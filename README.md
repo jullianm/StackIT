@@ -17,7 +17,7 @@ The app uses multiple managers to handle business logic within the app and rende
 - KeychainManager
 - ImageManager
 
-The `ViewManager` is initialized once and accessible to all the views as an environmment object. 
+The `ViewManager` is initialized once and accessible to all the views as an environmment object.<br>
 Views will be rendered whenever one the @Published properties inside that `ViewManager` object is mutated.
 
 Every business logic between the `ViewManager` and the other managers are made with `Publisher` and `Subscriber` using Combine.
