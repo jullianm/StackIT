@@ -31,14 +31,14 @@ For example, fetching the initial data (tags and questions) when app launches re
         let questionsPublisher = fetchQuestions(endpoint: .filteredQuestions(tags: [], trending: .votes, page: 1))
         
         Publishers.CombineLatest(tagsPublisher, questionsPublisher)
-            .handleEvents(receiveSubscription: { _ in
-                self.loadingSections = [.tags, .questions]
+            .handleEvents(receiveSubscription: { [weak self] _ in
+                self?.loadingSections = [.tags, .questions]
             }, receiveOutput: { _ in
-                self.loadingSections = []
+                self?.loadingSections = []
             })
-            .sink(receiveValue: { tags, questions in
-                self.tags = tags
-                self.questionsSummary = questions
+            .sink(receiveValue: { [weak self] tags, questions in
+                self?.tags = tags
+                self?.questionsSummary = questions
             }).store(in: &subscriptions)
     }        
         
@@ -58,7 +58,7 @@ private func bindFetchQuestions() {
         .handleEvents(receiveOutput: handleOutputSectionEvent)
         .map(resolveEndpointCall)
         .switchToLatest()
-        .handleEvents(receiveOutput: { _ in self.loadingSections = [] })
+        .handleEvents(receiveOutput: { [weak self] _ in self?.loadingSections = [] })
         .assign(to: \.questionsSummary, on: self)
         .store(in: &subscriptions)
 }
