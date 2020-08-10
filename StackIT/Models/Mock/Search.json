@@ -1,0 +1,587 @@
+{
+    "items": [
+        {
+            "owner": {
+                "reputation": 2234,
+                "user_id": 1311902,
+                "user_type": "registered",
+                "accept_rate": 63,
+                "profile_image": "https://www.gravatar.com/avatar/43ac0b36d98aa42d34d93ecc582a469c?s=128&d=identicon&r=PG",
+                "display_name": "Kaunteya",
+                "link": "https://stackoverflow.com/users/1311902/kaunteya"
+            },
+            "is_accepted": false,
+            "score": 1,
+            "last_activity_date": 1590047664,
+            "last_edit_date": 1590047664,
+            "creation_date": 1589865274,
+            "answer_id": 61883716,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p>Pure <code>Combine</code> solution for UIKit and AppKit</p>\n\n<p>Let's take a simple example of passing a count value between ViewControllers.</p>\n\n<p>A View control(parent) has a count and there is another ViewController(Child) which can let the user change the value of count. Once the user is done changing value, he will dismiss the child controller and parent should have the updated value after that</p>\n\n<h2>Parent View Controller</h2>\n\n<p>ParentVC is the one that would get count value from the ChildVC</p>\n\n<pre><code>class ParentVC: UIViewController {\n    var count = 1\n    var countObserver: AnyCancellable! // 1\n\n    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n        let childVC = segue.destination as! ChildVC\n        childVC.sliderValue = count // 2\n        countObserver = childVC.$sliderValue // 3\n            .assign(to: \\.count, on: self)\n    }\n}\n</code></pre>\n\n<ol>\n<li><p>countObserver will retain that observer that would observe value from ChildVC</p></li>\n<li><p>We assign the current count value from parent to the child, so as to update the slider with the current count value</p></li>\n<li><p>We observe sliderValue (which is a publisher) that would emit the value of count that user would change by dragging the slider. Note that we used $sliderValue instead of just sliderValue.</p></li>\n</ol>\n\n<hr>\n\n<h2>Child View Controller</h2>\n\n<p>Child view is the one that would emit values that ParentVc is interested in</p>\n\n<pre><code>class ChildVC: UIViewController {\n    @Published var sliderValue: Int = 0 // 1\n\n    @IBOutlet var sliderOutlet: UISlider!\n\n    @IBAction func slided(_ sender: UISlider) {\n        sliderValue = Int(sender.value)\n        print(sliderValue)\n    }\n}\n</code></pre>\n\n<ol>\n<li>@Published is Publisher that stores value and emits a signal when the value changes. It behaves just like a regular var but can publish values that can be accessed by prepending <code>$</code> sign to it.</li>\n</ol>\n\n<hr>\n\n<h2>CurrentValueSubject and PassthroughSubject vs @Published</h2>\n\n<ol>\n<li><p>CurrentValue subject can also be used instead of @Published. The only difference is that you would have to manually emit the signal. It is useful in cases where you want to control when to emit. For Eg. You can emit the value only if it falls in a specific range</p></li>\n<li><p>Passthrough subject also can be used instead of @Published or CurrentValue subject. Here the difference is that Passthrough subject does not hold a value it can just emit a signal. This can be useful when the value cannot be concretely represented in a variable</p></li>\n</ol>\n"
+        },
+        {
+            "owner": {
+                "reputation": 1365,
+                "user_id": 4519063,
+                "user_type": "registered",
+                "profile_image": "https://www.gravatar.com/avatar/33188347ba9fa3ea5f0ca1987db7f118?s=128&d=identicon&r=PG&f=1",
+                "display_name": "Hardik Bar",
+                "link": "https://stackoverflow.com/users/4519063/hardik-bar"
+            },
+            "is_accepted": false,
+            "score": 5,
+            "last_activity_date": 1580393051,
+            "last_edit_date": 1580393051,
+            "creation_date": 1575974722,
+            "answer_id": 59265436,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p><strong>For SwiftUI</strong></p>\n\n<p>Think of <code>@EnvironmentObject</code> as a smarter, simpler way of using <code>@ObservedObject</code> on lots of views. Rather than creating some data in view A, then passing it to view B, then view C, then view D before finally using it, you can create it in view and put it into the environment so that views B, C, and D will automatically have access to it.</p>\n\n<p>Note: Environment objects must be supplied by an ancestor view – if <strong>SwiftUI</strong> can’t find an environment object of the correct type you’ll get a crash. This applies for previews too, so be careful.</p>\n\n<p>As an example, here’s an observable object that stores user settings:</p>\n\n<pre><code>class UserSettings: ObservableObject {\n     @Published var score = 0\n}\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 309058,
+                "user_id": 3681880,
+                "user_type": "registered",
+                "accept_rate": 90,
+                "profile_image": "https://www.gravatar.com/avatar/3b7ad8915f552cd4e23caf38eee10030?s=128&d=identicon&r=PG",
+                "display_name": "Suragch",
+                "link": "https://stackoverflow.com/users/3681880/suragch"
+            },
+            "is_accepted": false,
+            "score": 194,
+            "last_activity_date": 1576053803,
+            "last_edit_date": 1592644375,
+            "creation_date": 1439274925,
+            "answer_id": 31934786,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<h1>Swift</h1>\n<p>There are tons and tons of explanations here and around StackOverflow, but if you are a beginner just trying to get something basic to work, try watching this YouTube tutorial (It's what helped me to finally understand how to do it).</p>\n<ul>\n<li>YouTube tutorial: <a href=\"https://www.youtube.com/watch?v=Kpwrc1PRDsg\" rel=\"noreferrer\">How to send data through segue (swift)</a></li>\n</ul>\n<h1>Passing data forward to the next View Controller</h1>\n<p>The following is an example based on the video. The idea is to pass a string from the text field in the First View Controller to the label in the Second View Controller.</p>\n<p><a href=\"https://i.stack.imgur.com/tpcnS.png\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/tpcnS.png\" alt=\"enter image description here\" /></a></p>\n<p>Create the storyboard layout in the Interface Builder. To make the segue, you just <KBD>Control</KBD> click on the button and drag over to the Second View Controller.</p>\n<p><strong>First View Controller</strong></p>\n<p>The code for the First View Controller is</p>\n<pre><code>import UIKit\n\nclass FirstViewController: UIViewController {\n\n    @IBOutlet weak var textField: UITextField!\n    \n    // This function is called before the segue\n    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n        \n        // get a reference to the second view controller\n        let secondViewController = segue.destination as! SecondViewController\n        \n        // set a variable in the second view controller with the String to pass\n        secondViewController.receivedString = textField.text!\n    }\n\n}\n</code></pre>\n<p><strong>Second View Controller</strong></p>\n<p>And the code for the Second View Controller is</p>\n<pre><code>import UIKit\n\nclass SecondViewController: UIViewController {\n\n    @IBOutlet weak var label: UILabel!\n    \n    // This variable will hold the data being passed from the First View Controller\n    var receivedString = &quot;&quot;\n    \n    override func viewDidLoad() {\n        super.viewDidLoad()\n\n        // Used the text from the First View Controller to set the label\n        label.text = receivedString\n    }\n\n}\n</code></pre>\n<p><strong>Don't forget</strong></p>\n<ul>\n<li>Hook up the outlets for the <code>UITextField</code> and the <code>UILabel</code>.</li>\n<li>Set the first and second View Controllers to the appropriate Swift files in IB.</li>\n</ul>\n<h1>Passing data back to the previous View Controller</h1>\n<p>To pass data back from the second view controller to the first view controller, you use <a href=\"https://stackoverflow.com/a/33549729/3681880\">a protocol and a delegate</a>. This video is a very clear walk though of that process:</p>\n<ul>\n<li>YouTube tutorial: <a href=\"https://www.youtube.com/watch?v=9LHDsSWc680\" rel=\"noreferrer\">iOS Swift Basics Tutorial: Protocols and Delegates</a> But also read <a href=\"http://krakendev.io/blog/weak-and-unowned-references-in-swift\" rel=\"noreferrer\">this post</a> to make sure you don't get into a strong reference cycle.</li>\n</ul>\n<p>The following is an example based on the video (with a few modifications).</p>\n<p><a href=\"https://i.stack.imgur.com/ypAga.png\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/ypAga.png\" alt=\"enter image description here\" /></a></p>\n<p>Create the storyboard layout in the Interface Builder. Again, to make the segue, you just <KBD>Control</KBD> drag from the button to the Second View Controller. Set the segue identifier to <code>showSecondViewController</code>. Also, don't forget to hook up the outlets and actions using the names in the following code.</p>\n<p><strong>First View Controller</strong></p>\n<p>The code for the First View Controller is</p>\n<pre><code>import UIKit\n\nclass FirstViewController: UIViewController, DataEnteredDelegate {\n\n    @IBOutlet weak var label: UILabel!\n    \n    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n        if segue.identifier == &quot;showSecondViewController&quot; {\n            let secondViewController = segue.destination as! SecondViewController\n            secondViewController.delegate = self\n        }\n    }\n    \n    func userDidEnterInformation(info: String) {\n        label.text = info\n    }\n}\n</code></pre>\n<p>Note the use of our custom <code>DataEnteredDelegate</code> protocol.</p>\n<p><strong>Second View Controller and Protocol</strong></p>\n<p>The code for the second view controller is</p>\n<pre><code>import UIKit\n\n// protocol used for sending data back\nprotocol DataEnteredDelegate: AnyObject {\n    func userDidEnterInformation(info: String)\n}\n\nclass SecondViewController: UIViewController {\n\n    // making this a weak variable so that it won't create a strong reference cycle\n    weak var delegate: DataEnteredDelegate? = nil\n    \n    @IBOutlet weak var textField: UITextField!\n\n    @IBAction func sendTextBackButton(sender: AnyObject) {\n        \n        // call this method on whichever class implements our delegate protocol\n        delegate?.userDidEnterInformation(info: textField.text!)\n    \n        // go back to the previous view controller\n        _ = self.navigationController?.popViewController(animated: true)\n    }\n}\n</code></pre>\n<p>Note that the <code>protocol</code> is outside of the View Controller class.</p>\n<p>That's it. Running the app now you should be able to send data back from the second view controller to the first.</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 954,
+                "user_id": 1041160,
+                "user_type": "registered",
+                "accept_rate": 11,
+                "profile_image": "https://www.gravatar.com/avatar/9ac65585b7297110e02987bf93b10f4d?s=128&d=identicon&r=PG",
+                "display_name": "kaar3k",
+                "link": "https://stackoverflow.com/users/1041160/kaar3k"
+            },
+            "is_accepted": false,
+            "score": 29,
+            "last_activity_date": 1561381408,
+            "last_edit_date": 1561381408,
+            "creation_date": 1337778510,
+            "answer_id": 10720605,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p><strong>This is a very old answer and this is anti pattern, please use delegates. Do not use this Approach !!</strong></p>\n\n<p><strong>1.</strong> Create the instance of first View Controller in the second View Controller and make its property <code>@property (nonatomic,assign)</code>.</p>\n\n<p><strong>2.</strong> Assign the <code>SecondviewController</code> instance of this view controller.</p>\n\n<p><strong>2.</strong> When you finish the selection operation copy the array to first View Controller,When u unload the SecondView ,FirstView will hold the Array Data.</p>\n\n<p>Hope This Helps.</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 32741,
+                "user_id": 1371853,
+                "user_type": "registered",
+                "accept_rate": 100,
+                "profile_image": "https://i.stack.imgur.com/Y8E6D.jpg?s=128&g=1",
+                "display_name": "swiftBoy",
+                "link": "https://stackoverflow.com/users/1371853/swiftboy"
+            },
+            "is_accepted": false,
+            "score": 19,
+            "last_activity_date": 1558287235,
+            "last_edit_date": 1558287235,
+            "creation_date": 1558275887,
+            "answer_id": 56208729,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<blockquote>\n  <p><strong>Swift 5</strong></p>\n  \n  <p>Well <a href=\"https://stackoverflow.com/a/9736559/1371853\">Matt Price's Answer</a> is perfectly fine for passing data but I\n  am going to rewrite it, in Latest Swift version because I believe new\n  programmers find it quit challenging due to new Syntax and\n  methods/frameworks, as original post is in Objective-C.</p>\n</blockquote>\n\n<p>There are multiple options for Passing Data between View Controllers.</p>\n\n<ol>\n<li>Using Navigation Controller Push </li>\n<li>Using Segue</li>\n<li>Using Delegate</li>\n<li>Using Notification Observer</li>\n<li>Using Block</li>\n</ol>\n\n<p>I am going to rewrite his logic in Swift with latest iOS Framework</p>\n\n<hr>\n\n<blockquote>\n  <p><strong>Passing Data through Navigation Controller Push</strong> : <em>From ViewControllerA to ViewControllerB</em></p>\n</blockquote>\n\n<p><strong>Step 1.</strong> Declare variable in ViewControllerB</p>\n\n<pre><code>var isSomethingEnabled = false\n</code></pre>\n\n<p><strong>Step 2.</strong> Print Variable in ViewControllerB' ViewDidLoad method</p>\n\n<pre><code>override func viewDidLoad() {\n        super.viewDidLoad()\n        //Print value received through segue, navigation push\n        print(\"Value of 'isSomethingEnabled' from ViewControllerA : \", isSomethingEnabled)\n    }\n</code></pre>\n\n<p><strong>Step 3.</strong> In ViewControllerA Pass Data while pushing through Navigation Controller</p>\n\n<pre><code>if let viewControllerB = UIStoryboard(name: \"Main\", bundle: nil).instantiateViewController(withIdentifier: \"ViewControllerB\") as? ViewControllerB {\n        viewControllerB.isSomethingEnabled = true\n        if let navigator = navigationController {\n            navigator.pushViewController(viewControllerB, animated: true)\n        }\n    }\n</code></pre>\n\n<p>So Here is the complete code for :   </p>\n\n<p><strong>ViewControllerA</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerA: UIViewController  {\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n    }\n\n    //MARK:Passing Data through Navigation PushViewController\n    @IBAction func goToViewControllerB(_ sender: Any) {\n\n        if let viewControllerB = UIStoryboard(name: \"Main\", bundle: nil).instantiateViewController(withIdentifier: \"ViewControllerB\") as? ViewControllerB {\n            viewControllerB.isSomethingEnabled = true\n            if let navigator = navigationController {\n                navigator.pushViewController(viewControllerB, animated: true)\n            }\n        }\n    }\n}\n</code></pre>\n\n<p><strong>ViewControllerB</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerB: UIViewController {\n\n    //MARK:  - Variable for Passing Data through Navigation push   \n    var isSomethingEnabled = false\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n        //Print value received through navigation push\n        print(\"Value of 'isSomethingEnabled' from ViewControllerA : \", isSomethingEnabled)\n    }\n}\n</code></pre>\n\n<hr>\n\n<blockquote>\n  <p><strong>Passing Data through Segue</strong> : <em>From ViewControllerA to ViewControllerB</em></p>\n</blockquote>\n\n<p><strong>Step 1.</strong> Create Segue from ViewControllerA to ViewControllerB and give Identifier = showDetailSegue in Storyboard as shown below</p>\n\n<p><a href=\"https://i.stack.imgur.com/fWzeW.png\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/fWzeW.png\" alt=\"enter image description here\"></a></p>\n\n<p><strong>Step 2.</strong> In ViewControllerB Declare a viable named <strong>isSomethingEnabled</strong> and print its value.</p>\n\n<p><strong>Step 3.</strong> In ViewControllerA pass isSomethingEnabled's value while passing Segue</p>\n\n<p>So Here is the complete code for : </p>\n\n<p><strong>ViewControllerA</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerA: UIViewController  {\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n    }\n\n    //MARK:  - - Passing Data through Segue  - - \n    @IBAction func goToViewControllerBUsingSegue(_ sender: Any) {\n        performSegue(withIdentifier: \"showDetailSegue\", sender: nil)\n    }\n\n    //Segue Delegate Method\n    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n        if (segue.identifier == \"showDetailSegue\") {\n            let controller = segue.destination as? ViewControllerB\n            controller?.isSomethingEnabled = true//passing data\n        }\n    }\n}\n</code></pre>\n\n<p><strong>ViewControllerB</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerB: UIViewController {\n    var isSomethingEnabled = false\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n        //Print value received through segue\n        print(\"Value of 'isSomethingEnabled' from ViewControllerA : \", isSomethingEnabled)\n    }\n}\n</code></pre>\n\n<hr>\n\n<blockquote>\n  <p><strong>Passing Data through Delegate</strong> : <em>From ViewControllerB to ViewControllerA</em></p>\n</blockquote>\n\n<p><strong>Step 1.</strong> Declare Protocol <strong><em>ViewControllerBDelegate</em></strong> in ViewControllerB file but outside the class</p>\n\n<pre><code>protocol ViewControllerBDelegate: NSObjectProtocol {\n\n    // Classes that adopt this protocol MUST define\n    // this method -- and hopefully do something in\n    // that definition.\n    func addItemViewController(_ controller: ViewControllerB?, didFinishEnteringItem item: String?)\n}\n</code></pre>\n\n<p><strong>Step 2.</strong> Declare Delegate variable instance in ViewControllerB</p>\n\n<pre><code>var delegate: ViewControllerBDelegate?\n</code></pre>\n\n<p><strong>Step 3.</strong> Send data for delegate inside viewDidLoad method of ViewControllerB</p>\n\n<pre><code>delegate?.addItemViewController(self, didFinishEnteringItem: \"Data for ViewControllerA\")\n</code></pre>\n\n<p><strong>Step 4.</strong> Confirm ViewControllerBDelegate in ViewControllerA</p>\n\n<pre><code>class ViewControllerA: UIViewController, ViewControllerBDelegate  {\n// to do\n}\n</code></pre>\n\n<p><strong>Step 5.</strong> Confirm that you will implement delegate in ViewControllerA</p>\n\n<pre><code>if let viewControllerB = UIStoryboard(name: \"Main\", bundle: nil).instantiateViewController(withIdentifier: \"ViewControllerB\") as? ViewControllerB {\n            viewControllerB.delegate = self//confirming delegate\n            if let navigator = navigationController {\n                navigator.pushViewController(viewControllerB, animated: true)\n            }\n        }\n</code></pre>\n\n<p><strong>Step 6.</strong> Implement delegate method for receiving data in ViewControllerA</p>\n\n<pre><code>func addItemViewController(_ controller: ViewControllerB?, didFinishEnteringItem item: String?) {\n        print(\"Value from ViewControllerB's Delegate\", item!)\n    }\n</code></pre>\n\n<p>So Here is the complete code for : </p>\n\n<p><strong>ViewControllerA</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerA: UIViewController, ViewControllerBDelegate  {\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n    }\n\n    //Delegate method\n    func addItemViewController(_ controller: ViewControllerB?, didFinishEnteringItem item: String?) {\n        print(\"Value from ViewControllerB's Delegate\", item!)\n    }\n\n    @IBAction func goToViewControllerForDelegate(_ sender: Any) {\n\n        if let viewControllerB = UIStoryboard(name: \"Main\", bundle: nil).instantiateViewController(withIdentifier: \"ViewControllerB\") as? ViewControllerB {\n            viewControllerB.delegate = self\n            if let navigator = navigationController {\n                navigator.pushViewController(viewControllerB, animated: true)\n            }\n        }\n    }\n}\n</code></pre>\n\n<p><strong>ViewControllerB</strong></p>\n\n<pre><code>import UIKit\n\n//Protocol decleare\nprotocol ViewControllerBDelegate: NSObjectProtocol {\n    // Classes that adopt this protocol MUST define\n    // this method -- and hopefully do something in\n    // that definition.\n    func addItemViewController(_ controller: ViewControllerB?, didFinishEnteringItem item: String?)\n}\n\nclass ViewControllerB: UIViewController {\n    var delegate: ViewControllerBDelegate?\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n        //MARK:  - - - -  Set Data for Passing Data through Delegate  - - - - - -\n        delegate?.addItemViewController(self, didFinishEnteringItem: \"Data for ViewControllerA\")\n    }\n}\n</code></pre>\n\n<hr>\n\n<blockquote>\n  <p><strong>Passing Data through Notification Observer</strong> : <em>From ViewControllerB to ViewControllerA</em></p>\n</blockquote>\n\n<p>Step 1. Set and Post data in Notification observer in ViewControllerB</p>\n\n<pre><code>let objToBeSent = \"Test Message from Notification\"\n        NotificationCenter.default.post(name: Notification.Name(\"NotificationIdentifier\"), object: objToBeSent)\n</code></pre>\n\n<p>Step 2. Add Notification Observer in ViewControllerA</p>\n\n<pre><code>NotificationCenter.default.addObserver(self, selector: #selector(self.methodOfReceivedNotification(notification:)), name: Notification.Name(\"NotificationIdentifier\"), object: nil)\n</code></pre>\n\n<p>Step 3. Receive Notification data value in ViewControllerA</p>\n\n<pre><code>@objc func methodOfReceivedNotification(notification: Notification) {\n        print(\"Value of notification : \", notification.object ?? \"\")\n    }\n</code></pre>\n\n<p>So Here is the complete code for : </p>\n\n<p><strong>ViewControllerA</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerA: UIViewController{\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n\n        // add observer in controller(s) where you want to receive data\n        NotificationCenter.default.addObserver(self, selector: #selector(self.methodOfReceivedNotification(notification:)), name: Notification.Name(\"NotificationIdentifier\"), object: nil)\n    }\n\n    //MARK: Method for receiving Data through Post Notification \n    @objc func methodOfReceivedNotification(notification: Notification) {\n        print(\"Value of notification : \", notification.object ?? \"\")\n    }\n}\n</code></pre>\n\n<p><strong>ViewControllerB</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerB: UIViewController {\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n\n        //MARK:Set data for Passing Data through Post Notification\n        let objToBeSent = \"Test Message from Notification\"\n        NotificationCenter.default.post(name: Notification.Name(\"NotificationIdentifier\"), object: objToBeSent)\n    }\n}\n</code></pre>\n\n<hr>\n\n<blockquote>\n  <p><strong>Passing Data through Block</strong> : <em>From ViewControllerB to ViewControllerA</em></p>\n</blockquote>\n\n<p>Step 1. Declare block in ViewControllerB</p>\n\n<p>var authorizationCompletionBlock:((Bool)->())? = {_ in}</p>\n\n<p>Step 2. Set data in block in ViewControllerB</p>\n\n<pre><code>if authorizationCompletionBlock != nil\n        {\n            authorizationCompletionBlock!(true)\n        }\n</code></pre>\n\n<p>Step 3. Receive block data in ViewControllerA</p>\n\n<pre><code>//Receiver Block\n                controller!.authorizationCompletionBlock = { isGranted in\n                    print(\"Data received from Block is :\", isGranted)\n                }\n</code></pre>\n\n<p>So Here is the complete code for : </p>\n\n<p><strong>ViewControllerA</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerA: UIViewController  {\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n    }\n\n    //MARK:Method for receiving Data through Block\n        override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n            if (segue.identifier == \"showDetailSegue\") {\n                let controller = segue.destination as? ViewControllerB\n                controller?.isSomethingEnabled = true\n\n                //Receiver Block\n                controller!.authorizationCompletionBlock = { isGranted in\n                    print(\"Data received from Block is :\", isGranted)\n                }\n            }\n        }\n}\n</code></pre>\n\n<p><strong>ViewControllerB</strong></p>\n\n<pre><code>import UIKit\n\nclass ViewControllerB: UIViewController {\n\n    //MARK:Variable for Passing Data through Block\n    var authorizationCompletionBlock:((Bool)-&gt;())? = {_ in}\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n\n        //MARK:Set data for Passing Data through Block\n        if authorizationCompletionBlock != nil\n        {\n            authorizationCompletionBlock!(true)\n        }\n    }\n}\n</code></pre>\n\n<p><a href=\"https://github.com/RamdhanChoudhary/A-Simple-iOS-App-for-Passing-Data-Between-Controllers-in-Swift\" rel=\"noreferrer\">You can find complete sample Application at my GitHub</a> Please let me know if you have any question(s) on this.</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 5992,
+                "user_id": 3750109,
+                "user_type": "registered",
+                "accept_rate": 55,
+                "profile_image": "https://i.stack.imgur.com/t5C4o.png?s=128&g=1",
+                "display_name": "Christopher Wade Cantley",
+                "link": "https://stackoverflow.com/users/3750109/christopher-wade-cantley"
+            },
+            "is_accepted": false,
+            "score": 21,
+            "last_activity_date": 1556882719,
+            "last_edit_date": 1556882719,
+            "creation_date": 1440516508,
+            "answer_id": 32208089,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p>I know this is a beaten subject but for those looking to answer this question with a SWIFT slant and want a bare-bones example, here my go-to method for passing data if you are using a segue to get around.</p>\n\n<p>It is similar to the above but without the buttons, labels and such.  Just simply passing data from one view to the next.</p>\n\n<p><strong>Setup The Storyboard</strong></p>\n\n<p>There are three parts.  </p>\n\n<ol>\n<li>The Sender</li>\n<li>The Segue</li>\n<li>The Receiver</li>\n</ol>\n\n<p>This is a very simple view layout with a segue between them.</p>\n\n<hr>\n\n<p><a href=\"https://i.stack.imgur.com/N6G2p.jpg\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/N6G2p.jpg\" alt=\"Very simple view layout.  Note : No navigation controller\"></a></p>\n\n<hr>\n\n<p>Here is the setup for the sender</p>\n\n<hr>\n\n<p><a href=\"https://i.stack.imgur.com/dGH1N.jpg\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/dGH1N.jpg\" alt=\"The Sender\"></a></p>\n\n<hr>\n\n<p>Here is the setup for the receiver.</p>\n\n<hr>\n\n<p><a href=\"https://i.stack.imgur.com/nWIib.jpg\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/nWIib.jpg\" alt=\"The Receiver\"></a></p>\n\n<hr>\n\n<p>Lastly, the setup for the segue.</p>\n\n<hr>\n\n<p><a href=\"https://i.stack.imgur.com/cvYVj.jpg\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/cvYVj.jpg\" alt=\"The Segue Identifier\"></a></p>\n\n<hr>\n\n<p><strong>The View Controllers</strong></p>\n\n<p>We are keeping this simple so no buttons, not actions, we are simply moving data from the sender to the receiver when the application loads and then outputting the transmitted value to the console.</p>\n\n<p>This page takes the initially loaded value and passes it along.</p>\n\n<pre><code>import UIKit\n\n\nclass ViewControllerSender: UIViewController {\n\n    // THE STUFF - put some info into a variable\n    let favoriteMovie = \"Ghost Busters\"\n\n    override func viewDidAppear(animated: Bool) {\n        // PASS IDENTIFIER - go to the recieving view controller.\n        self.performSegueWithIdentifier(\"goToReciever\", sender: self)\n    }\n\n    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {\n\n        //GET REFERENCE - ...to the receiver view.\n        var viewControllerReceiver = segue.destinationViewController as? ViewControllerReceiver\n\n        //PASS STUFF - pass the variable along to the target.\n        viewControllerReceiver!.yourFavMovie = self.favoriteMovie\n\n    }\n\n}\n</code></pre>\n\n<p>This page just sends the value of the variable to the console when it loads.  By this point, our favorite movie should be in that variable.</p>\n\n<pre><code>import UIKit\n\nclass ViewControllerReceiver: UIViewController {\n\n    //Basic empty variable waiting for you to pass in your fantastic favorite movie.\n    var yourFavMovie = \"\"\n\n    override func viewDidLoad() {\n        super.viewDidLoad()\n\n        //And now we can view it in the console.\n        println(\"The Movie is \\(self.yourFavMovie)\")\n\n    }   \n}\n</code></pre>\n\n<p>That is how you can tackle it if you want to use a segue and you don't have your pages under a navigation controller.</p>\n\n<p>Once it is run it should switch to the receiver view automatically and pass the value from the sender to the receiver, displaying the value in the console.</p>\n\n<p><a href=\"https://i.stack.imgur.com/edubX.jpg\" rel=\"noreferrer\"><img src=\"https://i.stack.imgur.com/edubX.jpg\" alt=\"Ghost Busters is a classic folks.\"></a></p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 32531,
+                "user_id": 634273,
+                "user_type": "registered",
+                "accept_rate": 75,
+                "profile_image": "https://www.gravatar.com/avatar/37d008229a56f1f8cb7a017644f9554d?s=128&d=identicon&r=PG",
+                "display_name": "Matt Price",
+                "link": "https://stackoverflow.com/users/634273/matt-price"
+            },
+            "is_accepted": true,
+            "score": 1689,
+            "last_activity_date": 1550217579,
+            "last_edit_date": 1550217579,
+            "creation_date": 1331897973,
+            "answer_id": 9736559,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p>This question seems to be very popular here on stackoverflow so I thought I would try and give a better answer to help out people starting in the world of iOS like me.</p>\n\n<p>I hope this answer is clear enough for people to understand and that I have not missed anything.</p>\n\n<p><strong>Passing Data Forward</strong></p>\n\n<p>Passing data forward to a view controller from another view controller. You would use this method if you wanted to pass an object/value from one view controller to another view controller that you may be pushing on to a navigation stack.</p>\n\n<p>For this example, we will have <code>ViewControllerA</code> and <code>ViewControllerB</code></p>\n\n<p>To pass a <code>BOOL</code> value from <code>ViewControllerA</code> to <code>ViewControllerB</code> we would do the following.</p>\n\n<ol>\n<li><p>in <code>ViewControllerB.h</code> create a property for the <code>BOOL</code></p>\n\n<pre><code>@property (nonatomic, assign) BOOL isSomethingEnabled;\n</code></pre></li>\n<li><p>in <code>ViewControllerA</code> you need to tell it about <code>ViewControllerB</code> so use an </p>\n\n<pre><code>#import \"ViewControllerB.h\"\n</code></pre>\n\n<p>Then where you want to load the view eg. <code>didSelectRowAtIndex</code> or some <code>IBAction</code> you need to set the property in <code>ViewControllerB</code> before you push it onto nav stack.</p>\n\n<pre><code>ViewControllerB *viewControllerB = [[ViewControllerB alloc] initWithNib:@\"ViewControllerB\" bundle:nil];\nviewControllerB.isSomethingEnabled = YES;\n[self pushViewController:viewControllerB animated:YES];\n</code></pre>\n\n<p>This will set <code>isSomethingEnabled</code> in <code>ViewControllerB</code> to <code>BOOL</code> value <code>YES</code>.</p></li>\n</ol>\n\n<p><strong>Passing Data Forward using Segues</strong></p>\n\n<p>If you are using Storyboards you are most likely using segues and will need this procedure to pass data forward. This is similar to the above but instead of passing the data before you push the view controller, you use a method called</p>\n\n<pre><code>-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender\n</code></pre>\n\n<p>So to pass a <code>BOOL</code> from <code>ViewControllerA</code> to <code>ViewControllerB</code> we would do the following:</p>\n\n<ol>\n<li><p>in <code>ViewControllerB.h</code> create a property for the <code>BOOL</code></p>\n\n<pre><code>@property (nonatomic, assign) BOOL isSomethingEnabled;\n</code></pre></li>\n<li><p>in <code>ViewControllerA</code> you need to tell it about <code>ViewControllerB</code> so use an</p>\n\n<pre><code>#import \"ViewControllerB.h\"\n</code></pre></li>\n<li><p>Create a the segue from <code>ViewControllerA</code> to <code>ViewControllerB</code> on the storyboard and give it an identifier, in this example we'll call it <code>\"showDetailSegue\"</code></p></li>\n<li><p>Next, we need to add the method to <code>ViewControllerA</code> that is called when any segue is performed, because of this we need to detect which segue was called and then do something. In our example we will check for <code>\"showDetailSegue\"</code> and if that's performed we will pass our <code>BOOL</code> value to <code>ViewControllerB</code></p>\n\n<pre><code>-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{\n    if([segue.identifier isEqualToString:@\"showDetailSegue\"]){\n        ViewControllerB *controller = (ViewControllerB *)segue.destinationViewController;\n        controller.isSomethingEnabled = YES;\n    }\n}\n</code></pre>\n\n<p>If you have your views embedded in a navigation controller you need to change the method above slightly to the following</p>\n\n<pre><code>-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{\n    if([segue.identifier isEqualToString:@\"showDetailSegue\"]){\n        UINavigationController *navController = (UINavigationController *)segue.destinationViewController;\n        ViewControllerB *controller = (ViewControllerB *)navController.topViewController;\n        controller.isSomethingEnabled = YES;\n    }\n}\n</code></pre>\n\n<p>This will set <code>isSomethingEnabled</code> in <code>ViewControllerB</code> to <code>BOOL</code> value <code>YES</code>.</p></li>\n</ol>\n\n<p><strong>Passing Data Back</strong></p>\n\n<p>To pass data back from <code>ViewControllerB</code> to <code>ViewControllerA</code> you need to use <em>Protocols and Delegates</em> or <em>Blocks</em>, the latter can be used as a loosely coupled mechanism for callbacks.</p>\n\n<p>To do this we will make <code>ViewControllerA</code> a delegate of <code>ViewControllerB</code>. This allows <code>ViewControllerB</code> to send a message back to <code>ViewControllerA</code> enabling us to send data back.</p>\n\n<p>For <code>ViewControllerA</code> to be a delegate of <code>ViewControllerB</code> it must conform to <code>ViewControllerB</code>'s protocol which we have to specify. This tells <code>ViewControllerA</code> which methods it must implement.</p>\n\n<ol>\n<li><p>In <code>ViewControllerB.h</code>, below the <code>#import</code>, but above <code>@interface</code> you specify the protocol.</p>\n\n<pre><code>@class ViewControllerB;\n\n@protocol ViewControllerBDelegate &lt;NSObject&gt;\n- (void)addItemViewController:(ViewControllerB *)controller didFinishEnteringItem:(NSString *)item;\n@end\n</code></pre></li>\n<li><p>next still in the <code>ViewControllerB.h</code> you need to setup a <code>delegate</code> property and synthesize in <code>ViewControllerB.m</code></p>\n\n<pre><code>@property (nonatomic, weak) id &lt;ViewControllerBDelegate&gt; delegate;\n</code></pre></li>\n<li><p>In <code>ViewControllerB</code> we call a message on the <code>delegate</code> when we pop the view controller.</p>\n\n<pre><code>NSString *itemToPassBack = @\"Pass this value back to ViewControllerA\";\n[self.delegate addItemViewController:self didFinishEnteringItem:itemToPassBack];\n</code></pre></li>\n<li><p>That's it for <code>ViewControllerB</code>. Now in <code>ViewControllerA.h</code>, tell <code>ViewControllerA</code> to import <code>ViewControllerB</code> and conform to its protocol.</p>\n\n<pre><code>#import \"ViewControllerB.h\"\n\n@interface ViewControllerA : UIViewController &lt;ViewControllerBDelegate&gt;\n</code></pre></li>\n<li><p>In <code>ViewControllerA.m</code> implement the following method from our protocol</p>\n\n<pre><code>- (void)addItemViewController:(ViewControllerB *)controller didFinishEnteringItem:(NSString *)item\n{\n    NSLog(@\"This was returned from ViewControllerB %@\",item);\n}\n</code></pre></li>\n<li><p>Before pushing <code>viewControllerB</code> to navigation stack we need to tell  <code>ViewControllerB</code> that <code>ViewControllerA</code> is its delegate, otherwise we will get an error.</p>\n\n<pre><code>ViewControllerB *viewControllerB = [[ViewControllerB alloc] initWithNib:@\"ViewControllerB\" bundle:nil];\nviewControllerB.delegate = self\n[[self navigationController] pushViewController:viewControllerB animated:YES];\n</code></pre></li>\n</ol>\n\n<hr>\n\n<h3>References</h3>\n\n<ol>\n<li><a href=\"http://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/ManagingDataFlowBetweenViewControllers/ManagingDataFlowBetweenViewControllers.html#//apple_ref/doc/uid/TP40007457-CH8-SW9\" rel=\"noreferrer\">Using Delegation to Communicate With Other View Controllers</a> in the <em>View Controller Programming Guide</em></li>\n<li><a href=\"https://developer.apple.com/library/mac/#documentation/General/Conceptual/DevPedia-CocoaCore/Delegation.html\" rel=\"noreferrer\">Delegate Pattern</a></li>\n</ol>\n\n<p><strong>NSNotification center</strong>\nIt's another way to pass data. </p>\n\n<pre><code>// add observer in controller(s) where you want to receive data\n[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeepLinking:) name:@\"handleDeepLinking\" object:nil];\n\n-(void) handleDeepLinking:(NSNotification *) notification {\n    id someObject = notification.object // some custom object that was passed with notification fire.\n}\n\n// post notification\nid someObject;\n[NSNotificationCenter.defaultCenter postNotificationName:@\"handleDeepLinking\" object:someObject];\n</code></pre>\n\n<p><strong>Passing Data back from one class to another</strong> (A class can be any controller, Network/session manager, UIView subclass or any other class)</p>\n\n<p><em>Blocks are anonymous functions.</em></p>\n\n<p>This example passes data from <strong>Controller B</strong> to <strong>Controller A</strong></p>\n\n<p><strong>define a block</strong></p>\n\n<pre><code>@property void(^selectedVoucherBlock)(NSString *); // in ContollerA.h\n</code></pre>\n\n<p><strong>add block handler (listener)</strong>\nwhere you need a value (for example you need your API response in ControllerA or you need ContorllerB data on A)</p>\n\n<pre><code>// in ContollerA.m\n\n- (void)viewDidLoad {\n    [super viewDidLoad];\n    __unsafe_unretained typeof(self) weakSelf = self;\n    self.selectedVoucherBlock = ^(NSString *voucher) {\n        weakSelf-&gt;someLabel.text = voucher;\n    };\n}\n</code></pre>\n\n<p><strong>Go to Controller B</strong></p>\n\n<pre><code>UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@\"Main\" bundle:nil];\nControllerB *vc = [storyboard instantiateViewControllerWithIdentifier:@\"ControllerB\"];\nvc.sourceVC = self;\n    [self.navigationController pushViewController:vc animated:NO];\n</code></pre>\n\n<p><strong>fire block</strong></p>\n\n<pre><code>-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath: \n(NSIndexPath *)indexPath {\n    NSString *voucher = vouchersArray[indexPath.row];\n    if (sourceVC.selectVoucherBlock) {\n        sourceVC.selectVoucherBlock(voucher);\n    }\n    [self.navigationController popToViewController:sourceVC animated:YES];\n}\n</code></pre>\n\n<p><a href=\"https://stackoverflow.com/a/49900404/3030400\">Another Working Example for Blocks</a></p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 4363,
+                "user_id": 1980246,
+                "user_type": "registered",
+                "accept_rate": 77,
+                "profile_image": "https://i.stack.imgur.com/Ri2B8.jpg?s=128&g=1",
+                "display_name": "Timur Bernikovich",
+                "link": "https://stackoverflow.com/users/1980246/timur-bernikovich"
+            },
+            "is_accepted": false,
+            "score": 1,
+            "last_activity_date": 1549444087,
+            "creation_date": 1549444087,
+            "answer_id": 54549967,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p>I prefer to make it without delegates and segues. It can be done with custom init or by setting optional values.</p>\n\n<p><strong>1. Custom init</strong></p>\n\n<pre><code>class ViewControllerA: UIViewController {\n  func openViewControllerB() {\n    let viewController = ViewControllerB(string: \"Blabla\", completionClosure: { success in\n      print(success)\n    })\n    navigationController?.pushViewController(animated: true)\n  }\n}\n\nclass ViewControllerB: UIViewController {\n  private let completionClosure: ((Bool) -&gt; Void)\n  init(string: String, completionClosure: ((Bool) -&gt; Void)) {\n    self.completionClosure = completionClosure\n    super.init(nibName: nil, bundle: nil)\n    title = string\n  }\n\n  func finishWork() {\n    completionClosure()\n  }\n}\n</code></pre>\n\n<p><strong>2. Optional vars</strong></p>\n\n<pre><code>class ViewControllerA: UIViewController {\n  func openViewControllerB() {\n    let viewController = ViewControllerB()\n    viewController.string = \"Blabla\"\n    viewController.completionClosure = { success in\n      print(success)\n    }\n    navigationController?.pushViewController(animated: true)\n  }\n}\n\nclass ViewControllerB: UIViewController {\n  var string: String? {\n    didSet {\n      title = string\n    }\n  }\n  var completionClosure: ((Bool) -&gt; Void)?\n\n  func finishWork() {\n    completionClosure?()\n  }\n}\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 1037,
+                "user_id": 9908210,
+                "user_type": "registered",
+                "profile_image": "https://www.gravatar.com/avatar/04f5a003a4e2ec657b0994a00be5903e?s=128&d=identicon&r=PG",
+                "display_name": "Sachin Rasane",
+                "link": "https://stackoverflow.com/users/9908210/sachin-rasane"
+            },
+            "is_accepted": false,
+            "score": 3,
+            "last_activity_date": 1542104939,
+            "creation_date": 1542104939,
+            "answer_id": 53278941,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p>USING NOTIFICATION CENTER</p>\n\n<h2>For Swift 3</h2>\n\n<pre><code>let imageDataDict:[String: UIImage] = [\"image\": image]\n\n  // post a notification\n  NotificationCenter.default.post(name: NSNotification.Name(rawValue: \"notificationName\"), object: nil, userInfo: imageDataDict) \n  // `default` is now a property, not a method call\n\n // Register to receive notification in your class\n NotificationCenter.default.addObserver(self, selector: #selector(self.showSpinningWheel(_:)), name: NSNotification.Name(rawValue: \"notificationName\"), object: nil)\n\n // handle notification\n func showSpinningWheel(_ notification: NSNotification) {\n        print(notification.userInfo ?? \"\")\n        if let dict = notification.userInfo as NSDictionary? {\n            if let id = dict[\"image\"] as? UIImage{\n                // do something with your image\n            }\n        }\n }\n</code></pre>\n\n<h2>For Swift 4</h2>\n\n<pre><code>let imageDataDict:[String: UIImage] = [\"image\": image]\n\n  // post a notification\n  NotificationCenter.default.post(name: NSNotification.Name(rawValue: \"notificationName\"), object: nil, userInfo: imageDataDict) \n  // `default` is now a property, not a method call\n\n // Register to receive notification in your class\n NotificationCenter.default.addObserver(self, selector: #selector(self.showSpinningWheel(_:)), name: NSNotification.Name(rawValue: \"notificationName\"), object: nil)\n\n // handle notification\n @objc func showSpinningWheel(_ notification: NSNotification) {\n        print(notification.userInfo ?? \"\")\n        if let dict = notification.userInfo as NSDictionary? {\n            if let id = dict[\"image\"] as? UIImage{\n                // do something with your image\n            }\n        }\n }\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 136,
+                "user_id": 7125468,
+                "user_type": "registered",
+                "profile_image": "https://i.stack.imgur.com/cPPI7.jpg?s=128&g=1",
+                "display_name": "Nayab Khan",
+                "link": "https://stackoverflow.com/users/7125468/nayab-khan"
+            },
+            "is_accepted": false,
+            "score": 2,
+            "last_activity_date": 1525707131,
+            "creation_date": 1525707131,
+            "answer_id": 50217750,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 4.0",
+            "body": "<p>well we have few ways we can work with delegates system or using storyboardSegue </p>\n\n<pre><code>1- As working with setter and getter method like in viewController.h\n   @property (retain, nonatomic) NSString *str;\n   now, in viewController.m\n   @synthesize str;\n\n\n   here i have pdf url and segue to another viewController like this and pdfObject is my pdfModel basicilly is NSOBJECT class.  \n\n   str =[NSString stringWithFormat:@\"%@\",pdfObject.objPath];\nNSLog(@\"pdfUrl :***: %@ :***:\",pdfUrl);\n\n[self performSegueWithIdentifier:@\"programPDFViewController_segue\" sender:self];\n</code></pre>\n\n<h1>pragma mark - Navigation</h1>\n\n<pre><code>  // In a storyboard-based application, you will often want to do a little preparation before navigation\n\n - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {\n\n    if ([[segue identifier] isEqualToString:@\"programPDFViewController_segue\"]){\n    programPDFViewController *pdfVC = [segue destinationViewController];\n    [pdfVC setRecievedPdfUrl:str];\n\n   }\n }\n</code></pre>\n\n<p>Now successfully i received my pdf url string and other ViewController and use that string in webview... </p>\n\n<p>2- As working with delegates like this i have one NSObject class of utilities containing my methods of dateFormatter , sharedInstance, EscapeWhiteSpaceCharacters, convertImageToGrayScale and more method i worked with through out the application so now in utilities.h</p>\n\n<p>in this you dont need to create variables on evering time parsing data  from one to another view controller one time your created string variable in utilities.h\njust make it nil; and used again</p>\n\n<pre><code>  @interface Utilities : NSObject\n\n  Utilities.h\n +(Utilities*)sharedInstance;\n\n @property(nonatomic,retain)NSString* strUrl;\n</code></pre>\n\n<p>now in utilities.m</p>\n\n<pre><code>   @implementation utilities\n\n\n  +(utilities*)sharedInstance\n  {\n  static utilities* sharedObj = nil;\n  if (sharedObj == nil) {\n    sharedObj = [[utilities alloc] init];\n    }\n   return sharedObj;\n  }\n\nnow its done come to your firstViewController.m and call delegate\n\nNSString*str =[NSString stringWithFormat:@\"%@\",pdfObject.objPath];\n\n[Connection sharedInstance].strUrl=nil;\n[Connection sharedInstance].strUrl=str;\n\n Now go to you secondViewController.m directly use it without creating variable \n\n in viewwillapear what i did\n\n -(void)viewWillAppear:(BOOL)animated{\n     [super viewWillAppear:YES];\n\n   [self webViewMethod:[Connection sharedInstance].strUrl];\n\n }\n\n\n -(void)WebViewMethod:(NSString)Url{\n\n // working with webview enjoy coding :D\n\n }\n</code></pre>\n\n<p>this delegate work is reliable with memory management </p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 525,
+                "user_id": 8210517,
+                "user_type": "registered",
+                "profile_image": "https://www.gravatar.com/avatar/cfc4d9688249d49961aa10ae847dda49?s=128&d=identicon&r=PG&f=1",
+                "display_name": "Kamani Jasmin",
+                "link": "https://stackoverflow.com/users/8210517/kamani-jasmin"
+            },
+            "is_accepted": false,
+            "score": 5,
+            "last_activity_date": 1523653245,
+            "last_edit_date": 1523653245,
+            "creation_date": 1521801042,
+            "answer_id": 49447579,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<blockquote>\n  <p>There are 3 types for passing data one ViewController to another\n  ViewController.</p>\n</blockquote>\n\n<ol>\n<li>Programatically</li>\n<li>Segue</li>\n<li>UserDefaults</li>\n</ol>\n\n<p><strong>Demo Project Link Here</strong> - <a href=\"https://github.com/kamanijasmin13/Swift-Pass-data-between-viewcontrollers\" rel=\"nofollow noreferrer\">https://github.com/kamanijasmin13/Swift-Pass-data-between-viewcontrollers</a></p>\n\n<p><strong>Programatically</strong>\n<a href=\"https://i.stack.imgur.com/2gFjo.jpg\" rel=\"nofollow noreferrer\"><img src=\"https://i.stack.imgur.com/2gFjo.jpg\" alt=\"enter image description here\"></a></p>\n\n<p><strong>Segue</strong>\n<a href=\"https://i.stack.imgur.com/3jweJ.jpg\" rel=\"nofollow noreferrer\"><img src=\"https://i.stack.imgur.com/3jweJ.jpg\" alt=\"enter image description here\"></a></p>\n\n<p><strong>UserDefaults</strong>\n<a href=\"https://i.stack.imgur.com/pBk3v.jpg\" rel=\"nofollow noreferrer\"><img src=\"https://i.stack.imgur.com/pBk3v.jpg\" alt=\"enter image description here\"></a></p>\n\n<p><strong>Demo Project Link Here</strong> - <a href=\"https://github.com/kamanijasmin13/Swift-Pass-data-between-viewcontrollers\" rel=\"nofollow noreferrer\">https://github.com/kamanijasmin13/Swift-Pass-data-between-viewcontrollers</a></p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 235,
+                "user_id": 7151113,
+                "user_type": "registered",
+                "profile_image": "https://www.gravatar.com/avatar/ad17e94d0b33a53b1e7a845f3dbbac89?s=128&d=identicon&r=PG&f=1",
+                "display_name": "Parth Barot",
+                "link": "https://stackoverflow.com/users/7151113/parth-barot"
+            },
+            "is_accepted": false,
+            "score": 2,
+            "last_activity_date": 1523528240,
+            "creation_date": 1523528240,
+            "answer_id": 49793983,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>You can create push segue from source viewcontroller to destination viewcontroller and give identifier name like below.\n<a href=\"https://i.stack.imgur.com/mOZjn.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.stack.imgur.com/mOZjn.png\" alt=\"enter image description here\"></a></p>\n\n<p>You have to performsegue from didselectRowAt like this.</p>\n\n<pre><code>func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {\n    performSegue(withIdentifier: \"segue\", sender: self)\n}\n</code></pre>\n\n<p>And you can pass the array of selected item from the below function.</p>\n\n<pre><code>override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n    let index = CategorytableView.indexPathForSelectedRow\n    let indexNumber = index?.row\n    print(indexNumber!)\n    let VC = segue.destination as! AddTransactionVC\n   VC.val = CategoryData[indexNumber!] . //You can pass here entire array instead of array element.\n\n}\n</code></pre>\n\n<p>And you have to check the value in viewdidload of destination viewcontroller and then store it into the database.</p>\n\n<pre><code>override func viewDidLoad{\n if val != \"\"{\n        btnSelectCategory.setTitle(val, for: .normal)\n    }\n}\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 770,
+                "user_id": 1151000,
+                "user_type": "registered",
+                "accept_rate": 67,
+                "profile_image": "https://www.gravatar.com/avatar/7b99d509e7322293d26470adc1c77fb1?s=128&d=identicon&r=PG",
+                "display_name": "Shahin",
+                "link": "https://stackoverflow.com/users/1151000/shahin"
+            },
+            "is_accepted": false,
+            "score": 1,
+            "last_activity_date": 1522079384,
+            "creation_date": 1522079384,
+            "answer_id": 49495599,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>You have to always follow MVC concept when creating apps for iOS.\nThere are two scenarios where you may want to pass data from a ViewController to another:</p>\n\n<ol>\n<li><p>When there is an \"A\" ViewContoller in the hierarchy and you want to send some data to \"B\" which is the <strong>next</strong> viewcontroller. In this case you have to use Segue. Just set an identifier for the segue and then in the \"A\" VC, write the following code:</p>\n\n<pre><code>override func prepare(for segue: UIStoryboardSegue, sender: Any?) {\n    if segue.identifier == \"A to B segue identifier\" {\n        let bViewController = segue.destination as! UIDocumentBrowserViewController\n        bViewController.data = someData\n    }\n}\n</code></pre></li>\n<li><p>When there is an <code>A</code> which opened <code>B</code> upon itself as modal (or embed). Now the <code>B</code> viewcontroller should be blind about it's parent. So the best way to send data back to <code>A</code> is to use <code>Delegation</code>. Create a delegate protocol in the <code>B</code> viewcontroller and a <code>delegate</code> property. So <code>B</code> will report (send data back) to it's delegate. In the <code>A</code> viewcontroller, we implement the <code>B</code> viewcontroller's delegate protocol and will set <code>self</code> as the <code>delegate</code> property of <code>B</code> viewcontroller in <code>prepare(forSegue:)</code> method.</p></li>\n</ol>\n\n<p>This is how it should be implemented correctly. Hope it helps</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 1211,
+                "user_id": 4744679,
+                "user_type": "registered",
+                "profile_image": "https://lh5.googleusercontent.com/-bilBCVkZoQA/AAAAAAAAAAI/AAAAAAAADuk/yo3U_vIifk4/photo.jpg?sz=128",
+                "display_name": "Jason Cross",
+                "link": "https://stackoverflow.com/users/4744679/jason-cross"
+            },
+            "is_accepted": false,
+            "score": 56,
+            "last_activity_date": 1520254595,
+            "last_edit_date": 1520254595,
+            "creation_date": 1428271497,
+            "answer_id": 29462744,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>There is some good information in many of the answers given, but none address the question fully.</p>\n\n<p>The question asks about passing information between view controllers. The specific example given asks about passing information between views, but given the self-stated newness to iOS, the original poster likely meant between viewControllers, not between views (without any involvement from the ViewControllers). It seems that all the answers focus on two view controllers, but what if the app evolves to need to involve more than two view controllers in the information exchange? </p>\n\n<p>The original poster also asked about <strong>Singletons</strong> and the use of the <strong>AppDelegate</strong>. These questions need to be answered.</p>\n\n<p>To help anyone else looking at this question, who wants a full answer, I'm going to attempt to provide it.</p>\n\n<p><strong>Application Scenarios</strong></p>\n\n<p>Rather than having a highly hypothetical, abstract discussion, it helps to have concrete applications in mind. To help define a two-view-controller situation and a more-than-two-view-controller situation, I am going to define two concrete application scenarios.</p>\n\n<p><strong>Scenario one:</strong> maximum two view controllers ever need to share information.\nSee diagram one. </p>\n\n<p><img src=\"https://i.stack.imgur.com/jtpRP.jpg\" alt=\"diagram of original problem\"></p>\n\n<p>There are two view controllers in the application. There is a ViewControllerA (Data Entry Form), and View Controller B (Product List). The items selected in the product list must match the items displayed in the text box in the data entry form. In this scenario, ViewControllerA and ViewControllerB must communicate directly with each other and no other view controllers. </p>\n\n<p><strong>Scenario two</strong>: more than two view controllers need to share the same information.\nSee diagram two.</p>\n\n<p><img src=\"https://i.stack.imgur.com/o0Pw4.jpg\" alt=\"home inventory application diagram\"></p>\n\n<p>There are four view controllers in the application. It is a tab-based application for managing home inventory. Three view controllers present differently filtered views of the same data:</p>\n\n<ul>\n<li>ViewControllerA - Luxury Items </li>\n<li>ViewControllerB - Non-insured Items</li>\n<li>ViewControllerC - Entire Home Inventory </li>\n<li>ViewControllerD - Add New Item Form</li>\n</ul>\n\n<p>Any time an individual item is created or edited, it must also synchronize with the other view controllers. For example, if we add a boat in ViewControllerD, but it is not yet insured, then the boat must appear when the user goes to ViewControllerA (Luxury Items), and also ViewControllerC (Entire Home Inventory), but not when the user goes to ViewControllerB (Non-insured Items). We need be concerned with not only adding new items, but also deleting items (which may be allowed from any of the four view controllers), or editing existing items (which may be allowed from the \"Add New Item Form\", repurposing the same for editing).</p>\n\n<p>Since all the view controllers do need to share the same data, all four view controllers need to remain in synchronization, and therefore there needs to be some sort of communication to all other view controllers, whenever any single view controller changes the underlying data. It should be fairly obvious that we do not want each view controller communicating directly with each other view controller in this scenario. In case it is not obvious, consider if we had 20 different view controllers (rather than just 4). How difficult and error-prone would it be to notify each of the other 19 view controllers any time one view controller made a change?</p>\n\n<p><strong>The Solutions: Delegates and the Observer Pattern, and Singletons</strong></p>\n\n<p>In scenario one, we have several viable solutions, as other answers have given</p>\n\n<ul>\n<li>segues</li>\n<li>delegates</li>\n<li>setting properties on view controllers directly</li>\n<li>NSUserDefaults (actually a poor choice)</li>\n</ul>\n\n<p>In scenario two, we have other viable solutions:</p>\n\n<ul>\n<li>Observer Pattern </li>\n<li>Singletons</li>\n</ul>\n\n<p>A <strong>singleton</strong> is an instance of a class, that instance being the only instance in existence during its lifetime. A singleton gets its name from the fact that it is the single instance. Normally developers who use singletons have special class methods for accessing them. </p>\n\n<pre><code>+ (HouseholdInventoryManager*) sharedManager; {\n    static dispatch_once_t onceQueue;\n    static HouseholdInventoryManager* _sharedInstance;\n\n    // dispatch_once is guaranteed to only be executed once in the\n    // lifetime of the application\n    dispatch_once(&amp;onceQueue, ^{\n        _sharedInstance = [[self alloc] init];\n    });\n    return _sharedInstance;\n}\n</code></pre>\n\n<p>Now that we understand what a singleton is, let's discuss how a singleton fits into the observer pattern. The observer pattern is used for one object to respond to changes by another object. In the second scenario, we have four different view controllers, who all want to know about changes to the underlying data. The \"underlying data\" should belong to a single instance, a singleton. The \"know about changes\" is accomplished by observing changes made to the singleton.</p>\n\n<p>The home inventory application would have a single instance of a class which is designed to manage a list of inventory items. The manager would manage a collection of household items. The following is a class definition for the data manager:</p>\n\n<pre><code>#import &lt;Foundation/Foundation.h&gt;\n\n@class JGCHouseholdInventoryItem;\n\n@interface HouseholdInventoryManager : NSObject\n/*!\n The global singleton for accessing application data\n */\n+ (HouseholdInventoryManager*) sharedManager;\n\n\n- (NSArray *) entireHouseholdInventory;\n- (NSArray *) luxuryItems;\n- (NSArray *) nonInsuredItems;\n\n- (void) addHouseholdItemToHomeInventory:(JGCHouseholdInventoryItem*)item;\n- (void) editHouseholdItemInHomeInventory:(JGCHouseholdInventoryItem*)item;\n- (void) deleteHoueholdItemFromHomeInventory:(JGCHouseholdInventoryItem*)item;\n@end\n</code></pre>\n\n<p>When the collection of home inventory items changes, the view controllers need to be made aware of this change. The class definition above does not make it obvious how this will happen. We need to follow the observer pattern. The view controllers must formally observe the sharedManager. There are two ways to observe another object:</p>\n\n<ul>\n<li>Key-Value-Observing (KVO)</li>\n<li>NSNotificationCenter.</li>\n</ul>\n\n<p>In scenario two, we do not have a single property of the HouseholdInventoryManager which could be observed using KVO. Because we do not have a single property which is easily observable, the observer pattern, in this case, must be implemented using NSNotificationCenter. Each of the four view controllers would subscribe to notifications, and the sharedManager would send notifications to the notification center when appropriate. The inventory manager does not need to know anything about the view controllers or instances of any other classes which may be interested in knowing when the collection of inventory items changes; the NSNotificationCenter takes care of these implementation details. The View Controllers simply subscribe to notifications, and the data manager simply posts notifications.</p>\n\n<p>Many beginner programmers take advantage of the fact that there is always exactly one <strong>Application Delegate</strong> in the lifetime of the application, which is globally accessible. Beginning programmers use this fact to stuff objects and functionality into the appDelegate as a convenience for access from anywhere else in the application. Just because the AppDelegate is a singleton doesn't mean it should replace all other singletons. This is a poor practice as it places too much burden on one class, breaking good object-oriented practices. Each class should have a clear role that is easily explained, often just by the name of the class.</p>\n\n<p>Any time your Application Delegate starts to get bloated, start to remove functionality into singletons. For example, the Core Data Stack should not be left in the AppDelegate, but should instead be put in its own class, a coreDataManager class. </p>\n\n<p><strong>References</strong></p>\n\n<ul>\n<li><a href=\"https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/ManagingDataFlowBetweenViewControllers/ManagingDataFlowBetweenViewControllers.html\" rel=\"noreferrer\">Managing Data Flow Between View Controllers</a></li>\n<li><a href=\"https://www.blogger.com/blogger.g?blogID=1591443959382526146#editor/target=post;postID=9190043611384073352;onPublishedMenu=allposts;onClosedMenu=allposts;postNum=0;src=postname\" rel=\"noreferrer\">Passing Data Between View Controllers</a></li>\n<li><a href=\"https://www.blogger.com/blogger.g?blogID=1591443959382526146#editor/target=post;postID=5973873796555751994;onPublishedMenu=allposts;onClosedMenu=allposts;postNum=1;src=postname\" rel=\"noreferrer\">Asynchronous JSON Requests in Objective-C</a></li>\n</ul>\n"
+        },
+        {
+            "owner": {
+                "reputation": 2336,
+                "user_id": 1394020,
+                "user_type": "registered",
+                "accept_rate": 88,
+                "profile_image": "https://i.stack.imgur.com/7f6od.png?s=128&g=1",
+                "display_name": "Korey Hinton",
+                "link": "https://stackoverflow.com/users/1394020/korey-hinton"
+            },
+            "is_accepted": false,
+            "score": 11,
+            "last_activity_date": 1520254016,
+            "last_edit_date": 1520254016,
+            "creation_date": 1422552929,
+            "answer_id": 28221039,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>There are tons of ways to do this and it's important to pick the right one. Probably one of the biggest architectural decisions lies on how the model code will be shared or accessed throughout the app.</p>\n\n<p>I wrote a blog post about this a while back: <a href=\"http://koreyhinton.com/blog/sharing-model-code.html\" rel=\"nofollow noreferrer\">Sharing Model Code</a>. Here's a brief summary:</p>\n\n<h2>Shared data</h2>\n\n<p>One approach is to share pointers to the model objects between view controllers. </p>\n\n<ul>\n<li>Brute force iteration on view controllers (in Navigation or Tab Bar Controller) to set the data</li>\n<li>Set data in prepareForSegue (if storyboards) or init (if programmatic)</li>\n</ul>\n\n<p>Since prepare for segue is the most common here is an example:</p>\n\n<pre><code>override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {\n    var next = segue.destinationViewController as NextViewController\n    next.dataSource = dataSource\n}\n</code></pre>\n\n<h2>Independent access</h2>\n\n<p>Another approach is to handle a screen full of data at a time and instead of coupling the view controllers to each other couple each view controller to single data source that they can get to independently. </p>\n\n<p>The most common way I've seen this done is a <a href=\"http://koreyhinton.com/blog/singleton-pattern-in-swift.html\" rel=\"nofollow noreferrer\">singleton</a> instance. So if your singleton object was <code>DataAccess</code> you could do the following in the viewDidLoad method of UIViewController:</p>\n\n<pre><code>func viewDidLoad() {\n    super.viewDidLoad()\n    var data = dataAccess.requestData()\n}\n</code></pre>\n\n<p>There are addition tools that also help pass along data:</p>\n\n<ul>\n<li>Key-Value Observing</li>\n<li>NSNotification</li>\n<li>Core Data</li>\n<li>NSFetchedResultsController</li>\n<li>Data Source</li>\n</ul>\n\n<h2>Core Data</h2>\n\n<p>The nice thing about Core Data is that it has inverse relationships. So if you want to just give a NotesViewController the notes object you can because it'll have an inverse relationship to something else like the notebook. If you need data on the notebook in the NotesViewController you can walk back up the object graph by doing the following:</p>\n\n<pre><code>let notebookName = note.notebook.name\n</code></pre>\n\n<p>Read more about this in my blog post: <a href=\"http://koreyhinton.com/blog/sharing-model-code.html\" rel=\"nofollow noreferrer\">Sharing Model Code</a></p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 340,
+                "user_id": 5967144,
+                "user_type": "registered",
+                "accept_rate": 62,
+                "profile_image": "https://lh3.googleusercontent.com/-Ag51MijVlAc/AAAAAAAAAAI/AAAAAAAAAME/Q3HP_gZ3s-A/photo.jpg?sz=128",
+                "display_name": "soorej babu",
+                "link": "https://stackoverflow.com/users/5967144/soorej-babu"
+            },
+            "is_accepted": false,
+            "score": 0,
+            "last_activity_date": 1500878784,
+            "last_edit_date": 1500878784,
+            "creation_date": 1467896373,
+            "answer_id": 38246147,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>Simpler way is here.</p>\n\n<p>Just use of global variable. Declare the object or variable needed to pass to the next class.</p>\n\n<p>For example, we have 2 classes - <code>classA</code> and <code>classB</code> respectively.</p>\n\n<p>In <code>classA</code> normally contains:</p>\n\n<pre><code>#import \"classA.h\"\n\n@interface classA()\n\n@end\n\n@implementation classA\n\n-(void)viewDidLoad\n{\n    ...\n}\n-(void)didReceiveMemoryWarning\n{\n    ...\n}\n</code></pre>\n\n<p>and <code>classB</code> contains:</p>\n\n<pre><code>#import \"classB.h\"\n\n@interface classB()\n\n@end\n\n@implementation classB\n\n-(void)viewWillLoad\n{\n    ...\n}\n-(void)didReceiveMemoryWarning\n{\n    ...\n}\n</code></pre>\n\n<p>Now, import the second class <code>classB</code> to <code>classA</code></p>\n\n<pre><code>#import \"classA.h\"\n#import \"classB.h\"  //---import classB to classA.\n@interface classA()\n\n@end\n\n@implementation classA\n\n-(void)viewDidLoad\n{\n    ...\n}\n-(void)didReceiveMemoryWarning\n{\n    ...\n}\n</code></pre>\n\n<p>Now we have a bridge to go to the second class <code>classB</code>\nnow, for declaring a variable or object as global, declare it in the .m file of first class as below</p>\n\n<p>In <code>classA.h</code></p>\n\n<pre><code>#import \"classA.h\"\n#import \"classB.h\"\n@interface classA()\n\n@end\nNSString *temp;  //----declare any object/variable as global.\n@implementation classA\n\n-(void)viewDidLoad\n{\n    ...\n    temp=@\"Hello\";\n    ...\n}\n-(void)didReceiveMemoryWarning\n{\n    ...\n}\n</code></pre>\n\n<p>Here the object <code>temp</code> is global object of class <code>NSString</code> for accessing the global object or variable in any class, just redeclare the object or variable in the second class. Eg. given below:</p>\n\n<p>In <code>classB.m</code></p>\n\n<pre><code>#import \"classB.h\"\n\n@interface classB()\n\n@end\nextern NSString *temp;  //----use `extern` keyword for using the global object/variable in classB that was declared in classA.\n@implementation classB\n\n-(void)viewDidLoad\n{\n    ...\n    LabeL.text=temp;\n    ...\n}\n-(void)didReceiveMemoryWarning\n{\n    ...\n}\n</code></pre>\n\n<p>Now the value can be accessed by the second class. Simple!.. This method can be followed for any number of classes.</p>\n\n<p><strong>Note:</strong></p>\n\n<p>You should import .h file of second class to the first class. But no need to import\nthe .h file of first class to second class.</p>\n\n<p>Remember the bridge, if there is a bridge it should be able to go on both sides.</p>\n\n<p>I think this will help. It helped me when i was in the same situation.</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 873,
+                "user_id": 4559803,
+                "user_type": "registered",
+                "profile_image": "https://i.stack.imgur.com/r3OUm.jpg?s=128&g=1",
+                "display_name": "Umair",
+                "link": "https://stackoverflow.com/users/4559803/umair"
+            },
+            "is_accepted": false,
+            "score": 1,
+            "last_activity_date": 1494284090,
+            "creation_date": 1494284090,
+            "answer_id": 43858462,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>I recommend blocks/closures and custom constructors.</p>\n\n<p>Suppose you have to pass string from FirstViewController to SecondViewController.</p>\n\n<p>Your First View Controller. </p>\n\n<pre><code>class FirstViewController : UIViewController {\n\n    func moveToViewControllerB() {\n\n        let second_screen = SecondViewController.screen(string: \"DATA TO PASS\", call_back: {\n            [weak self] (updated_data) in\n            ///This closure will be called by second view controller when it updates something\n        })\n        self.navigationController?.pushViewController(second_screen, animated: true)\n    }\n\n\n}\n</code></pre>\n\n<p>Your Second View Controller</p>\n\n<pre><code>class SecondViewController : UIViewController {\n\n    var incoming_string : String?\n    var call_back : ((String) -&gt; Void)?\n\n    class func screen(string: String?, call_back : ((String) -&gt; Void)?) -&gt; SecondViewController {\n\n        let me = SecondViewController(nibName: String(describing: self), bundle: Bundle.main);\n        me.incoming_string = string\n        me.call_back = call_back\n        return me\n    }\n\n    // Suppose its called when you have to update FirstViewController with new data.\n    func updatedSomething() {\n\n        //Executing block that is implemented/assigned by the FirstViewController.\n        self.call_back?(\"UPDATED DATA\")\n    }\n\n}\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 1415,
+                "user_id": 2617872,
+                "user_type": "registered",
+                "accept_rate": 60,
+                "profile_image": "https://www.gravatar.com/avatar/cb11c9672e17aa9978f658edc0276212?s=128&d=identicon&r=PG&f=1",
+                "display_name": "Yevgeni",
+                "link": "https://stackoverflow.com/users/2617872/yevgeni"
+            },
+            "is_accepted": false,
+            "score": 41,
+            "last_activity_date": 1489036495,
+            "last_edit_date": 1489036495,
+            "creation_date": 1397176381,
+            "answer_id": 23001504,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>Passing data back from ViewController 2(destination) to viewController 1(Source) is the more interesting thing.\nAssuming you use storyBoard those are all the ways i found out:</p>\n\n<ul>\n<li>Delegate </li>\n<li>Notification</li>\n<li>User defaults</li>\n<li>Singleton</li>\n</ul>\n\n<p>Those were  discussed here already.</p>\n\n<p>I found there are more ways:</p>\n\n<p><strong>-Using Block callbacks:</strong></p>\n\n<p>use it in the <code>prepareForSegue</code> method in the VC1</p>\n\n<pre><code>NextViewController *destinationVC = (NextViewController *) segue.destinationViewController;\n[destinationVC setDidFinishUsingBlockCallback:^(NextViewController *destinationVC)\n{\n    self.blockLabel.text = destination.blockTextField.text;\n}];\n</code></pre>\n\n<p><strong>-Using storyboards Unwind (Exit)</strong></p>\n\n<p>Implement a method with a    UIStoryboardSegue argument in  VC 1,    like this one:</p>\n\n<pre><code>-(IBAction)UnWindDone:(UIStoryboardSegue *)segue { }\n</code></pre>\n\n<p>In the storyBoard hook the \"return\" button to the green Exit\nbutton(Unwind) of the vc.\n Now you have a segue that \"goes back\" so u can use the\ndestinationViewController property in the prepareForSegue of VC2 and\nchange any property of VC1 before it goes back.</p>\n\n<ul>\n<li><p>Another option of using storyboards Undwind (Exit)  - you can\nuse the method you wrote in VC1</p>\n\n<pre><code>-(IBAction)UnWindDone:(UIStoryboardSegue *)segue {\n    NextViewController *nextViewController = segue.sourceViewController;\n    self.unwindLabel.text = nextViewController.unwindPropertyPass;\n} \n</code></pre>\n\n<p>And in the prepareForSegue of VC1 you can change any property you want to share.</p></li>\n</ul>\n\n<p>In both unwind options you can set the tag property of the button and check it in\n        the prepareForSegue. </p>\n\n<p>Hope i added something to the discussion. </p>\n\n<p>:) Cheers.</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 616,
+                "user_id": 2560578,
+                "user_type": "registered",
+                "accept_rate": 25,
+                "profile_image": "https://graph.facebook.com/100000454566126/picture?type=large",
+                "display_name": "Anubrata Santra",
+                "link": "https://stackoverflow.com/users/2560578/anubrata-santra"
+            },
+            "is_accepted": false,
+            "score": 40,
+            "last_activity_date": 1482565174,
+            "last_edit_date": 1482565174,
+            "creation_date": 1380278316,
+            "answer_id": 19048719,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>There are multiple methods for sharing data.</p>\n\n<ol>\n<li><p>You can always share data using <code>NSUserDefaults</code>. Set the value you want to share with respect to a key of your choice and get the value from <code>NSUserDefault</code> associated to that key in the next view controller. </p>\n\n<pre><code>[[NSUserDefaults standardUserDefaults] setValue:value forKey:key]\n[[NSUserDefaults standardUserDefaults] objectForKey:key]\n</code></pre></li>\n<li><p>You can just create a property in <code>viewcontrollerA</code>. Create an object of <code>viewcontrollerA</code> in <code>viewcontrollerB</code> and assign the desired value to that property.</p></li>\n<li><p>You can also create custom delegates for this.</p></li>\n</ol>\n"
+        },
+        {
+            "owner": {
+                "reputation": 395,
+                "user_id": 2377332,
+                "user_type": "registered",
+                "profile_image": "https://i.stack.imgur.com/CbXT3.jpg?s=128&g=1",
+                "display_name": "Matteo Manferdini",
+                "link": "https://stackoverflow.com/users/2377332/matteo-manferdini"
+            },
+            "is_accepted": false,
+            "score": 6,
+            "last_activity_date": 1480778868,
+            "creation_date": 1480778868,
+            "answer_id": 40949382,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>There are many answers to this questions offering many different ways to perform view controller communication that would indeed work, but I don't see anywhere mentioned which one are actually best to use and which ones to avoid.</p>\n\n<h3>In practice, in my opinion only a few solutions are recommended:</h3>\n\n<ul>\n<li>To pass data forward:\n\n<ul>\n<li>override the <code>prepare(for:sender:)</code> method of <code>UIViewController</code> when using a storyboard and segues</li>\n<li>pass data through an initializer or through properties when performing view controller transitions thtough code</li>\n</ul></li>\n<li>To pass data backwards\n\n<ul>\n<li>update the app shared state (which you can pass forward between view controllers with either one of the methods above)</li>\n<li>use delegation</li>\n<li>use an unwind segue</li>\n</ul></li>\n</ul>\n\n<h3>Solutions I recommend NOT to use:</h3>\n\n<ul>\n<li>Referencing the previous controller directly instead of using delegation</li>\n<li>Sharing data through a singleton</li>\n<li>Passing data through the app delegate</li>\n<li>Sharing data through the user defaults</li>\n<li>Passing data through notifications</li>\n</ul>\n\n<p>These solutions, although working in the short term, introduce too many dependencies that will garble the architecture of the app and create more problems later.</p>\n\n<p>For those interested, I wrote some articles that address these points more in depth and highlight the various drawbacks:</p>\n\n<ul>\n<li><a href=\"http://matteomanferdini.com/how-ios-view-controllers-communicate-with-each-other/\" rel=\"noreferrer\">How iOS View Controllers Communicate With Each Other</a></li>\n<li><a href=\"http://matteomanferdini.com/how-to-structure-the-code-of-ios-apps/\" rel=\"noreferrer\">How to Structure the Code of iOS Apps</a></li>\n<li><a href=\"http://matteomanferdini.com/understanding-the-core-architectural-principles-of-ios-development-with-a-practical-example/\" rel=\"noreferrer\">Understanding the Core Architectural Principles of iOS Development with a Practical Example</a></li>\n</ul>\n"
+        },
+        {
+            "owner": {
+                "reputation": 117361,
+                "user_id": 643383,
+                "user_type": "registered",
+                "accept_rate": 79,
+                "profile_image": "https://i.stack.imgur.com/uQ5JF.png?s=128&g=1",
+                "display_name": "Caleb",
+                "link": "https://stackoverflow.com/users/643383/caleb"
+            },
+            "is_accepted": false,
+            "score": 136,
+            "last_activity_date": 1477577472,
+            "last_edit_date": 1477577472,
+            "creation_date": 1299419353,
+            "answer_id": 5210861,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>The M in MVC is for \"Model\" and in the MVC paradigm the role of model classes is to manage a program's data. A model is the opposite of a view -- a view knows how to display data, but it knows nothing about what to do with data, whereas a model knows everything about how to work with data, but nothing about how to display it. Models can be complicated, but they don't have to be -- the model for your app might be as simple as an array of strings or dictionaries.</p>\n\n<p>The role of a controller is to mediate between view and model. Therefore, they need a reference to one or more view objects and one or more model objects. Let's say that your model is an array of dictionaries, with each dictionary representing one row in your table. The root view for your app displays that table, and it might be responsible for loading the array from a file. When the user decides to add a new row to the table, they tap some button and your controller creates a new (mutable) dictionary and adds it to the array. In order to fill in the row, the controller creates a detail view controller and gives it the new dictionary. The detail view controller fills in the dictionary and returns. The dictionary is already part of the model, so nothing else needs to happen.</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 1294,
+                "user_id": 3544697,
+                "user_type": "registered",
+                "accept_rate": 80,
+                "profile_image": "https://www.gravatar.com/avatar/dc7fe6f0ed55cddb9a4532210d3058ff?s=128&d=identicon&r=PG&f=1",
+                "display_name": "ak_tyagi",
+                "link": "https://stackoverflow.com/users/3544697/ak-tyagi"
+            },
+            "is_accepted": false,
+            "score": 10,
+            "last_activity_date": 1458936565,
+            "last_edit_date": 1458936565,
+            "creation_date": 1432902885,
+            "answer_id": 30529779,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>You can save data in App delegate to access it across view controllers in your application. All you have to do is create a shared instance of app delegate</p>\n\n<pre><code>AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;\n</code></pre>\n\n<p><strong>For Example</strong></p>\n\n<p>if you declare a <code>NSArray object *arrayXYZ</code> then you can access it in any view controller by <code>appDelegate.arrayXYZ</code></p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 824,
+                "user_id": 1547644,
+                "user_type": "registered",
+                "accept_rate": 50,
+                "profile_image": "https://i.stack.imgur.com/NJBcp.jpg?s=128&g=1",
+                "display_name": "AsifHabib",
+                "link": "https://stackoverflow.com/users/1547644/asifhabib"
+            },
+            "is_accepted": false,
+            "score": 28,
+            "last_activity_date": 1456478943,
+            "last_edit_date": 1456478943,
+            "creation_date": 1374915154,
+            "answer_id": 17896040,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>I was searching this solution for long time, Atlast I found it. First of all declare all the objects in your SecondViewController.h file like</p>\n\n<pre><code>@interface SecondViewController: UIviewController \n{\n    NSMutableArray *myAray;\n    CustomObject *object;\n}\n</code></pre>\n\n<p>Now in your implementation file allocate the memory for those objects like this</p>\n\n<pre><code>- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil\n{\n     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];\n     if (self) \n     {\n         // Custom initialization\n         myAray=[[NSMutableArray alloc] init];\n         object=[[CustomObject alloc] init];\n     }\n     return self;\n}\n</code></pre>\n\n<p>Now you have allocated the memory for <code>Array</code> and object. now you can fill that memory before pushing this <code>ViewController</code></p>\n\n<p>Go to your SecondViewController.h and write two methods</p>\n\n<pre><code>-(void)setMyArray:(NSArray *)_myArray;\n-(void)setMyObject:(CustomObject *)_myObject;\n</code></pre>\n\n<p>in implementation file you can implement the function </p>\n\n<pre><code>-(void)setMyArray:(NSArray *)_myArray\n{\n     [myArra addObjectsFromArray:_myArray];\n}\n-(void)setMyObject:(CustomObject *)_myObject\n{\n     [object setCustomObject:_myObject];\n}\n</code></pre>\n\n<p>expecting that your <code>CustomObject</code> must have a setter function with it.</p>\n\n<p>now your basic work is done. go to the place where you want to push the <code>SecondViewController</code> and do the following stuff</p>\n\n<pre><code>SecondViewController *secondView= [[SecondViewController alloc] initWithNibName:@\"SecondViewController \" bundle:[NSBundle MainBundle]] ;\n[secondView setMyArray:ArrayToPass];\n[secondView setMyObject:objectToPass];\n[self.navigationController pushViewController:secondView animated:YES ];\n</code></pre>\n\n<p>Take care for spelling mistakes. </p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 628,
+                "user_id": 3452689,
+                "user_type": "registered",
+                "accept_rate": 100,
+                "profile_image": "https://www.gravatar.com/avatar/312b104df2705a21c94c4863e0141e4e?s=128&d=identicon&r=PG&f=1",
+                "display_name": "tmac_balla",
+                "link": "https://stackoverflow.com/users/3452689/tmac-balla"
+            },
+            "is_accepted": false,
+            "score": 1,
+            "last_activity_date": 1450756787,
+            "last_edit_date": 1450756787,
+            "creation_date": 1450754021,
+            "answer_id": 34407912,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>An Apple way to do this is to use Segues.\nYou need to use prepareForSegue() function</p>\n\n<p>There are lots of great tutorials around, here is one:\n<a href=\"https://www.iphonelife.com/content/unleash-your-inner-app-developer-part-21-passing-data-between-controllers\" rel=\"nofollow\">https://www.iphonelife.com/content/unleash-your-inner-app-developer-part-21-passing-data-between-controllers</a></p>\n\n<p>Also, read up the Apple docs on using segues:\n<a href=\"https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html\" rel=\"nofollow\">https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/UsingSegues.html</a></p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 3849,
+                "user_id": 4452222,
+                "user_type": "registered",
+                "accept_rate": 47,
+                "profile_image": "https://www.gravatar.com/avatar/92f81098d1299847d91113d450954214?s=128&d=identicon&r=PG&f=1",
+                "display_name": "Dalvik",
+                "link": "https://stackoverflow.com/users/4452222/dalvik"
+            },
+            "is_accepted": false,
+            "score": 2,
+            "last_activity_date": 1448693729,
+            "creation_date": 1448693729,
+            "answer_id": 33968648,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>to send the data from one VC to other use this simple approach:</p>\n\n<pre><code>YourNextVC *nxtScr = (YourNextVC*)[self.storyboard  instantiateViewControllerWithIdentifier:@\"YourNextVC\"];//Set this identifier from your storyboard\n\nnxtScr.comingFrom = @\"PreviousScreen\"l\n[self.navigationController nxtScr animated:YES];\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 251,
+                "user_id": 5318839,
+                "user_type": "registered",
+                "accept_rate": 100,
+                "profile_image": "https://www.gravatar.com/avatar/082dc76cf786dc2fe71ed3dcb33e5df6?s=128&d=identicon&r=PG&f=1",
+                "display_name": "crazy_tiger_corp",
+                "link": "https://stackoverflow.com/users/5318839/crazy-tiger-corp"
+            },
+            "is_accepted": false,
+            "score": 3,
+            "last_activity_date": 1443433415,
+            "last_edit_date": 1443433415,
+            "creation_date": 1443430800,
+            "answer_id": 32819163,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>This is a really great <a href=\"http://www.appcoda.com/storyboards-ios-tutorial-pass-data-between-view-controller-with-segue/\" rel=\"nofollow\">tutorial</a> for anyone that wants one. Here is the example code:</p>\n\n<pre><code>- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {\n    if ([segue.identifier isEqualToString:@\"myIdentifer]) {\n        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];\n        myViewController *destViewController = segue.destinationViewController;\n        destViewController.name = [object objectAtIndex:indexPath.row];\n    }\n}\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 834,
+                "user_id": 4335943,
+                "user_type": "registered",
+                "profile_image": "https://i.stack.imgur.com/aCjDp.jpg?s=128&g=1",
+                "display_name": "krushnsinh",
+                "link": "https://stackoverflow.com/users/4335943/krushnsinh"
+            },
+            "is_accepted": false,
+            "score": 10,
+            "last_activity_date": 1432736218,
+            "last_edit_date": 1432736218,
+            "creation_date": 1432735909,
+            "answer_id": 30485042,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>if you wants to pass data from ViewControlerOne to ViewControllerTwo try these.. </p>\n\n<p>do these in ViewControlerOne.h</p>\n\n<pre><code> @property (nonatomic, strong) NSString *str1;\n</code></pre>\n\n<p>do these in ViewControllerTwo.h</p>\n\n<pre><code> @property (nonatomic, strong) NSString *str2;\n</code></pre>\n\n<p>Synthesize str2 in ViewControllerTwo.m</p>\n\n<pre><code>@interface ViewControllerTwo ()\n@end\n@implementation ViewControllerTwo\n@synthesize str2;\n</code></pre>\n\n<p>do these in ViewControlerOne.m</p>\n\n<pre><code> - (void)viewDidLoad\n {\n   [super viewDidLoad];\n\n  // Data or string you wants to pass in ViewControllerTwo..\n  self.str1 = @\"hello world\";\n\n }\n</code></pre>\n\n<p>on the buttons click event do this..</p>\n\n<pre><code>-(IBAction)ButtonClicked\n{ //Navigation on buttons click event from ViewControlerOne to ViewControlerTwo with transferring data or string..\n  ViewControllerTwo *objViewTwo=[self.storyboard instantiateViewControllerWithIdentifier:@\"ViewControllerTwo\"];\n  obj.str2=str1;\n  [self.navigationController pushViewController: objViewTwo animated:YES];\n}\n</code></pre>\n\n<p>do these in ViewControllerTwo.m</p>\n\n<pre><code>- (void)viewDidLoad\n{\n [super viewDidLoad];\n  NSLog(@\"%@\",str2);\n}\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 21,
+                "user_id": 2998756,
+                "user_type": "registered",
+                "profile_image": "https://www.gravatar.com/avatar/6a96ff90ae8b6e1c6f6d6b22e4d00f26?s=128&d=identicon&r=PG&f=1",
+                "display_name": "user2998756",
+                "link": "https://stackoverflow.com/users/2998756/user2998756"
+            },
+            "is_accepted": false,
+            "score": 30,
+            "last_activity_date": 1432495557,
+            "last_edit_date": 1432495557,
+            "creation_date": 1384778904,
+            "answer_id": 20048208,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>If you want to pass data from one controller to other try this code</p>\n\n<p>FirstViewController.h</p>\n\n<pre><code>@property (nonatomic, retain) NSString *str;\n</code></pre>\n\n<p>SecondViewController.h</p>\n\n<pre><code>@property (nonatomic, retain) NSString *str1;\n</code></pre>\n\n<p>FirstViewController.m</p>\n\n<pre><code>- (void)viewDidLoad\n   {\n     // message for the second SecondViewController\n     self.str = @\"text message\";\n\n     [super viewDidLoad];\n   }\n\n-(IBAction)ButtonClicked\n {\n   SecondViewController *secondViewController = [[SecondViewController alloc] initWithNibName:@\"SecondViewController\" bundle:nil];\n   secondViewController.str1 = str;\n  [self.navigationController pushViewController:secondViewController animated:YES];\n }\n</code></pre>\n"
+        },
+        {
+            "owner": {
+                "reputation": 1449,
+                "user_id": 1606733,
+                "user_type": "registered",
+                "profile_image": "https://www.gravatar.com/avatar/23b89008ff71539ddb3ae5025b3585db?s=128&d=identicon&r=PG",
+                "display_name": "borncrazy",
+                "link": "https://stackoverflow.com/users/1606733/borncrazy"
+            },
+            "is_accepted": false,
+            "score": 95,
+            "last_activity_date": 1423474750,
+            "last_edit_date": 1423474750,
+            "creation_date": 1396952669,
+            "answer_id": 22934200,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>There are various ways by which a data can be received to a different class in iOS. For example - </p>\n\n<ol>\n<li>Direct initialization after the allocation of another class.</li>\n<li>Delegation - for passing data back </li>\n<li>Notification - for broadcasting data to multiple classes at a single time</li>\n<li>Saving in <code>NSUserDefaults</code> - for accessing it later</li>\n<li>Singleton classes </li>\n<li>Databases and other storage mechanisms like plist, etc.</li>\n</ol>\n\n<p>But for the simple scenario of passing a value to a different class whose allocation is done in the current class, the most common and preferred method would be the direct setting of values after allocation. This is done as follows:-</p>\n\n<p>We can understand it using two controllers - <strong>Controller1 and Controller2</strong> </p>\n\n<p>Suppose in Controller1 class you want to create the Controller2 object and push it with a String value being passed. This can be done as this:-</p>\n\n<pre><code>- (void)pushToController2 {\n\n    Controller2 *obj = [[Controller2 alloc] initWithNib:@\"Controller2\" bundle:nil];\n    [obj passValue:@\"String\"];\n    [self pushViewController:obj animated:YES];\n}\n</code></pre>\n\n<p>In the implementation of the Controller2 class there will be this function as- </p>\n\n<pre><code>@interface Controller2  : NSObject\n\n@property (nonatomic , strong) NSString* stringPassed;\n\n@end\n\n@implementation Controller2\n\n@synthesize stringPassed = _stringPassed;\n\n- (void) passValue:(NSString *)value {\n\n    _stringPassed = value; //or self.stringPassed = value\n}\n\n@end\n</code></pre>\n\n<p>You can also directly set the properties of the Controller2 class in the similar way as this:</p>\n\n<pre><code>- (void)pushToController2 {\n\n    Controller2 *obj = [[Controller2 alloc] initWithNib:@\"Controller2\" bundle:nil];\n    [obj setStringPassed:@\"String\"];  \n    [self pushViewController:obj animated:YES];\n}\n</code></pre>\n\n<p>To pass multiple values you can use the multiple parameters like :-</p>\n\n<pre><code>Controller2 *obj = [[Controller2 alloc] initWithNib:@\"Controller2\" bundle:nil];\n[obj passValue:@“String1” andValues:objArray withDate:date]; \n</code></pre>\n\n<p>Or if you need to pass more than 3 parameters which are related to a common feature you can store the values to a Model class and pass that modelObject to the next class</p>\n\n<pre><code>ModelClass *modelObject = [[ModelClass alloc] init]; \nmodelObject.property1 = _property1;\nmodelObject.property2 = _property2;\nmodelObject.property3 = _property3;\n\nController2 *obj = [[Controller2 alloc] initWithNib:@\"Controller2\" bundle:nil];\n[obj passmodel: modelObject];\n</code></pre>\n\n<p>So in-short if you want to -</p>\n\n<pre><code>1) set the private variables of the second class initialise the values by calling a custom function and passing the values.\n2) setProperties do it by directlyInitialising it using the setter method.\n3) pass more that 3-4 values related to each other in some manner , then create a model class and set values to its object and pass the object using any of the above process.\n</code></pre>\n\n<p>Hope this helps</p>\n"
+        },
+        {
+            "owner": {
+                "reputation": 4697,
+                "user_id": 4008175,
+                "user_type": "registered",
+                "accept_rate": 84,
+                "profile_image": "https://i.stack.imgur.com/04XNG.jpg?s=128&g=1",
+                "display_name": "App Dev Guy",
+                "link": "https://stackoverflow.com/users/4008175/app-dev-guy"
+            },
+            "is_accepted": false,
+            "score": 8,
+            "last_activity_date": 1421378323,
+            "creation_date": 1421378323,
+            "answer_id": 27976793,
+            "question_id": 5210535,
+            "content_license": "CC BY-SA 3.0",
+            "body": "<p>I have seen a lot of people over complicating this using the <code>didSelectRowAtPath</code> method. I am using Core Data in my example.</p>\n\n<pre><code>- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{\n\n    //this solution is for using Core Data\n    YourCDEntityName * value = (YourCDEntityName *)[[self fetchedResultsController] objectAtIndexPath: indexPath];\n\n    YourSecondViewController * details = [self.storyboard instantiateViewControllerWithIdentifier:@\"nameOfYourSecondVC\"];//make sure in storyboards you give your second VC an identifier\n\n    //Make sure you declare your value in the second view controller\n    details.selectedValue = value;\n\n    //Now that you have said to pass value all you need to do is change views\n    [self.navigationController pushViewController: details animated:YES];\n\n}\n</code></pre>\n\n<p>4 lines of code inside the method and you are done. </p>\n"
+        }
+    ],
+    "has_more": true,
+    "quota_max": 300,
+    "quota_remaining": 155
+}

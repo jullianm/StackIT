@@ -1,0 +1,203 @@
+{
+    "items": [
+        {
+            "site": {
+                "aliases": [
+                    "http://www.stackoverflow.com",
+                    "http://facebook.stackoverflow.com"
+                ],
+                "styling": {
+                    "tag_background_color": "#E0EAF1",
+                    "tag_foreground_color": "#3E6D8E",
+                    "link_color": "#0077CC"
+                },
+                "related_sites": [
+                    {
+                        "relation": "meta",
+                        "api_site_parameter": "meta.stackoverflow",
+                        "site_url": "https://meta.stackoverflow.com",
+                        "name": "Meta Stack Overflow"
+                    },
+                    {
+                        "relation": "chat",
+                        "site_url": "https://chat.stackoverflow.com",
+                        "name": "Stack Overflow Chat"
+                    }
+                ],
+                "markdown_extensions": [
+                    "Prettify"
+                ],
+                "launch_date": 1221436800,
+                "open_beta_date": 1217462400,
+                "site_state": "normal",
+                "high_resolution_icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png",
+                "favicon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico",
+                "icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png",
+                "audience": "professional and enthusiast programmers",
+                "site_url": "https://stackoverflow.com",
+                "api_site_parameter": "stackoverflow",
+                "logo_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/logo.png",
+                "name": "Stack Overflow",
+                "site_type": "main_site"
+            },
+            "is_unread": false,
+            "creation_date": 1596428204,
+            "comment_id": 111798304,
+            "question_id": 63218212,
+            "item_type": "comment",
+            "link": "https://stackoverflow.com/posts/comments/111798304?noredirect=1",
+            "body": "Great! It it helped you could vote up that answer to make it more visible for others as well.",
+            "title": "SwiftUI Why is NSAttributedString in NSTextField&#39;s representable view cut off in the end?"
+        },
+        {
+            "site": {
+                "aliases": [
+                    "http://www.stackoverflow.com",
+                    "http://facebook.stackoverflow.com"
+                ],
+                "styling": {
+                    "tag_background_color": "#E0EAF1",
+                    "tag_foreground_color": "#3E6D8E",
+                    "link_color": "#0077CC"
+                },
+                "related_sites": [
+                    {
+                        "relation": "meta",
+                        "api_site_parameter": "meta.stackoverflow",
+                        "site_url": "https://meta.stackoverflow.com",
+                        "name": "Meta Stack Overflow"
+                    },
+                    {
+                        "relation": "chat",
+                        "site_url": "https://chat.stackoverflow.com",
+                        "name": "Stack Overflow Chat"
+                    }
+                ],
+                "markdown_extensions": [
+                    "Prettify"
+                ],
+                "launch_date": 1221436800,
+                "open_beta_date": 1217462400,
+                "site_state": "normal",
+                "high_resolution_icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png",
+                "favicon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico",
+                "icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png",
+                "audience": "professional and enthusiast programmers",
+                "site_url": "https://stackoverflow.com",
+                "api_site_parameter": "stackoverflow",
+                "logo_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/logo.png",
+                "name": "Stack Overflow",
+                "site_type": "main_site"
+            },
+            "is_unread": false,
+            "creation_date": 1596388768,
+            "comment_id": 111790046,
+            "question_id": 63218212,
+            "item_type": "comment",
+            "link": "https://stackoverflow.com/posts/comments/111790046?noredirect=1",
+            "body": "My point is that you have not given enough information / code for me to know that that is true.",
+            "title": "SwiftUI Why is NSAttributedString in NSTextField&#39;s representable view cut off in the end?"
+        },
+        {
+            "site": {
+                "aliases": [
+                    "http://www.stackoverflow.com",
+                    "http://facebook.stackoverflow.com"
+                ],
+                "styling": {
+                    "tag_background_color": "#E0EAF1",
+                    "tag_foreground_color": "#3E6D8E",
+                    "link_color": "#0077CC"
+                },
+                "related_sites": [
+                    {
+                        "relation": "meta",
+                        "api_site_parameter": "meta.stackoverflow",
+                        "site_url": "https://meta.stackoverflow.com",
+                        "name": "Meta Stack Overflow"
+                    },
+                    {
+                        "relation": "chat",
+                        "site_url": "https://chat.stackoverflow.com",
+                        "name": "Stack Overflow Chat"
+                    }
+                ],
+                "markdown_extensions": [
+                    "Prettify"
+                ],
+                "launch_date": 1221436800,
+                "open_beta_date": 1217462400,
+                "site_state": "normal",
+                "high_resolution_icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png",
+                "favicon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico",
+                "icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png",
+                "audience": "professional and enthusiast programmers",
+                "site_url": "https://stackoverflow.com",
+                "api_site_parameter": "stackoverflow",
+                "logo_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/logo.png",
+                "name": "Stack Overflow",
+                "site_type": "main_site"
+            },
+            "is_unread": false,
+            "creation_date": 1596384943,
+            "comment_id": 111788880,
+            "question_id": 63218212,
+            "item_type": "comment",
+            "link": "https://stackoverflow.com/posts/comments/111788880?noredirect=1",
+            "body": "The following should be helpful stackoverflow.com/a/61133796/12299030",
+            "title": "SwiftUI Why is NSAttributedString in NSTextField&#39;s representable view cut off in the end?"
+        },
+        {
+            "site": {
+                "aliases": [
+                    "http://www.stackoverflow.com",
+                    "http://facebook.stackoverflow.com"
+                ],
+                "styling": {
+                    "tag_background_color": "#E0EAF1",
+                    "tag_foreground_color": "#3E6D8E",
+                    "link_color": "#0077CC"
+                },
+                "related_sites": [
+                    {
+                        "relation": "meta",
+                        "api_site_parameter": "meta.stackoverflow",
+                        "site_url": "https://meta.stackoverflow.com",
+                        "name": "Meta Stack Overflow"
+                    },
+                    {
+                        "relation": "chat",
+                        "site_url": "https://chat.stackoverflow.com",
+                        "name": "Stack Overflow Chat"
+                    }
+                ],
+                "markdown_extensions": [
+                    "Prettify"
+                ],
+                "launch_date": 1221436800,
+                "open_beta_date": 1217462400,
+                "site_state": "normal",
+                "high_resolution_icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png",
+                "favicon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/favicon.ico",
+                "icon_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png",
+                "audience": "professional and enthusiast programmers",
+                "site_url": "https://stackoverflow.com",
+                "api_site_parameter": "stackoverflow",
+                "logo_url": "https://cdn.sstatic.net/Sites/stackoverflow/Img/logo.png",
+                "name": "Stack Overflow",
+                "site_type": "main_site"
+            },
+            "is_unread": false,
+            "creation_date": 1531194817,
+            "answer_id": 51257020,
+            "question_id": 51220774,
+            "item_type": "new_answer",
+            "link": "https://stackoverflow.com/a/51257020?noredirect=1",
+            "body": "First, make sure to model the relationship between tableB and tableA objects by assigning a relat...",
+            "title": "Swift Parse PFQuery filter tableA and filter pointer tableB"
+        }
+    ],
+    "has_more": false,
+    "quota_max": 10000,
+    "quota_remaining": 9989
+}

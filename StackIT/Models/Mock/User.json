@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "badge_counts": {
+        "bronze": 6,
+        "silver": 0,
+        "gold": 0
+      },
+      "account_id": 12032122,
+      "is_employee": false,
+      "last_modified_date": 1573678456,
+      "last_access_date": 1596916613,
+      "reputation_change_year": -4,
+      "reputation_change_quarter": -4,
+      "reputation_change_month": -4,
+      "reputation_change_week": -4,
+      "reputation_change_day": 0,
+      "reputation": 21,
+      "creation_date": 1512211944,
+      "user_type": "registered",
+      "user_id": 9042825,
+      "location": "Paris, France",
+      "link": "https://stackoverflow.com/users/9042825/julm",
+      "profile_image": "https://www.gravatar.com/avatar/2f0df6609dd4ced05c60a4613c11f100?s=128&d=identicon&r=PG&f=1",
+      "display_name": "Julm"
+    }
+  ],
+  "has_more": false,
+  "quota_max": 10000,
+  "quota_remaining": 9998
+}

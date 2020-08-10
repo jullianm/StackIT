@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct StackITApp: App {
+    private let viewManager = ViewManager()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppView()
+                .environmentObject(viewManager)
+                .onOpenURL { url in
+                    viewManager.authenticationSubject.send(.signIn(url: url))
+                }
         }
     }
 }
