@@ -38,8 +38,8 @@ final class NetworkManager: ServiceManager {
             .decode(type: model, decoder: decoder)
             .mapError(Error.decodingError)
             .print("#DEBUG GET REQUEST")
-            .handleEvents(receiveOutput: { [self] model in
-                cache[endpoint.cacheID] = model
+            .handleEvents(receiveOutput: { [weak self] model in
+                self?.cache[endpoint.cacheID] = model
             })
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()

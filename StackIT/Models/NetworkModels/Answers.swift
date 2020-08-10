@@ -21,6 +21,10 @@ struct Answer: Codable {
     let body: String
 }
 
+extension Answers {
+    static let empty = Answers(items: [], hasMore: false)
+}
+
 extension Answer {
     static let placeholder = Answer(owner: Owner.placeholder,
                                     isAccepted: false,

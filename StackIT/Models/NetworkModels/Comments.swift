@@ -14,6 +14,10 @@ struct Comments: Codable {
     let quotaRemaining: Int
 }
 
+extension Comments {
+    static let empty = Comments(items: [], hasMore: false, quotaRemaining: 0)
+}
+
 // MARK: - Item
 struct Comment: Codable {
     let owner: Owner

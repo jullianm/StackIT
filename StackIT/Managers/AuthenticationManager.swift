@@ -31,18 +31,22 @@ class AuthenticationManager {
     
     func bindCheckToken() {
         checkTokenSubject
-            .map { [self] in
-                return keychainManager.retrieveToken() ?? .init()
+            .map { [weak self] _ -> String in
+                guard let self = self else { return .init() }
+                return self.keychainManager.retrieveToken() ?? .init()
             }
-            .handleEvents(receiveOutput: { [self] token in
+            .handleEvents(receiveOutput: { [weak self] token in
                 if token.isEmpty {
-                    addUserSubject.send(nil)
+                    self?.addUserSubject.send(nil)
                 } else {
-                    stackConfig.token = token
+                    self?.stackConfig.token = token
                 }
             })
             .filter { !$0.isEmpty }
-            .map { [self] in getUser(token: $0) }
+            .map { [weak self] token -> AnyPublisher<UserSummary?, Never> in
+                guard let self = self else { return Just(nil).eraseToAnyPublisher() }
+                return self.getUser(token: token)
+            }
             .switchToLatest()
             .sink(receiveValue: addUserSubject.send)
             .store(in: &subscriptions)

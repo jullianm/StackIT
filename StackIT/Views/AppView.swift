@@ -15,7 +15,7 @@ struct AppView: View {
         HStack {
             SideBarView().frame(minWidth: 250, maxWidth: 250, minHeight: 650, maxHeight: .infinity)
             QuestionsSummaryView().frame(minWidth: 400, maxWidth: 500)
-            AnswersView().frame(minWidth: 450, maxWidth: 600)
+            AnswersView().frame(minWidth: 500, idealWidth: 550, maxWidth: .infinity)
         }
         .navigationTitle(String.init())
         .toolbar {

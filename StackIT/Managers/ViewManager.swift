@@ -37,11 +37,11 @@ class ViewManager: ObservableObject {
     var authenticationSubject = CurrentValueSubject<AuthenticationAction, Never>(.checkAuthentication)
     
     init(serviceManager: ServiceManager = NetworkManager(), authenticationManager: AuthenticationManager = .shared) {
-        #if DEBUG
-        self.serviceManager = MockManager()
-        #else
+//        #if DEBUG
+//        self.serviceManager = MockManager()
+//        #else
         self.serviceManager = serviceManager
-        #endif
+//        #endif
         self.authenticationManager = authenticationManager
         fetchData()
         setupBindings()
@@ -75,7 +75,9 @@ extension ViewManager {
             .handleEvents(receiveOutput: handleOutputSectionEvent)
             .map(resolveEndpointCall)
             .switchToLatest()
-            .handleEvents(receiveOutput: { _ in self.loadingSections = [] })
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.loadingSections = []
+            })
             .assign(to: \.questionsSummary, on: self)
             .store(in: &subscriptions)
     }
@@ -87,7 +89,7 @@ extension ViewManager {
             .map(resolveEndpointType)
             .map(fetchAnswers(endpoint:))
             .switchToLatest()
-            .handleEvents(receiveOutput: { _ in self.loadingSections = [] })
+            .handleEvents(receiveOutput: { [weak self] _ in self?.loadingSections = [] })
             .replaceError(with: [])
             .assign(to: \.answersSummary, on: self)
             .store(in: &subscriptions)
@@ -112,23 +114,26 @@ extension ViewManager {
     
     private func bindAuthentication() {
         authenticationSubject
-            .handleEvents(receiveOutput: { [self] action in
+            .handleEvents(receiveOutput: { [weak self] action in
                 switch action {
                 case .checkAuthentication:
-                    authenticationManager.checkTokenSubject.send(())
+                    self?.authenticationManager.checkTokenSubject.send(())
                 case .signIn(let url):
-                    authenticationManager.parseTokenSubject.send(url)
+                    self?.authenticationManager.parseTokenSubject.send(url)
                 case .logOut:
-                    authenticationManager.removeUserSubject.send(())
+                    self?.authenticationManager.removeUserSubject.send(())
                 }
                 
-                loadingSections = [.account]
+                self?.loadingSections = [.account]
             })
-            .map { [self] _ in authenticationManager.addUserSubject }
+            .map { [weak self] _ -> AnyPublisher<UserSummary?, Never> in
+                guard let self = self else { return Just(nil).eraseToAnyPublisher() }
+                return self.authenticationManager.addUserSubject.eraseToAnyPublisher()
+            }
             .switchToLatest()
-            .sink { user in
-                self.user = user
-                self.loadingSections = []
+            .sink { [weak self] user in
+                self?.user = user
+                self?.loadingSections = []
             }.store(in: &subscriptions)
     }
 }
@@ -140,14 +145,14 @@ extension ViewManager {
         let questionsPublisher = fetchQuestions(endpoint: .filteredQuestions(tags: [], trending: .votes, page: 1))
         
         Publishers.CombineLatest(tagsPublisher, questionsPublisher)
-            .handleEvents(receiveSubscription: { _ in
-                self.loadingSections = [.tags, .questions]
-            }, receiveOutput: { _ in
-                self.loadingSections = []
+            .handleEvents(receiveSubscription: { [weak self] _ in
+                self?.loadingSections = [.tags, .questions]
+            }, receiveOutput: { [weak self] _ in
+                self?.loadingSections = []
             })
-            .sink(receiveValue: { tags, questions in
-                self.tags = tags
-                self.questionsSummary = questions
+            .sink(receiveValue: { [weak self] tags, questions in
+                self?.tags = tags
+                self?.questionsSummary = questions
             }).store(in: &subscriptions)
     }
     
@@ -160,18 +165,23 @@ extension ViewManager {
     
     private func fetchQuestions(endpoint: Endpoint) -> AnyPublisher<[QuestionsSummary], Never> {
         return serviceManager.fetch(endpoint: endpoint, model: Questions.self)
-            .handleEvents(receiveOutput: { [self] questions in
-                showLoadMore = questions.hasMore && questions.quotaRemaining > 0
+            .handleEvents(receiveOutput: { [weak self] questions in
+                self?.showLoadMore = questions.hasMore && questions.quotaRemaining > 0
             })
             .map { $0.items.map(QuestionsSummary.init) }
             .replaceError(with: [])
-            .map { $0.filtered(by: self.questionsFilter) }
+            .map { [weak self] in
+                guard let self = self else { return [] }
+                return $0.filtered(by: self.questionsFilter)
+            }
             .eraseToAnyPublisher()
     }
     
     private func fetchAnswers(endpoint: Endpoint) -> AnyPublisher<[AnswersSummary], Never> {
         return serviceManager.fetch(endpoint: endpoint, model: Answers.self)
-            .map { answers -> AnyPublisher<(Answers, Comments), Error> in
+            .map { [weak self] answers -> AnyPublisher<(Answers, Comments), Error> in
+                guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
+                
                 let ids = answers.items.map(\.answerId).joinedString()
                 let commentsPublisher = self.serviceManager.fetch(endpoint: .commentsForAnswers(answersId: ids), model: Comments.self)
                 let answersPublisher = Just(answers).setFailureType(to: Error.self).eraseToAnyPublisher()
@@ -195,12 +205,14 @@ extension ViewManager {
         }
         
         serviceManager.fetch(endpoint: .inbox(token: token, key: authenticationManager.stackConfig.key), model: Inbox.self)
-            .map { [self] inbox -> AnyPublisher<[UserMessageSummary], Error> in
+            .map { [weak self] inbox -> AnyPublisher<[UserMessageSummary], Error> in
+                guard let self = self else { return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher() }
+                
                 let posts = inbox.items.map(MessageStatus.init)
                 let answersIds = posts.filter { $0.messageType == .answer }.compactMap(\.id).joinedString()
                 let commentsIds = posts.filter { $0.messageType == .comment }.compactMap(\.id).joinedString()
                 
-                return inboxPublisher(answersIds: answersIds, commentsIds: commentsIds)
+                return self.inboxPublisher(answersIds: answersIds, commentsIds: commentsIds)
                     .map { answer, comment -> [UserMessageSummary] in
                         let userAnswersSummary = answer.reduce([UserMessageSummary]()) { summary, answer in
                             let answerStatus = posts.filter { $0.messageType == .answer }.first(where: { $0.id == answer.answerId })!
@@ -240,7 +252,10 @@ extension ViewManager {
         case .search(let keywords):
             return serviceManager.fetch(endpoint: .search(keywords: keywords), model: Search.self)
                 .map { $0.items.map(\.questionId).joinedString() }
-                .map { [self] in fetchQuestions(endpoint: .questions(ids: $0)) }
+                .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
+                    guard let self = self else { return Just([]).eraseToAnyPublisher() }
+                    return self.fetchQuestions(endpoint: .questions(ids: ids))
+                }
                 .switchToLatest()
                 .replaceError(with: [])
                 .eraseToAnyPublisher()
