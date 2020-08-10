@@ -2,6 +2,8 @@
 
 **Summary**
 
+![alt text](app-screenshot.png)
+
 StackIT is a native macOS client app for the StackOverflow website, built in SwiftUI and Combine.
 
 ⚠️ Disclaimer n°1 - The app is still in progress, some additional features need to be implemented and some bugs need to be fixed. 
@@ -45,7 +47,3 @@ For example, fetching the initial data (tags and questions) when app launches re
 **Dependencies**
 
 - KeychainAccess
-
-**App screenshot**
-
-![alt text](stackIT-screenshot.png)
