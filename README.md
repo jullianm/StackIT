@@ -46,10 +46,10 @@ For example, fetching the initial data (tags and questions) when app launches re
 
 Views send new values to the `ViewManager` using `PassThroughSubject` and `CurrentValueSubject` variables whenever a new action is required. <br>
 
-_TagSectionView_
+_TagSectionView_<br>
 `viewManager.fetchQuestionsSubject.send((.tag(tag: tag), false))`
 
-_ViewManager_
+_ViewManager_<br>
 `var fetchQuestionsSubject = CurrentValueSubject<SectionOutput, Never>(AppSection.empty)`<br>
 ```
 private func bindFetchQuestions() {
@@ -63,7 +63,7 @@ private func bindFetchQuestions() {
         .store(in: &subscriptions)
 }
 ```
-_NetworkManager_
+_NetworkManager_<br>
 ```
 func fetch<T: Decodable>(endpoint: Endpoint, model: T.Type) -> AnyPublisher<T, Error> {
     if let value = cache[endpoint.cacheID] as? T {
