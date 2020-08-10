@@ -1,3 +1,3 @@
 # stackIT
 
-![alt text](https://github.com/jullianm/stackIT/main/stackIT-screenshot.png?raw=true)
+![alt text](stackIT-screenshot.png)
