@@ -46,6 +46,7 @@ struct AccountSectionView: View {
                 .opacity(0.1)
                 .padding(.leading)
             
+            
             if viewManager.user != nil {
                 VStack(alignment: .leading) {
                     ForEach(AccountSection.allCases, id: \.self) { section in
@@ -57,7 +58,9 @@ struct AccountSectionView: View {
                                 viewManager.fetchAccountSectionSubject.send(.account(subsection: section))
                             }
                     }
-                }.popover(isPresented: $showProfileSheet, arrowEdge: .leading) {
+                }
+                .redacted(reason: viewManager.loadingSections.contains(.account) ? .placeholder: [])
+                .popover(isPresented: $showProfileSheet, arrowEdge: .leading) {
                     ZStack {
                         Color.stackITCode
                         inboxSection
@@ -78,8 +81,11 @@ struct AccountSectionView: View {
                     }) {
                         Text("Sign up")
                     }.cornerRadius(5.0)
-                }.padding(.leading)
+                }
+                .redacted(reason: viewManager.loadingSections.contains(.account) ? .placeholder: [])
+                .padding(.leading)
             }
+            
         }.padding([.top])
     }
 }

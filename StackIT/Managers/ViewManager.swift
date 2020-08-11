@@ -119,14 +119,16 @@ extension ViewManager {
     
     private func bindAuthentication() {
         authenticationSubject
-            .handleEvents(receiveOutput: { [weak self] section in
+            .sink { [weak self] section in
                 switch section {
                 case .authentication(let action):
                     switch action {
                     case .checkAuthentication:
                         self?.authenticationManager.checkTokenSubject.send(())
+                        self?.loadingSections = [.account]
                     case .signIn(let url):
                         self?.authenticationManager.parseTokenSubject.send(url)
+                        self?.loadingSections = [.account]
                     case .logOut:
                         self?.authenticationManager.removeUserSubject.send(())
                     }
@@ -134,17 +136,14 @@ extension ViewManager {
                     break
                 }
                 
-                self?.loadingSections = [.account]
-            })
-            .map { [weak self] _ -> AnyPublisher<UserSummary?, Never> in
-                guard let self = self else { return Just(nil).eraseToAnyPublisher() }
-                return self.authenticationManager.addUserSubject.eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .sink { [weak self] user in
-                self?.user = user
-                self?.loadingSections = []
             }.store(in: &subscriptions)
+        
+        authenticationManager.addUserPublisher
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.loadingSections = []
+            })
+            .assign(to: \.user, on: self)
+            .store(in: &subscriptions)
     }
 }
 

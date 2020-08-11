@@ -18,9 +18,12 @@ class AuthenticationManager {
     
     /// Subjects properties
     var parseTokenSubject = PassthroughSubject<URL, Never>()
-    var addUserSubject = PassthroughSubject<UserSummary?, Never>()
     var removeUserSubject = PassthroughSubject<Void, Never>()
     var checkTokenSubject = PassthroughSubject<Void, Never>()
+    private var addUserSubject = PassthroughSubject<UserSummary?, Never>()
+    var addUserPublisher: AnyPublisher<UserSummary?, Never> {
+        addUserSubject.eraseToAnyPublisher()
+    }
     
     private init() {
         stackConfig = Bundle.main.load(resource: "StackConfig", ofType: "plist")
@@ -54,6 +57,9 @@ class AuthenticationManager {
     
     func bindRemoveUser() {
         removeUserSubject
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.addUserSubject.send(nil)
+            })
             .sink(receiveValue: keychainManager.removeToken)
             .store(in: &subscriptions)
     }
