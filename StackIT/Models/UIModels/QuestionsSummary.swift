@@ -7,48 +7,69 @@
 
 import Foundation
 
-struct QuestionsSummary: Identifiable {
+class QuestionsSummary: Identifiable, Equatable {
     var id = UUID()
     let questionId: String
     let body: String
     var lastActivityDate: String
     let title: String
     let tags: [String]
-    let votes: String
+    let score: String
     let views: String
     let answers: String
     let hasAcceptedAnswer: Bool
     let isAnswered: Bool
     let isClosed: Bool
+    var authorName: String
+    var authorReputation: String
+    var authorImage: String
+    var comments: [CommentsSummary]
+    var isSelected = false
+    
+    init(questionId: String, body: String, lastActivityDate: String, title: String, tags: [String], score: String, views: String, answers: String, hasAcceptedAnswer: Bool, isAnswered: Bool, authorName: String, authorReputation: String, authorImage: String, comments: [CommentsSummary], isClosed: Bool) {
+        self.questionId = questionId
+        self.body = body
+        self.lastActivityDate = lastActivityDate
+        self.title = title
+        self.tags = tags
+        self.score = score
+        self.views = views
+        self.answers = answers
+        self.hasAcceptedAnswer = hasAcceptedAnswer
+        self.isAnswered = isAnswered
+        self.authorName = authorName
+        self.authorReputation = authorReputation
+        self.authorImage = authorImage
+        self.comments = comments
+        self.isClosed = isClosed
+    }
+    
+    func setSelected(_ isSelected: Bool) {
+        self.isSelected = isSelected
+    }
+    
+    static func == (lhs: QuestionsSummary, rhs: QuestionsSummary) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 extension QuestionsSummary {
-    init(from question: Question) {
-        self.questionId = question.questionId.string()
-        self.body = question.body
-        self.lastActivityDate = "Last activity on \(question.lastActivityDate.stringDate())"
-        self.title = question.title
-        self.tags = question.tags
-        self.votes = question.score.string()
-        self.views = question.viewCount.formatNumber()
-        self.answers = question.answerCount.string()
-        self.hasAcceptedAnswer = (question.acceptedAnswerId != nil)
-        self.isAnswered = question.isAnswered
-        self.isClosed = (question.closedDate != nil)
-    }
-    
-    init(from search: SearchItem) {
-        self.questionId = search.questionId.string()
-        self.body = .init()
-        self.lastActivityDate = "Last activity on \(search.lastActivityDate.stringDate())"
-        self.title = search.title
-        self.tags = search.tags
-        self.votes = search.score.string()
-        self.views = .init()
-        self.answers = search.answerCount.string()
-        self.hasAcceptedAnswer = (search.hasAcceptedAnswer != nil)
-        self.isAnswered = search.isAnswered
-        self.isClosed = false
+    convenience init(from question: Question, comments: [CommentsSummary]) {
+        self.init(questionId: question.questionId.string(),
+                  body: question.body.addStyling(),
+                  lastActivityDate: "Last activity on \(question.lastActivityDate.stringDate())",
+                  title: question.title,
+                  tags: question.tags,
+                  score: question.score.string(),
+                  views: question.viewCount.formatNumber(),
+                  answers: question.answerCount.string(),
+                  hasAcceptedAnswer: (question.acceptedAnswerId != nil),
+                  isAnswered: question.isAnswered,
+                  authorName: question.owner.displayName.unwrapped(),
+                  authorReputation: question.owner.reputation.string(),
+                  authorImage: question.owner.profileImage.unwrapped(),
+                  comments: comments,
+                  isClosed: (question.closedDate != nil))
     }
 }
 
@@ -56,7 +77,7 @@ extension QuestionsSummary {
     static var isPagingEnabled = false
     static var currentPage = 1
     static let placeholders: [QuestionsSummary] = Array(0...13).map { _ in
-        return QuestionsSummary(from: Question.placeholder)
+        return QuestionsSummary(from: Question.placeholder, comments: [])
     }
     
     static func updatePaging(isEnabled: Bool) {

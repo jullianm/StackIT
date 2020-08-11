@@ -14,6 +14,7 @@ enum Endpoint {
     case comments(ids: String)
     case answersForQuestion(questionId: String)
     case commentsForAnswers(answersId: String)
+    case commentsForQuestions(questionsId: String)
     case tags
     case search(keywords: String)
     case user(token: String, key: String)
@@ -88,6 +89,8 @@ enum Endpoint {
             return "/2.2/comments/\(ids)"
         case .answers(let ids):
             return "2.2/answers/\(ids)"
+        case .commentsForQuestions(let questionsId):
+            return "2.2/questions/\(questionsId)/comments"
         }
     }
     
@@ -184,6 +187,13 @@ enum Endpoint {
                 .init(name: "sort", value: "creation"),
                 .init(name: "filter", value: "withbody")
             ]
+        case .commentsForQuestions:
+            return [
+                .init(name: "order", value: "desc"),
+                .init(name: "sort", value: "creation"),
+                .init(name: "site", value: "stackoverflow"),
+                .init(name: "filter", value: "withbody")
+            ]
         }
     }
     
@@ -197,7 +207,7 @@ enum Endpoint {
             return Bundle.main.data(from: "Answers.json")
         case .search:
             return Bundle.main.data(from: "Search.json")
-        case .commentsForAnswers, .comments:
+        case .commentsForAnswers, .commentsForQuestions, .comments:
             return Bundle.main.data(from: "Comments.json")
         case .user:
             return Bundle.main.data(from: "User.json")

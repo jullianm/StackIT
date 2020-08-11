@@ -33,8 +33,8 @@ class ViewManager: ObservableObject {
     /// Subjects properties
     var fetchQuestionsSubject = CurrentValueSubject<SectionOutput, Never>(AppSection.empty)
     var fetchAnswersSubject = CurrentValueSubject<SectionOutput, Never>(AppSection.empty)
-    var fetchAccountSectionSubject = PassthroughSubject<AccountSection, Never>()
-    var authenticationSubject = CurrentValueSubject<AuthenticationAction, Never>(.checkAuthentication)
+    var fetchAccountSectionSubject = PassthroughSubject<AppSection, Never>()
+    var authenticationSubject = CurrentValueSubject<AppSection, Never>(.authentication(action: .checkAuthentication))
     
     init(serviceManager: ServiceManager = NetworkManager(), authenticationManager: AuthenticationManager = .shared) {
 //        #if DEBUG
@@ -73,7 +73,7 @@ extension ViewManager {
         fetchQuestionsSubject
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
-            .map(resolveEndpointCall)
+            .map(resolveQuestionsEndpointCall)
             .switchToLatest()
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections = []
@@ -102,26 +102,36 @@ extension ViewManager {
         fetchAccountSectionSubject
             .sink { [self] section in
                 switch section {
-                case .messages:
-                    fetchInbox()
-                case .activity:
-                    break /// ⚠️  To do.
-                case .profile:
-                    return /// ⚠️ We already have current user informations in `User` object.
+                case .account(let subsection):
+                    switch subsection {
+                    case .messages:
+                        fetchInbox()
+                    case .activity:
+                        break /// ⚠️  To do.
+                    case .profile:
+                        return /// ⚠️ We already have current user informations in `User` object.
+                    }
+                default:
+                    break
                 }
             }.store(in: &subscriptions)
     }
     
     private func bindAuthentication() {
         authenticationSubject
-            .handleEvents(receiveOutput: { [weak self] action in
-                switch action {
-                case .checkAuthentication:
-                    self?.authenticationManager.checkTokenSubject.send(())
-                case .signIn(let url):
-                    self?.authenticationManager.parseTokenSubject.send(url)
-                case .logOut:
-                    self?.authenticationManager.removeUserSubject.send(())
+            .handleEvents(receiveOutput: { [weak self] section in
+                switch section {
+                case .authentication(let action):
+                    switch action {
+                    case .checkAuthentication:
+                        self?.authenticationManager.checkTokenSubject.send(())
+                    case .signIn(let url):
+                        self?.authenticationManager.parseTokenSubject.send(url)
+                    case .logOut:
+                        self?.authenticationManager.removeUserSubject.send(())
+                    }
+                default:
+                    break
                 }
                 
                 self?.loadingSections = [.account]
@@ -168,7 +178,22 @@ extension ViewManager {
             .handleEvents(receiveOutput: { [weak self] questions in
                 self?.showLoadMore = questions.hasMore && questions.quotaRemaining > 0
             })
-            .map { $0.items.map(QuestionsSummary.init) }
+            .map { [weak self] questions -> AnyPublisher<(Questions, Comments), Error> in
+                guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
+                
+                let ids = questions.items.map(\.questionId).joinedString()
+                let commentsPublisher = self.serviceManager.fetch(endpoint: .commentsForQuestions(questionsId: ids), model: Comments.self)
+                let questionsPublisher = Just(questions).setFailureType(to: Error.self).eraseToAnyPublisher()
+                
+                return Publishers.CombineLatest(questionsPublisher, commentsPublisher).eraseToAnyPublisher()
+            }
+            .switchToLatest()
+            .map { (questions, comments) -> [QuestionsSummary] in
+                return questions.items.map { question in
+                    let comments = comments.items.filter { $0.postId == question.questionId }.map(CommentsSummary.init)
+                    return QuestionsSummary(from: question, comments: comments)
+                }
+            }
             .replaceError(with: [])
             .map { [weak self] in
                 guard let self = self else { return [] }
@@ -247,50 +272,68 @@ extension ViewManager {
 
 // MARK: - Webservice helpers
 extension ViewManager {
-    private func resolveEndpointCall(from output: SectionOutput) -> AnyPublisher<[QuestionsSummary], Never> {
+    private func resolveQuestionsEndpointCall(from output: SectionOutput) -> AnyPublisher<[QuestionsSummary], Never> {
         switch output.section {
-        case .search(let keywords):
-            return serviceManager.fetch(endpoint: .search(keywords: keywords), model: Search.self)
-                .map { $0.items.map(\.questionId).joinedString() }
-                .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
-                    guard let self = self else { return Just([]).eraseToAnyPublisher() }
-                    return self.fetchQuestions(endpoint: .questions(ids: ids))
-                }
-                .switchToLatest()
-                .replaceError(with: [])
-                .eraseToAnyPublisher()
+        case .questions(let subsection):
+            switch subsection {
+            case .search(let keywords):
+                return serviceManager.fetch(endpoint: .search(keywords: keywords), model: Search.self)
+                    .map { $0.items.map(\.questionId).joinedString() }
+                    .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
+                        guard let self = self else { return Just([]).eraseToAnyPublisher() }
+                        return self.fetchQuestions(endpoint: .questions(ids: ids))
+                    }
+                    .switchToLatest()
+                    .replaceError(with: [])
+                    .eraseToAnyPublisher()
+            default:
+                return fetchQuestions(endpoint: self.resolveEndpointType(from: output))
+            }
+            
         default:
-            return fetchQuestions(endpoint: self.resolveEndpointType(from: output))
+            assertionFailure("⚠️ We should not fall into that case.")
+            return Just([]).eraseToAnyPublisher()
         }
     }
     
     private func resolveEndpointType(from output: SectionOutput) -> Endpoint {
         switch output.section {
-        case let .trending(trending):
-            return .filteredQuestions(tags: [], trending: trending, page: QuestionsSummary.currentPage)
-        case .tag:
-            return .filteredQuestions(tags: tags.filter(\.isFavorite), trending: .votes, page: QuestionsSummary.currentPage)
-        case let .search(keywords):
-            return .search(keywords: keywords)
-        case let .answers(questionId):
-            return .answersForQuestion(questionId: questionId)
+        case let .questions(subsection):
+            switch subsection {
+            case let .trending(trending):
+                return .filteredQuestions(tags: [], trending: trending, page: QuestionsSummary.currentPage)
+            case .tag:
+                return .filteredQuestions(tags: tags.filter(\.isFavorite), trending: .votes, page: QuestionsSummary.currentPage)
+            case let .search(keywords):
+                return .search(keywords: keywords)
+            }
+        case let .answers(question):
+            return .answersForQuestion(questionId: question.questionId)
+        default:
+            fatalError()
         }
     }
     
     private func handleOutputSectionEvent(output: SectionOutput) {
-        QuestionsSummary.updatePaging(isEnabled: output.isPagingEnabled)
-        
         switch output.section {
-        case .trending:
-            loadingSections = [.questions]
-        case .tag(let tag):
-            if !output.isPagingEnabled { tags.first(where: { $0.name == tag.name })?.isFavorite.toggle() }
-            loadingSections = [.questions]
-        case .answers:
+        case let .questions(subsection):
+            QuestionsSummary.updatePaging(isEnabled: output.isPagingEnabled)
+            switch subsection {
+            case .trending:
+                loadingSections = [.questions]
+            case .tag(let tag):
+                if !output.isPagingEnabled { tags.first(where: { $0.name == tag.name })?.isFavorite.toggle() }
+                loadingSections = [.questions]
+            case .search:
+                tags.forEach { $0.isFavorite = false }
+                loadingSections = [.questions]
+            }
+        case .answers(let question):
+            questionsSummary.first(where: \.isSelected)?.setSelected(false)
+            questionsSummary.first(where: { $0.id == question.id })?.setSelected(true)
             loadingSections = [.answers]
-        case .search:
-            tags.forEach { $0.isFavorite = false }
-            loadingSections = [.questions]
+        default:
+            break
         }
     }
 }

@@ -13,6 +13,14 @@ struct AnswersView: View {
     var body: some View {
         ZStack {
             List {
+                if let question = viewManager.questionsSummary.first(where: \.isSelected) {
+                    Text("Question").font(.largeTitle).padding(.leading)
+                    QuestionRow(imageManager: .init(question.authorImage), question: question)
+                    
+                }
+                if !viewManager.answersSummary.isEmpty {
+                    Text("Answers").font(.largeTitle).padding(.leading)
+                }
                 ForEach(viewManager.answersSummary, id: \.id) { answer in
                     AnswerRow(imageManager: .init(answer.authorImage), answer: answer)
                 }

@@ -28,7 +28,7 @@ struct AccountSectionView: View {
                 }
                 
                 Button(action: {
-                    viewManager.authenticationSubject.send(.logOut)
+                    viewManager.authenticationSubject.send(.authentication(action: .logOut))
                 }) {
                     Image(systemName: "xmark.circle.fill")
                 }
@@ -54,7 +54,7 @@ struct AccountSectionView: View {
                             .padding(.bottom, 5)
                             .onTapGesture {
                                 showProfileSheet = true
-                                viewManager.fetchAccountSectionSubject.send(section)
+                                viewManager.fetchAccountSectionSubject.send(.account(subsection: section))
                             }
                     }
                 }.popover(isPresented: $showProfileSheet, arrowEdge: .leading) {

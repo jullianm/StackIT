@@ -9,6 +9,7 @@ import SwiftUI
 
 struct QuestionSummaryRow: View {
     var questionSummary: QuestionsSummary
+    var isSelected: Bool
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,7 +37,7 @@ struct QuestionSummaryRow: View {
                             .foregroundColor(Color("StackITGreen"))
                             .cornerRadius(10.0)
                         VStack {
-                            Text(questionSummary.votes).font(.headline)
+                            Text(questionSummary.score).font(.headline)
                             Text("votes").font(.subheadline)
                         }
                     }.frame(width : 70, height: 50)
@@ -55,6 +56,6 @@ struct QuestionSummaryRow: View {
             }
             
             Divider()
-        }
+        }.opacity(isSelected ? 0.7: 1)
     }
 }

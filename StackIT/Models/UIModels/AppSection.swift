@@ -8,14 +8,20 @@
 import Foundation
 
 enum AppSection: Equatable {
+    case questions(subsection: SubSection)
+    case answers(question: QuestionsSummary)
+    case account(subsection: AccountSection)
+    case authentication(action: AuthenticationAction)
+}
+
+enum SubSection: Equatable {
     case trending(trending: Trending)
     case tag(tag: Tag)
     case search(keywords: String)
-    case answers(questionId: String)
 }
 
 extension AppSection {
-    static let empty = (Self.tag(tag: .init(name: .init())), false)
+    static let empty = (AppSection.questions(subsection: .tag(tag: .init(name: .init()))), false)
 }
 
 enum Trending: String, CaseIterable {
@@ -130,7 +136,7 @@ extension Tag {
     ]
 }
 
-enum AuthenticationAction {
+enum AuthenticationAction: Equatable {
     case checkAuthentication
     case signIn(url: URL)
     case logOut

@@ -14,7 +14,7 @@ extension Array where Element == QuestionsSummary {
                 $0.isClosed == questionsFilter.contains(.closed) &&
                 $0.isAnswered == !questionsFilter.contains(.unanswered)
         }.sorted(by: { lhs, rhs  in
-            return lhs.votes > rhs.votes
+            return lhs.score > rhs.score
         })
     }
 }

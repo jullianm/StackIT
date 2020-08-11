@@ -24,10 +24,10 @@ struct QuestionsSummaryView: View {
             List {
                 ScrollViewReader { scrollView in
                     ForEach(viewManager.questionsSummary, id: \.id) { questionSummary in
-                        QuestionSummaryRow(questionSummary: questionSummary)
+                        QuestionSummaryRow(questionSummary: questionSummary, isSelected: questionSummary.isSelected)
                             .redacted(reason: viewManager.loadingSections.contains(.questions) ? .placeholder: [])
                             .onTapGesture {
-                                viewManager.fetchAnswersSubject.send((.answers(questionId: questionSummary.questionId), false))
+                                viewManager.fetchAnswersSubject.send((.answers(question: questionSummary), false))
                                 scrollView.scrollTo(0)
                             }
                     }

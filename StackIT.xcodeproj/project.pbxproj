@@ -67,6 +67,7 @@
 		C9A1DBE124D8B50E00464D32 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1DBE024D8B50E00464D32 /* ImageManager.swift */; };
 		C9A1DBE324D9E5B100464D32 /* QuestionsSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1DBE224D9E5B100464D32 /* QuestionsSummary.swift */; };
 		C9A1DBE724D9EDFD00464D32 /* AnswersSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1DBE624D9EDFD00464D32 /* AnswersSummary.swift */; };
+		C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */; };
 		C9FA32A824DAE0C40041DE48 /* Search.json in Resources */ = {isa = PBXBuildFile; fileRef = C9FA32A724DAE0C30041DE48 /* Search.json */; };
 /* End PBXBuildFile section */
 
@@ -133,6 +134,7 @@
 		C9A1DBE024D8B50E00464D32 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		C9A1DBE224D9E5B100464D32 /* QuestionsSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionsSummary.swift; sourceTree = "<group>"; };
 		C9A1DBE624D9EDFD00464D32 /* AnswersSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswersSummary.swift; sourceTree = "<group>"; };
+		C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionRow.swift; sourceTree = "<group>"; };
 		C9FA32A724DAE0C30041DE48 /* Search.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Search.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -194,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				C95942D724CE456A001FA9FA /* AnswersView.swift */,
+				C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */,
 				C946AA9D24E16E4B00DF3A13 /* AnswerRow.swift */,
 				C946AA9924E16C1800DF3A13 /* CommentRow.swift */,
 			);
@@ -429,6 +432,7 @@
 				C946AA9224E169BA00DF3A13 /* InboxMessageRow.swift in Sources */,
 				C913CA8D24DC275D00A9BFA4 /* SideBarView.swift in Sources */,
 				C95942E224D1026C001FA9FA /* Webview.swift in Sources */,
+				C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */,
 				C946AA8724E167C600DF3A13 /* AccountSectionView.swift in Sources */,
 				C946AA9524E16B9B00DF3A13 /* QuestionsSummaryRow.swift in Sources */,
 				C913CAA224DF3FEA00A9BFA4 /* Token.swift in Sources */,

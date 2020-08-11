@@ -13,6 +13,10 @@ struct Questions: Codable {
     let quotaRemaining: Int
 }
 
+extension Questions {
+    static let empty = Questions(items: [], hasMore: false, quotaRemaining: 0)
+}
+
 // MARK: - Item
 struct Question: Codable {
     let tags: [String]

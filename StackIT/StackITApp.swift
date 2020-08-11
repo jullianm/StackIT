@@ -16,7 +16,7 @@ struct StackITApp: App {
             AppView()
                 .environmentObject(viewManager)
                 .onOpenURL { url in
-                    viewManager.authenticationSubject.send(.signIn(url: url))
+                    viewManager.authenticationSubject.send(.authentication(action: .signIn(url: url)))
                 }
         }
     }
