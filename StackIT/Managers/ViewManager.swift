@@ -8,8 +8,6 @@
 import Combine
 import Foundation
 
-typealias SectionOutput = (section: AppSection, isPagingEnabled: Bool)
-
 class ViewManager: ObservableObject {
     /// Published properties
     @Published var tags: [Tag] = Tag.popular
@@ -31,8 +29,8 @@ class ViewManager: ObservableObject {
     var cachedQuestions: [QuestionsSummary] = []
 
     /// Subjects properties
-    var fetchQuestionsSubject = CurrentValueSubject<SectionOutput, Never>(AppSection.empty)
-    var fetchAnswersSubject = CurrentValueSubject<SectionOutput, Never>(AppSection.empty)
+    var fetchQuestionsSubject = CurrentValueSubject<AppSection, Never>(.questions)
+    var fetchAnswersSubject = CurrentValueSubject<AppSection, Never>(.questions)
     var fetchAccountSectionSubject = PassthroughSubject<AppSection, Never>()
     var authenticationSubject = CurrentValueSubject<AppSection, Never>(.authentication(action: .checkAuthentication))
     
@@ -151,7 +149,9 @@ extension ViewManager {
 extension ViewManager {
     private func fetchData() {
         let tagsPublisher = fetchTags()
-        let questionsPublisher = fetchQuestions(endpoint: .filteredQuestions(tags: [], trending: .votes, page: 1))
+        let questionsPublisher = fetchQuestions(endpoint: .questions(subendpoint: .questionsByFilters(tags: [],
+                                                                                                     trending: .votes,
+                                                                                                     status: .active)))
         
         Publishers.CombineLatest(tagsPublisher, questionsPublisher)
             .handleEvents(receiveSubscription: { [weak self] _ in
@@ -181,7 +181,7 @@ extension ViewManager {
                 guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
                 
                 let ids = questions.items.map(\.questionId).joinedString()
-                let commentsPublisher = self.serviceManager.fetch(endpoint: .commentsForQuestions(questionsId: ids), model: Comments.self)
+                let commentsPublisher = self.serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByQuestionsIds(ids)), model: Comments.self)
                 let questionsPublisher = Just(questions).setFailureType(to: Error.self).eraseToAnyPublisher()
                 
                 return Publishers.CombineLatest(questionsPublisher, commentsPublisher).eraseToAnyPublisher()
@@ -207,7 +207,7 @@ extension ViewManager {
                 guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
                 
                 let ids = answers.items.map(\.answerId).joinedString()
-                let commentsPublisher = self.serviceManager.fetch(endpoint: .commentsForAnswers(answersId: ids), model: Comments.self)
+                let commentsPublisher = self.serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByQuestionsIds(ids)), model: Comments.self)
                 let answersPublisher = Just(answers).setFailureType(to: Error.self).eraseToAnyPublisher()
                 
                 return Publishers.CombineLatest(answersPublisher, commentsPublisher).eraseToAnyPublisher()
@@ -262,8 +262,10 @@ extension ViewManager {
     }
     
     private func inboxPublisher(answersIds: String, commentsIds: String) -> AnyPublisher<([Answer], [Comment]), Error> {
-        let answersPublisher = serviceManager.fetch(endpoint: .answers(ids: answersIds), model: Answers.self).map(\.items)
-        let commentsPublisher = serviceManager.fetch(endpoint: .comments(ids: commentsIds), model: Comments.self).map(\.items)
+        let answersPublisher = serviceManager.fetch(endpoint: .answers(subendpoint: .answersByIds(answersIds)),
+                                                    model: Answers.self).map(\.items)
+        let commentsPublisher = serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByIds(commentsIds)),
+                                                     model: Comments.self).map(\.items)
         
         return Publishers.Zip(answersPublisher, commentsPublisher).eraseToAnyPublisher()
     }
@@ -271,16 +273,17 @@ extension ViewManager {
 
 // MARK: - Webservice helpers
 extension ViewManager {
-    private func resolveQuestionsEndpointCall(from output: SectionOutput) -> AnyPublisher<[QuestionsSummary], Never> {
-        switch output.section {
-        case .questions(let subsection):
+    private func resolveQuestionsEndpointCall(from output: AppSection) -> AnyPublisher<[QuestionsSummary], Never> {
+        switch output {
+        case .questions(let subsection, _):
             switch subsection {
             case .search(let keywords):
-                return serviceManager.fetch(endpoint: .search(keywords: keywords), model: Search.self)
+                return serviceManager.fetch(endpoint: .questions(subendpoint: .questionsByKeywords(keywords)),
+                                            model: Search.self)
                     .map { $0.items.map(\.questionId).joinedString() }
                     .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
                         guard let self = self else { return Just([]).eraseToAnyPublisher() }
-                        return self.fetchQuestions(endpoint: .questions(ids: ids))
+                        return self.fetchQuestions(endpoint: .questions(subendpoint: .questionsByIds(ids)))
                     }
                     .switchToLatest()
                     .replaceError(with: [])
@@ -295,39 +298,40 @@ extension ViewManager {
         }
     }
     
-    private func resolveEndpointType(from output: SectionOutput) -> Endpoint {
-        switch output.section {
-        case let .questions(subsection):
+    private func resolveEndpointType(from output: AppSection) -> Endpoint {
+        switch output {
+        case let .questions(subsection, status):
             switch subsection {
             case let .trending(trending):
-                return .filteredQuestions(tags: [], trending: trending, page: QuestionsSummary.currentPage)
+                return .questions(subendpoint: .questionsByFilters(tags: [], trending: trending, status: status))
             case .tag:
-                return .filteredQuestions(tags: tags.filter(\.isFavorite), trending: .votes, page: QuestionsSummary.currentPage)
+                return .questions(subendpoint: .questionsByFilters(tags: tags.filter(\.isFavorite), trending: .votes, status: status))
             case let .search(keywords):
-                return .search(keywords: keywords)
+                return .questions(subendpoint: .questionsByKeywords(keywords))
             }
-        case let .answers(question):
-            return .answersForQuestion(questionId: question.questionId)
+        case let .answers(question, _):
+            return .answers(subendpoint: .answersByQuestionId(question.questionId))
         default:
             fatalError()
         }
     }
     
-    private func handleOutputSectionEvent(output: SectionOutput) {
-        switch output.section {
-        case let .questions(subsection):
-            QuestionsSummary.updatePaging(isEnabled: output.isPagingEnabled)
+    private func handleOutputSectionEvent(output: AppSection) {
+        switch output {
+        case let .questions(subsection, status):
             switch subsection {
             case .trending:
                 loadingSections = [.questions]
             case .tag(let tag):
-                if !output.isPagingEnabled { tags.first(where: { $0.name == tag.name })?.isFavorite.toggle() }
+                if status == .active {
+                    tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
+                }
                 loadingSections = [.questions]
             case .search:
                 tags.forEach { $0.isFavorite = false }
                 loadingSections = [.questions]
             }
-        case .answers(let question):
+        case .answers(let question, _):
             questionsSummary.first(where: \.isSelected)?.setSelected(false)
             questionsSummary.first(where: { $0.id == question.id })?.setSelected(true)
             loadingSections = [.answers]

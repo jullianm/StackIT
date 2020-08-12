@@ -13,10 +13,13 @@ extension Publisher where Output == [QuestionsSummary], Failure == Never {
                 on object: ViewManager) -> AnyCancellable {
         receive(on: DispatchQueue.main)
             .sink { output in
-                if QuestionsSummary.isPagingEnabled {
+                guard case let .questions(_, status) = object.fetchQuestionsSubject.value else { return }
+                
+                switch status {
+                case .paging:
                     object.questionsSummary.append(contentsOf: output)
                     object.cachedQuestions.append(contentsOf: output)
-                } else {
+                default:
                     object.questionsSummary = output
                     object.cachedQuestions = output
                 }

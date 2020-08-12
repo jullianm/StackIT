@@ -33,7 +33,7 @@ struct AppView: View {
                     TextField("", text: $search, onCommit: {
                         NSApplication.shared.endEditing()
                         guard !search.isEmpty else { return }
-                        self.viewManager.fetchQuestionsSubject.send((.questions(subsection: .search(keywords: search)), false))
+                        self.viewManager.fetchQuestionsSubject.send(.questions(subsection: .search(keywords: search), .active))
                     }).textFieldStyle(RoundedBorderTextFieldStyle())
                     
                     Image(systemName: "magnifyingglass")

@@ -7,11 +7,46 @@
 
 import Foundation
 
+enum SectionStatus: Equatable {
+    case paging(count: Int = 1)
+    case refreshing
+    case active
+    
+    func updatePagingCount() -> Self {
+        switch self {
+        case let .paging(count):
+            return .paging(count: count + 1)
+        default:
+            return self
+        }
+    }
+    
+    var pageCount: Int {
+        switch self {
+        case .paging(let count):
+            return count
+        default :
+            return 1
+        }
+    }
+}
+
 enum AppSection: Equatable {
-    case questions(subsection: SubSection)
-    case answers(question: QuestionsSummary)
+    case questions(subsection: SubSection, SectionStatus)
+    case answers(question: QuestionsSummary, SectionStatus)
     case account(subsection: AccountSection)
     case authentication(action: AuthenticationAction)
+    
+    func updatePaging() -> Self {
+        switch self {
+        case .questions(let subsection, let status):
+            return .questions(subsection: subsection, .paging(count: status.pageCount + 1))
+        case .answers(let question, let status):
+            return .answers(question: question, status.updatePagingCount())
+        default:
+            return self
+        }
+    }
 }
 
 enum SubSection: Equatable {
@@ -21,7 +56,7 @@ enum SubSection: Equatable {
 }
 
 extension AppSection {
-    static let empty = (AppSection.questions(subsection: .tag(tag: .init(name: .init()))), false)
+    static let questions = AppSection.questions(subsection: .tag(tag: .init(name: .init())), .active)
 }
 
 enum Trending: String, CaseIterable {

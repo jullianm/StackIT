@@ -27,7 +27,7 @@ struct QuestionsSummaryView: View {
                         QuestionSummaryRow(questionSummary: questionSummary, isSelected: questionSummary.isSelected)
                             .redacted(reason: viewManager.loadingSections.contains(.questions) ? .placeholder: [])
                             .onTapGesture {
-                                viewManager.fetchAnswersSubject.send((.answers(question: questionSummary), false))
+                                viewManager.fetchAnswersSubject.send(.answers(question: questionSummary, .active))
                                 scrollView.scrollTo(0)
                             }
                     }
@@ -37,8 +37,7 @@ struct QuestionsSummaryView: View {
                     HStack {
                         Spacer()
                         Button {
-                            viewManager.fetchQuestionsSubject.send((viewManager.fetchQuestionsSubject.value.section,
-                                                                    isPagingEnabled: true))
+                            viewManager.fetchQuestionsSubject.send(viewManager.fetchQuestionsSubject.value.updatePaging())
                         } label: {
                             Text("Next page")
                         }.buttonStyle(BorderlessButtonStyle())

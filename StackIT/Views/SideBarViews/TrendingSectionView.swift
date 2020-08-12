@@ -33,7 +33,7 @@ struct TrendingSectionView: View {
                 .padding(.leading)
                 .padding(.bottom, 5)
                 .onTapGesture {
-                    self.viewManager.fetchQuestionsSubject.send((.questions(subsection: .trending(trending: trending)), false))
+                    self.viewManager.fetchQuestionsSubject.send(.questions(subsection: .trending(trending: trending), .active))
                 }
             }
         }.padding([.top])

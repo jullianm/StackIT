@@ -35,7 +35,7 @@ struct TagSectionView: View {
                     }
                     .redacted(reason: viewManager.loadingSections.contains(.tags) ? .placeholder: [])
                     .onTapGesture {
-                        viewManager.fetchQuestionsSubject.send((.questions(subsection: .tag(tag: tag)), false))
+                        viewManager.fetchQuestionsSubject.send(.questions(subsection: .tag(tag: tag), .active))
                     }
                 }
             }.padding(.horizontal)

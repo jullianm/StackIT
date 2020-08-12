@@ -74,14 +74,7 @@ extension QuestionsSummary {
 }
 
 extension QuestionsSummary {
-    static var isPagingEnabled = false
-    static var currentPage = 1
     static let placeholders: [QuestionsSummary] = Array(0...13).map { _ in
         return QuestionsSummary(from: Question.placeholder, comments: [])
-    }
-    
-    static func updatePaging(isEnabled: Bool) {
-        isPagingEnabled = isEnabled
-        currentPage = isEnabled ? currentPage + 1: 1
     }
 }
