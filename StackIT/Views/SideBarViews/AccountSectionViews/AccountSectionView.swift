@@ -103,12 +103,26 @@ extension AccountSectionView {
                 }.buttonStyle(BorderlessButtonStyle())
             }.padding(.bottom)
             
-            List {
-                ForEach(viewManager.inbox, id: \.id) { messageSummary in
-                    InboxMessageRow(imageManager: .init(messageSummary.profileImage),
-                                    messageSummary: messageSummary)
+            ZStack {
+                List {
+                    ForEach(viewManager.inbox, id: \.id) { messageSummary in
+                        InboxMessageRow(imageManager: .init(messageSummary.profileImage),
+                                        messageSummary: messageSummary)
+                    }
+                    .listRowBackground(Color.stackITCode)
                 }
-                .listRowBackground(Color.stackITCode)
+                
+                if viewManager.loadingSections.contains(.inbox) {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                }
             }
         }
         .frame(width: 800, height: 500)

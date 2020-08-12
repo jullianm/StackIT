@@ -115,6 +115,8 @@ enum LoadingSection {
     case questions
     case answers
     case account
+    case inbox
+    case activity
 }
 
 class Tag: Comparable {

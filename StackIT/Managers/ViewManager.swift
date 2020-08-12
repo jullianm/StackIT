@@ -98,12 +98,27 @@ extension ViewManager {
 extension ViewManager {
     private func bindFetchAccount() {
         fetchAccountSectionSubject
-            .sink { [self] section in
+            .handleEvents(receiveOutput: { [weak self] section in
                 switch section {
                 case .account(let subsection):
                     switch subsection {
                     case .messages:
-                        fetchInbox()
+                        self?.loadingSections = [.inbox]
+                    case .activity:
+                        self?.loadingSections = [.activity]
+                    case .profile:
+                        return /// ⚠️ We already have current user informations in `User` object.
+                    }
+                default:
+                    break
+                }
+            })
+            .sink { [weak self] section in
+                switch section {
+                case .account(let subsection):
+                    switch subsection {
+                    case .messages:
+                        self?.fetchInbox()
                     case .activity:
                         break /// ⚠️  To do.
                     case .profile:
@@ -257,6 +272,9 @@ extension ViewManager {
             }
             .switchToLatest()
             .replaceError(with: [])
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.loadingSections = []
+            })
             .assign(to: \.inbox, on: self)
             .store(in: &subscriptions)
     }
