@@ -9,6 +9,6 @@ import Foundation
 
 extension String {
     func addStyling() -> String {
-        return "<html><style>html {font-size: 1em;color: white}</style>" + self
+        return "<html><style>html {font-size: 1.1em;color: white; font-family: -apple-system} pre {background: lightgray}</style>" + self
     }
 }

@@ -58,7 +58,7 @@ extension QuestionsSummaryView {
                             .onTapGesture {
                                 viewManager.fetchAnswersSubject.send(.answers(question: questionSummary, .active))
                             }
-                    }.buttonStyle(PlainButtonStyle())
+                    }
                 }
             }.padding(.top)
             
@@ -68,7 +68,7 @@ extension QuestionsSummaryView {
                     Button {
                         viewManager.fetchQuestionsSubject.send(viewManager.fetchQuestionsSubject.value.updatePaging())
                     } label: {
-                        Text("Next page")
+                        Text("Next page").foregroundColor(Color.white)
                     }.buttonStyle(BorderlessButtonStyle())
                     Spacer()
                 }.padding()

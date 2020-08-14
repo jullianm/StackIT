@@ -56,6 +56,6 @@ struct QuestionSummaryRow: View {
             }
             
             Divider()
-        }.opacity(isSelected ? 0.4: 1)
+        }
     }
 }

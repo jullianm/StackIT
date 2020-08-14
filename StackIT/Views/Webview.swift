@@ -56,7 +56,8 @@ extension NSTextFieldRepresentable {
             if let attributedString = try? NSMutableAttributedString(data: data,
                                                               options: options,
                                                               documentAttributes: nil) {
-                attributedString.addAttributes([.backgroundColor: NSColor(named: "StackITCode")!],
+                attributedString.addAttributes([.backgroundColor: NSColor(named: "StackITCode")!,
+                                                ],
                                                range: NSMakeRange(0, attributedString.length))
                 textField.attributedStringValue = attributedString
             }
