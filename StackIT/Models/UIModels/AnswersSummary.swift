@@ -17,7 +17,6 @@ struct AnswersSummary: Identifiable {
     var authorReputation: String
     var authorImage: String
     var comments: [CommentsSummary]
-    
 }
 
 extension AnswersSummary {

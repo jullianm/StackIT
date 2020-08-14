@@ -15,6 +15,8 @@ extension Publisher where Output == [QuestionsSummary], Failure == Never {
             .sink { output in
                 guard case let .questions(_, status) = object.fetchQuestionsSubject.value else { return }
                 
+                object.loadingSections = []
+                
                 switch status {
                 case .paging:
                     object.questionsSummary.append(contentsOf: output)

@@ -29,6 +29,7 @@ class ViewManager: ObservableObject {
     var cachedQuestions: [QuestionsSummary] = []
 
     /// Subjects properties
+    var fetchTagsSubject = PassthroughSubject<AppSection, Never>()
     var fetchQuestionsSubject = CurrentValueSubject<AppSection, Never>(.questions)
     var fetchAnswersSubject = CurrentValueSubject<AppSection, Never>(.questions)
     var fetchAccountSectionSubject = PassthroughSubject<AppSection, Never>()
@@ -41,11 +42,11 @@ class ViewManager: ObservableObject {
         self.serviceManager = serviceManager
 //        #endif
         self.authenticationManager = authenticationManager
-        fetchData()
         setupBindings()
     }
     
     private func setupBindings() {
+        bindFetchTags()
         bindFetchQuestions()
         bindFetchAnswers()
         bindAuthentication()
@@ -67,15 +68,28 @@ class ViewManager: ObservableObject {
 
 // MARK: - Posts-related bindings
 extension ViewManager {
+    private func bindFetchTags() {
+        fetchTags()
+            .map { [weak self] _ -> AnyPublisher<[Tag], Never> in
+                guard let self = self else { return Just([]).eraseToAnyPublisher() }
+                return self.fetchTags()
+            }
+            .switchToLatest()
+            .handleEvents(receiveSubscription: { [weak self] _ in
+                self?.loadingSections.insert(.tags)
+            }, receiveOutput: { [weak self] _ in
+                self?.loadingSections.remove(.tags)
+            })
+            .assign(to: \.tags, on: self)
+            .store(in: &subscriptions)
+    }
+    
     private func bindFetchQuestions() {
         fetchQuestionsSubject
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
             .map(resolveQuestionsEndpointCall)
             .switchToLatest()
-            .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections = []
-            })
             .assign(to: \.questionsSummary, on: self)
             .store(in: &subscriptions)
     }
@@ -87,7 +101,9 @@ extension ViewManager {
             .map(resolveEndpointType)
             .map(fetchAnswers(endpoint:))
             .switchToLatest()
-            .handleEvents(receiveOutput: { [weak self] _ in self?.loadingSections = [] })
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.loadingSections.remove(.answers)
+            })
             .replaceError(with: [])
             .assign(to: \.answersSummary, on: self)
             .store(in: &subscriptions)
@@ -103,9 +119,9 @@ extension ViewManager {
                 case .account(let subsection):
                     switch subsection {
                     case .messages:
-                        self?.loadingSections = [.inbox]
+                        self?.loadingSections.insert(.inbox)
                     case .activity:
-                        self?.loadingSections = [.activity]
+                        self?.loadingSections.insert(.activity)
                     case .profile:
                         return /// ⚠️ We already have current user informations in `User` object.
                     }
@@ -138,10 +154,10 @@ extension ViewManager {
                     switch action {
                     case .checkAuthentication:
                         self?.authenticationManager.checkTokenSubject.send(())
-                        self?.loadingSections = [.account]
+                        self?.loadingSections.insert(.account)
                     case .signIn(let url):
                         self?.authenticationManager.parseTokenSubject.send(url)
-                        self?.loadingSections = [.account]
+                        self?.loadingSections.insert(.account)
                     case .logOut:
                         self?.authenticationManager.removeUserSubject.send(())
                     }
@@ -153,7 +169,7 @@ extension ViewManager {
         
         authenticationManager.addUserPublisher
             .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections = []
+                self?.loadingSections.remove(.account)
             })
             .assign(to: \.user, on: self)
             .store(in: &subscriptions)
@@ -162,24 +178,6 @@ extension ViewManager {
 
 // MARK: - Webservices call
 extension ViewManager {
-    private func fetchData() {
-        let tagsPublisher = fetchTags()
-        let questionsPublisher = fetchQuestions(endpoint: .questions(subendpoint: .questionsByFilters(tags: [],
-                                                                                                     trending: .votes,
-                                                                                                     status: .active)))
-        
-        Publishers.CombineLatest(tagsPublisher, questionsPublisher)
-            .handleEvents(receiveSubscription: { [weak self] _ in
-                self?.loadingSections = [.tags, .questions]
-            }, receiveOutput: { [weak self] _ in
-                self?.loadingSections = []
-            })
-            .sink(receiveValue: { [weak self] tags, questions in
-                self?.tags = tags
-                self?.questionsSummary = questions
-            }).store(in: &subscriptions)
-    }
-    
     private func fetchTags() -> AnyPublisher<[Tag], Never> {
         return serviceManager.fetch(endpoint: .tags, model: Tags.self)
             .map { $0.items.map(\.name).map { Tag(name: $0) } }
@@ -273,7 +271,7 @@ extension ViewManager {
             .switchToLatest()
             .replaceError(with: [])
             .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections = []
+                self?.loadingSections.remove(.inbox)
             })
             .assign(to: \.inbox, on: self)
             .store(in: &subscriptions)
@@ -339,20 +337,20 @@ extension ViewManager {
         case let .questions(subsection, status):
             switch subsection {
             case .trending:
-                loadingSections = [.questions]
+                loadingSections.insert(.questions)
             case .tag(let tag):
                 if status == .active {
                     tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
                 }
-                loadingSections = [.questions]
+                loadingSections.insert(.questions)
             case .search:
                 tags.forEach { $0.isFavorite = false }
-                loadingSections = [.questions]
+                loadingSections.insert(.questions)
             }
         case .answers(let question, _):
             questionsSummary.first(where: \.isSelected)?.setSelected(false)
             questionsSummary.first(where: { $0.id == question.id })?.setSelected(true)
-            loadingSections = [.answers]
+            loadingSections.insert(.answers)
         default:
             break
         }

@@ -34,6 +34,7 @@ struct AccountSectionView: View {
                 }
                 .cornerRadius(5.0)
                 .buttonStyle(BorderlessButtonStyle())
+                .padding(.trailing)
                 .onHover { hovered in
                     withAnimation {
                         isLogoutHovered = hovered

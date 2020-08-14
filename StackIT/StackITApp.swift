@@ -13,7 +13,7 @@ struct StackITApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AppView()
+            SideBarView()
                 .environmentObject(viewManager)
                 .onOpenURL { url in
                     viewManager.authenticationSubject.send(.authentication(action: .signIn(url: url)))

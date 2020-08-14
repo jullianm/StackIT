@@ -32,6 +32,7 @@ enum SectionStatus: Equatable {
 }
 
 enum AppSection: Equatable {
+    case tags
     case questions(subsection: SubSection, SectionStatus)
     case answers(question: QuestionsSummary, SectionStatus)
     case account(subsection: AccountSection)
