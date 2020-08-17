@@ -25,6 +25,9 @@ class QuestionsSummary: Identifiable, Equatable {
     var authorImage: String
     var comments: [CommentsSummary]
     var isSelected = false
+    var isNoResultFound: Bool {
+        return title.isEmpty && body.isEmpty
+    }
     
     init(questionId: String, body: String, lastActivityDate: String, title: String, tags: [String], score: String, views: String, answers: String, hasAcceptedAnswer: Bool, isAnswered: Bool, authorName: String, authorReputation: String, authorImage: String, comments: [CommentsSummary], isClosed: Bool) {
         self.questionId = questionId
@@ -77,4 +80,6 @@ extension QuestionsSummary {
     static let placeholders: [QuestionsSummary] = Array(0...13).map { _ in
         return QuestionsSummary(from: Question.placeholder, comments: [])
     }
+    
+    static let empty = [QuestionsSummary(questionId: "", body: "", lastActivityDate: "", title: "", tags: [], score: "", views: "", answers: "", hasAcceptedAnswer: true, isAnswered: true, authorName: "", authorReputation: "", authorImage: "", comments: [], isClosed: true)]
 }

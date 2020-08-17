@@ -19,10 +19,14 @@ final class NetworkManager: ServiceManager {
     private var cache: [CacheID: Any] = [:]
     
     func fetch<T: Decodable>(endpoint: Endpoint, model: T.Type) -> AnyPublisher<T, Error> {
-        if let value = cache[endpoint.cacheID] as? T {
-            return Just(value)
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
+        if endpoint.status == .refreshing {
+            cache = [:]
+        } else {
+            if let value = cache[endpoint.cacheID] as? T {
+                return Just(value)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+            }
         }
         
         guard let url = endpoint.url else {

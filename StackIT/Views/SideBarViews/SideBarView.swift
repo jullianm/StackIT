@@ -35,16 +35,17 @@ struct SideBarView: View {
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
-                    
+                    resetAll()
                 } label: {
-                    Image(systemName: "arrow.clockwise")
+                    Image(systemName: "arrow.2.circlepath")
                 }
 
             }
             
             ToolbarItem(placement: .principal) {
                 ZStack(alignment: .trailing) {
-                    TextField("", text: $search, onCommit: {
+                    TextField("", text: $search, onEditingChanged: { text in
+                    }, onCommit: {
                         NSApplication.shared.endEditing()
                         guard !search.isEmpty else { return }
                         self.viewManager.fetchQuestionsSubject.send(.questions(subsection: .search(keywords: search), .active))
@@ -57,6 +58,13 @@ struct SideBarView: View {
                 }.frame(width: 500, height: 30)
             }
         }
+    }
+}
+
+extension SideBarView {
+    private func resetAll() {
+        viewManager.resetAllSubject.send()
+        search = .init()
     }
 }
 

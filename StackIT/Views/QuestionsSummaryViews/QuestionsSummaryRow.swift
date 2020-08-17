@@ -9,17 +9,17 @@ import SwiftUI
 
 struct QuestionSummaryRow: View {
     var questionSummary: QuestionsSummary
-    var isSelected: Bool
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack(alignment: .top, spacing: 30) {
+            HStack(alignment: .top) {
                 VStack(alignment: .leading) {
                     Text(questionSummary.title)
                     
                     Text(questionSummary.tags.joined(separator: ", "))
                         .foregroundColor(Color.gray)
                         .font(.caption)
+                        .opacity(questionSummary.isNoResultFound ? 0: 1)
                     
                     Spacer()
                     
@@ -27,6 +27,7 @@ struct QuestionSummaryRow: View {
                         .foregroundColor(Color.gray)
                         .italic()
                         .font(.caption)
+                        .opacity(questionSummary.isNoResultFound ? 0: 1)
                 }
                 
                 Spacer()
@@ -40,7 +41,8 @@ struct QuestionSummaryRow: View {
                             Text(questionSummary.score).font(.headline)
                             Text("votes").font(.subheadline)
                         }
-                    }.frame(width : 70, height: 50)
+                    }
+                    .frame(width : 70, height: 50)
                     .padding(.bottom, 5)
                     
                     HStack(spacing: 8.5) {
@@ -52,10 +54,16 @@ struct QuestionSummaryRow: View {
                         Image(systemName: "eye.fill")
                         Text(questionSummary.views)
                     }
-                }
-            }
+                }.opacity(questionSummary.isNoResultFound ? 0: 1)
+            }.padding(.top, 10)
             
-            Divider()
+            Divider().opacity(questionSummary.isNoResultFound ? 0: 1)
         }
+    }
+}
+
+struct QuestionsSummaryRow_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
     }
 }

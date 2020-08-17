@@ -26,6 +26,15 @@ enum Endpoint {
         return components.url
     }
     
+    var status: SectionStatus {
+        switch self {
+        case .questions(let subendpoint):
+            return subendpoint.status
+        default:
+            return .active
+        }
+    }
+    
     var urlRequest: URLRequest? {
         var components = URLComponents()
         components.scheme = "https"
@@ -160,7 +169,16 @@ enum Endpoint {
 enum QuestionsEndpoint {
     case questionsByFilters(tags: [Tag], trending: Trending, status: SectionStatus)
     case questionsByIds(_ ids: String)
-    case questionsByKeywords(_ keywords: String)
+    case questionsByKeywords(_ keywords: String, status: SectionStatus)
+    
+    var status: SectionStatus {
+        switch self {
+        case .questionsByFilters(_, _, let status):
+            return status
+        default:
+            return .active
+        }
+    }
     
     var path: String {
         switch self {
@@ -188,7 +206,7 @@ enum QuestionsEndpoint {
             }
             
             return items
-        case let .questionsByKeywords(keywords):
+        case let .questionsByKeywords(keywords, _):
             return [
                 .init(name: "order", value: "desc"),
                 .init(name: "sort", value: "relevance"),

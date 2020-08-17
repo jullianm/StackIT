@@ -38,12 +38,23 @@ enum AppSection: Equatable {
     case account(subsection: AccountSection)
     case authentication(action: AuthenticationAction)
     
-    func updatePaging() -> Self {
+    func enablePaging() -> Self {
         switch self {
         case .questions(let subsection, let status):
             return .questions(subsection: subsection, .paging(count: status.pageCount + 1))
         case .answers(let question, let status):
             return .answers(question: question, status.updatePagingCount())
+        default:
+            return self
+        }
+    }
+    
+    func enableRefresh() -> Self {
+        switch self {
+        case .questions(let subsection, _):
+            return .questions(subsection: subsection, .refreshing)
+        case .answers(let question, _):
+            return .answers(question: question, .refreshing)
         default:
             return self
         }

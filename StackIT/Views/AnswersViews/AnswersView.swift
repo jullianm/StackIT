@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AnswersView: View {
     @EnvironmentObject var viewManager: ViewManager
+    var questionSummary: QuestionsSummary
     
     var body: some View {
         ZStack {
@@ -30,7 +31,7 @@ struct AnswersView: View {
                 ForEach(viewManager.answersSummary, id: \.id) { answer in
                     AnswerRow(imageManager: .init(answer.authorImage), answer: answer)
                 }
-            }.blur(radius: viewManager.loadingSections.contains(.answers) ? 2.0: 0)
+            }
             
             if viewManager.loadingSections.contains(.answers) {
                 ProgressView()
@@ -51,12 +52,10 @@ struct AnswersView: View {
                     Spacer()
                 }
             }
-        }.frame(minWidth: 500, idealWidth: 550, maxWidth: .infinity)
-    }
-}
-
-struct AnswersView_Previews: PreviewProvider {
-    static var previews: some View {
-        AnswersView(viewManager: .init())
+        }
+        .frame(minWidth: 500, idealWidth: 550, maxWidth: .infinity)
+        .onAppear {
+            viewManager.fetchAnswersSubject.send(.answers(question: questionSummary, .active))
+        }
     }
 }

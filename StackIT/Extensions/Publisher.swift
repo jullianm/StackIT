@@ -17,6 +17,11 @@ extension Publisher where Output == [QuestionsSummary], Failure == Never {
                 
                 object.loadingSections = []
                 
+                guard output.count > 0 else {
+                    object.questionsSummary = QuestionsSummary.empty
+                    return
+                }
+                
                 switch status {
                 case .paging:
                     object.questionsSummary.append(contentsOf: output)

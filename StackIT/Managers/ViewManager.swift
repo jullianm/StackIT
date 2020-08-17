@@ -29,6 +29,7 @@ class ViewManager: ObservableObject {
     var cachedQuestions: [QuestionsSummary] = []
 
     /// Subjects properties
+    var resetAllSubject = PassthroughSubject<Void, Never>()
     var fetchTagsSubject = PassthroughSubject<AppSection, Never>()
     var fetchQuestionsSubject = CurrentValueSubject<AppSection, Never>(.questions)
     var fetchAnswersSubject = CurrentValueSubject<AppSection, Never>(.questions)
@@ -51,6 +52,16 @@ class ViewManager: ObservableObject {
         bindFetchAnswers()
         bindAuthentication()
         bindFetchAccount()
+        bindResetAll()
+    }
+    
+    private func bindResetAll() {
+        resetAllSubject
+            .sink { [weak self] _ in
+                self?.answersSummary = []
+                self?.tags.forEach { $0.isFavorite = false }
+                self?.fetchQuestionsSubject.send(AppSection.questions)
+            }.store(in: &subscriptions)
     }
     
     func updateQuestionsFilter(_ filter: QuestionsFilter) {
@@ -59,10 +70,12 @@ class ViewManager: ObservableObject {
         } else {
             questionsFilter.insert(filter)
         }
-
-        questionsSummary = questionsFilter.isEmpty ?
+        
+        let filteredQuestions = questionsFilter.isEmpty ?
             cachedQuestions:
             cachedQuestions.filtered(by: questionsFilter)
+        
+        questionsSummary = filteredQuestions.isEmpty ? QuestionsSummary.empty: filteredQuestions
     }
 }
 
@@ -88,6 +101,7 @@ extension ViewManager {
         fetchQuestionsSubject
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
             .map(resolveQuestionsEndpointCall)
             .switchToLatest()
             .assign(to: \.questionsSummary, on: self)
@@ -291,10 +305,10 @@ extension ViewManager {
 extension ViewManager {
     private func resolveQuestionsEndpointCall(from output: AppSection) -> AnyPublisher<[QuestionsSummary], Never> {
         switch output {
-        case .questions(let subsection, _):
+        case .questions(let subsection, let status):
             switch subsection {
             case .search(let keywords):
-                return serviceManager.fetch(endpoint: .questions(subendpoint: .questionsByKeywords(keywords)),
+                return serviceManager.fetch(endpoint: .questions(subendpoint: .questionsByKeywords(keywords, status: status)),
                                             model: Search.self)
                     .map { $0.items.map(\.questionId).joinedString() }
                     .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
@@ -323,34 +337,38 @@ extension ViewManager {
             case .tag:
                 return .questions(subendpoint: .questionsByFilters(tags: tags.filter(\.isFavorite), trending: .votes, status: status))
             case let .search(keywords):
-                return .questions(subendpoint: .questionsByKeywords(keywords))
+                return .questions(subendpoint: .questionsByKeywords(keywords, status: status))
             }
         case let .answers(question, _):
             return .answers(subendpoint: .answersByQuestionId(question.questionId))
         default:
-            fatalError()
+            assertionFailure("⚠️ We should not fall into that case.")
+            return .tags
         }
     }
     
     private func handleOutputSectionEvent(output: AppSection) {
         switch output {
         case let .questions(subsection, status):
-            switch subsection {
-            case .trending:
-                loadingSections.insert(.questions)
-            case .tag(let tag):
-                if status == .active {
-                    tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
-                }
-                loadingSections.insert(.questions)
-            case .search:
-                tags.forEach { $0.isFavorite = false }
-                loadingSections.insert(.questions)
-            }
+            handleQuestionsSubsection(subsection, status: status)
         case .answers(let question, _):
             questionsSummary.first(where: \.isSelected)?.setSelected(false)
             questionsSummary.first(where: { $0.id == question.id })?.setSelected(true)
             loadingSections.insert(.answers)
+        default:
+            break
+        }
+    }
+    
+    private func handleQuestionsSubsection(_ subsection: SubSection, status: SectionStatus) {
+        if status == .active { answersSummary = [] }
+        loadingSections.insert(.questions)
+        
+        switch subsection {
+        case .tag(let tag) where status == .active:
+            tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
+        case .search:
+            tags.forEach { $0.isFavorite = false }
         default:
             break
         }
