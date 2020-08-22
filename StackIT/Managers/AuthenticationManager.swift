@@ -51,6 +51,7 @@ class AuthenticationManager {
                 return self.getUser(token: token)
             }
             .switchToLatest()
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: addUserSubject.send)
             .store(in: &subscriptions)
     }

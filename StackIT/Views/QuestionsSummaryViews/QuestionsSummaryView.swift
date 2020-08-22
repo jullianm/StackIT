@@ -11,14 +11,13 @@ import AppKit
 struct QuestionsSummaryView: View {
     @EnvironmentObject var viewManager: ViewManager
     @State private var isActive = true
+    @State private var selectedIndex: UUID?
 
     var body: some View {
-        NavigationView {
-            VStack {
-                filterView
-                listView
-            }.frame(width: 500)
-        }.navigationTitle(" ")
+        VStack {
+            filterView
+            listView
+        }.frame(width: 500)
     }
 }
 
@@ -52,9 +51,12 @@ extension QuestionsSummaryView {
     var listView: some View {
         List {
             ForEach(viewManager.questionsSummary, id: \.id) { questionSummary in
-                NavigationLink(destination: AnswersView(questionSummary: questionSummary)) {
-                    QuestionSummaryRow(questionSummary: questionSummary)
-                }.buttonStyle(PlainButtonStyle())
+                QuestionSummaryRow(questionSummary: questionSummary)
+                    .background(selectedIndex == questionSummary.id ? Color.white.opacity(0.3): Color.clear)
+                    .onTapGesture {
+                        selectedIndex = questionSummary.id
+                        viewManager.fetchAnswersSubject.send(.answers(question: questionSummary, .active))
+                    }
             }.redacted(reason: viewManager.loadingSections.contains(.questions) ? .placeholder: [])
             
             if viewManager.showLoadMore && viewManager.questionsFilter.isEmpty {

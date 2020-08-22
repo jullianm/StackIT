@@ -35,7 +35,7 @@ struct QuestionSummaryRow: View {
                 VStack(alignment:.leading, spacing: 7) {
                     ZStack {
                         Rectangle()
-                            .foregroundColor(Color("StackITGreen"))
+                            .foregroundColor(Color.blue.opacity(0.5))
                             .cornerRadius(10.0)
                         VStack {
                             Text(questionSummary.score).font(.headline)
@@ -58,7 +58,7 @@ struct QuestionSummaryRow: View {
             }.padding(.top, 10)
             
             Divider().opacity(questionSummary.isNoResultFound ? 0: 1)
-        }
+        }.contentShape(Rectangle())
     }
 }
 

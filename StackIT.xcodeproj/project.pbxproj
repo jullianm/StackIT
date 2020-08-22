@@ -43,7 +43,6 @@
 		C946AAB124E17A0C00DF3A13 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C946AAB024E17A0C00DF3A13 /* Array.swift */; };
 		C946AAB324E17A3300DF3A13 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C946AAB224E17A3300DF3A13 /* URL.swift */; };
 		C946AAB524E17A5800DF3A13 /* NS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C946AAB424E17A5800DF3A13 /* NS.swift */; };
-		C946AAB724E1868E00DF3A13 /* StackConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = C946AAB624E1868E00DF3A13 /* StackConfig.plist */; };
 		C95942C124CC7CE5001FA9FA /* Questions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942C024CC7CE5001FA9FA /* Questions.swift */; };
 		C95942C824CCBD92001FA9FA /* AppSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942C724CCBD92001FA9FA /* AppSection.swift */; };
 		C95942CA24CD9E56001FA9FA /* Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942C924CD9E56001FA9FA /* Tags.swift */; };
@@ -54,6 +53,7 @@
 		C95942D424CE4321001FA9FA /* Answers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942D324CE4321001FA9FA /* Answers.swift */; };
 		C95942D824CE456A001FA9FA /* AnswersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942D724CE456A001FA9FA /* AnswersView.swift */; };
 		C95942E224D1026C001FA9FA /* Webview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942E124D1026C001FA9FA /* Webview.swift */; };
+		C96EA6BA24ED498E00C64A32 /* StackConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = C96EA6B924ED498E00C64A32 /* StackConfig.plist */; };
 		C98AFBE924CC65E2005BAD7A /* StackITApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98AFBE824CC65E2005BAD7A /* StackITApp.swift */; };
 		C98AFBED24CC65E7005BAD7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */; };
 		C98AFBF024CC65E7005BAD7A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C98AFBEF24CC65E7005BAD7A /* Preview Assets.xcassets */; };
@@ -106,7 +106,6 @@
 		C946AAB024E17A0C00DF3A13 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		C946AAB224E17A3300DF3A13 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		C946AAB424E17A5800DF3A13 /* NS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NS.swift; sourceTree = "<group>"; };
-		C946AAB624E1868E00DF3A13 /* StackConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = StackConfig.plist; sourceTree = "<group>"; };
 		C95942C024CC7CE5001FA9FA /* Questions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Questions.swift; sourceTree = "<group>"; };
 		C95942C724CCBD92001FA9FA /* AppSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSection.swift; sourceTree = "<group>"; };
 		C95942C924CD9E56001FA9FA /* Tags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tags.swift; sourceTree = "<group>"; };
@@ -117,6 +116,7 @@
 		C95942D324CE4321001FA9FA /* Answers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Answers.swift; sourceTree = "<group>"; };
 		C95942D724CE456A001FA9FA /* AnswersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswersView.swift; sourceTree = "<group>"; };
 		C95942E124D1026C001FA9FA /* Webview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webview.swift; sourceTree = "<group>"; };
+		C96EA6B924ED498E00C64A32 /* StackConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = StackConfig.plist; sourceTree = "<group>"; };
 		C98AFBE524CC65E2005BAD7A /* StackIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StackIT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C98AFBE824CC65E2005BAD7A /* StackITApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackITApp.swift; sourceTree = "<group>"; };
 		C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -264,8 +264,8 @@
 				C95942DB24CE492E001FA9FA /* Views */,
 				C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */,
 				C98AFBF124CC65E7005BAD7A /* Info.plist */,
+				C96EA6B924ED498E00C64A32 /* StackConfig.plist */,
 				C98AFBF224CC65E7005BAD7A /* StackIT.entitlements */,
-				C946AAB624E1868E00DF3A13 /* StackConfig.plist */,
 				C98AFBEE24CC65E7005BAD7A /* Preview Content */,
 			);
 			path = StackIT;
@@ -409,7 +409,7 @@
 				C9FA32A824DAE0C40041DE48 /* Search.json in Resources */,
 				C95942D224CE425F001FA9FA /* Answers.json in Resources */,
 				C95942D024CDACF8001FA9FA /* Questions.json in Resources */,
-				C946AAB724E1868E00DF3A13 /* StackConfig.plist in Resources */,
+				C96EA6BA24ED498E00C64A32 /* StackConfig.plist in Resources */,
 				C90B509524E037C1002DFA55 /* Posts.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -527,7 +527,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -582,7 +582,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -608,7 +608,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Croissants.StackIT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -632,7 +632,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Croissants.StackIT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

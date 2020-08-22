@@ -14,23 +14,22 @@ struct SideBarView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
-                NavigationLink(destination: QuestionsSummaryView(),
-                               isActive: $isActive,
-                               label: EmptyView.init).buttonStyle(PlainButtonStyle())
-                
-                ScrollView(showsIndicators: false) {
-                    AccountSectionView()
-                    TrendingSectionView()
-                    TagSectionView()
-                }
-                .padding(.top, 5)
-                .frame(minWidth: 250, maxWidth: 250, minHeight: 650, maxHeight: .infinity)
-                .onAppear {
-                    viewManager.fetchTagsSubject.send(.tags)
-                }
+            ScrollView(showsIndicators: false) {
+                AccountSectionView()
+                TrendingSectionView()
+                TagSectionView()
             }
+            .padding(.top, 5)
+            .frame(minWidth: 250, maxWidth: 250, minHeight: 650, maxHeight: .infinity)
+            .onAppear {
+                viewManager.fetchTagsSubject.send(.tags)
+            }
+            
+            QuestionsSummaryView()
+            
+            AnswersView()
         }
+        .listStyle(SidebarListStyle())
         .navigationTitle(String.init())
         .toolbar {
             ToolbarItem(placement: .navigation) {
@@ -39,7 +38,6 @@ struct SideBarView: View {
                 } label: {
                     Image(systemName: "arrow.2.circlepath")
                 }
-
             }
             
             ToolbarItem(placement: .principal) {
@@ -59,9 +57,7 @@ struct SideBarView: View {
             }
         }
     }
-}
-
-extension SideBarView {
+    
     private func resetAll() {
         viewManager.resetAllSubject.send()
         search = .init()

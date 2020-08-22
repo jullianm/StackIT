@@ -16,7 +16,6 @@ class ViewManager: ObservableObject {
     @Published var answersSummary: [AnswersSummary] = []
     @Published var loadingSections: Set<LoadingSection> = []
     @Published var showLoadMore: Bool = false
-    @Published var isAuthenticated: Bool = false
     @Published var user: UserSummary?
     @Published var inbox: [UserMessageSummary] = []
 
@@ -101,7 +100,7 @@ extension ViewManager {
         fetchQuestionsSubject
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
             .map(resolveQuestionsEndpointCall)
             .switchToLatest()
             .assign(to: \.questionsSummary, on: self)

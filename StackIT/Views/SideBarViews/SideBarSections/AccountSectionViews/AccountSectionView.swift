@@ -111,7 +111,7 @@ extension AccountSectionView {
                                         messageSummary: messageSummary)
                     }
                     .listRowBackground(Color.stackITCode)
-                }
+                }.id(UUID())
                 
                 if viewManager.loadingSections.contains(.inbox) {
                     VStack {
