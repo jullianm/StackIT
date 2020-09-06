@@ -26,7 +26,7 @@ enum Endpoint {
         return components.url
     }
     
-    var status: SectionStatus {
+    var sectionStatus: SectionStatus {
         switch self {
         case .questions(let subendpoint):
             return subendpoint.status
@@ -60,15 +60,24 @@ enum Endpoint {
             switch subendpoint {
             case let .questionsByFilters(tags, trending, status):
                 return tags.map(\.name).joined(separator: ";") + "&" + trending.rawValue + status.pageCount.string()
-            default:
-                return .init()
+            case .questionsByIds(let ids):
+                return ids
+            case .questionsByKeywords(let keywords, _):
+                return keywords
             }
         case let .answers(subendpoint):
             switch subendpoint {
             case .answersByQuestionId(let questionId):
-                return questionId
-            default:
-                return .init()
+                return subendpoint.path + questionId
+            case .answersByIds(let ids):
+                return subendpoint.path + ids
+            }
+        case let .comments(subendpoint):
+            switch subendpoint {
+            case .commentsByAnswersIds(let ids),
+                 .commentsByIds(let ids),
+                 .commentsByQuestionsIds(let ids):
+                return subendpoint.path + ids
             }
         default:
             return .init()

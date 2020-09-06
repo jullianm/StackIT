@@ -19,7 +19,7 @@ final class NetworkManager: ServiceManager {
     private var cache: [CacheID: Any] = [:]
     
     func fetch<T: Decodable>(endpoint: Endpoint, model: T.Type) -> AnyPublisher<T, Error> {
-        if endpoint.status == .refreshing {
+        if endpoint.sectionStatus == .refreshing {
             cache = [:]
         } else {
             if let value = cache[endpoint.cacheID] as? T {

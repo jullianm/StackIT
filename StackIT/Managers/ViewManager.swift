@@ -233,10 +233,11 @@ extension ViewManager {
                 guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
                 
                 let ids = answers.items.map(\.answerId).joinedString()
-                let commentsPublisher = self.serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByQuestionsIds(ids)), model: Comments.self)
+                let commentsPublisher = self.serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByAnswersIds(ids)), model: Comments.self)
                 let answersPublisher = Just(answers).setFailureType(to: Error.self).eraseToAnyPublisher()
                 
-                return Publishers.CombineLatest(answersPublisher, commentsPublisher).eraseToAnyPublisher()
+                return Publishers.CombineLatest(answersPublisher,
+                                                commentsPublisher).eraseToAnyPublisher()
             }
             .switchToLatest()
             .map { (answers, comments) -> [AnswersSummary] in
