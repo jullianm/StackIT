@@ -61,6 +61,7 @@ struct SideBarView: View {
     private func resetAll() {
         viewManager.resetAllSubject.send()
         search = .init()
+        print("test")
     }
 }
 
