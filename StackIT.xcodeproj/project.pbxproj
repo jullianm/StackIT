@@ -54,6 +54,9 @@
 		C95942D824CE456A001FA9FA /* AnswersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942D724CE456A001FA9FA /* AnswersView.swift */; };
 		C95942E224D1026C001FA9FA /* Webview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95942E124D1026C001FA9FA /* Webview.swift */; };
 		C96EA6BA24ED498E00C64A32 /* StackConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = C96EA6B924ED498E00C64A32 /* StackConfig.plist */; };
+		C9730A15250E4DC4004D95BD /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A14250E4DC4004D95BD /* ProfileView.swift */; };
+		C9730A17250E5CA4004D95BD /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A16250E5CA4004D95BD /* InboxView.swift */; };
+		C9730A19250E6236004D95BD /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A18250E6236004D95BD /* ActivityView.swift */; };
 		C98AFBE924CC65E2005BAD7A /* StackITApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98AFBE824CC65E2005BAD7A /* StackITApp.swift */; };
 		C98AFBED24CC65E7005BAD7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */; };
 		C98AFBF024CC65E7005BAD7A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C98AFBEF24CC65E7005BAD7A /* Preview Assets.xcassets */; };
@@ -117,6 +120,9 @@
 		C95942D724CE456A001FA9FA /* AnswersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswersView.swift; sourceTree = "<group>"; };
 		C95942E124D1026C001FA9FA /* Webview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webview.swift; sourceTree = "<group>"; };
 		C96EA6B924ED498E00C64A32 /* StackConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = StackConfig.plist; sourceTree = "<group>"; };
+		C9730A14250E4DC4004D95BD /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		C9730A16250E5CA4004D95BD /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
+		C9730A18250E6236004D95BD /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		C98AFBE524CC65E2005BAD7A /* StackIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StackIT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C98AFBE824CC65E2005BAD7A /* StackITApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackITApp.swift; sourceTree = "<group>"; };
 		C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -175,6 +181,9 @@
 			children = (
 				C946AA8624E167C600DF3A13 /* AccountSectionView.swift */,
 				C946AA9124E169BA00DF3A13 /* InboxMessageRow.swift */,
+				C9730A14250E4DC4004D95BD /* ProfileView.swift */,
+				C9730A16250E5CA4004D95BD /* InboxView.swift */,
+				C9730A18250E6236004D95BD /* ActivityView.swift */,
 			);
 			path = AccountSectionViews;
 			sourceTree = "<group>";
@@ -422,6 +431,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C90B509D24E054FC002DFA55 /* UserSummary.swift in Sources */,
+				C9730A17250E5CA4004D95BD /* InboxView.swift in Sources */,
 				C946AA9E24E16E4B00DF3A13 /* AnswerRow.swift in Sources */,
 				C946AA8A24E1680400DF3A13 /* TrendingSectionView.swift in Sources */,
 				C913CA9E24DF3B2800A9BFA4 /* User.swift in Sources */,
@@ -453,6 +463,7 @@
 				C946AAA124E1793F00DF3A13 /* String.swift in Sources */,
 				C90B509924E039A3002DFA55 /* Inbox.swift in Sources */,
 				C90B509324E036FD002DFA55 /* Posts.swift in Sources */,
+				C9730A15250E4DC4004D95BD /* ProfileView.swift in Sources */,
 				C946AAAB24E1798600DF3A13 /* Bundle.swift in Sources */,
 				C95942D424CE4321001FA9FA /* Answers.swift in Sources */,
 				C90B509B24E04591002DFA55 /* UserMessageSummary.swift in Sources */,
@@ -460,6 +471,7 @@
 				C9A1DBE124D8B50E00464D32 /* ImageManager.swift in Sources */,
 				C946AAA324E1794B00DF3A13 /* Int.swift in Sources */,
 				C946AAAD24E1798D00DF3A13 /* Double.swift in Sources */,
+				C9730A19250E6236004D95BD /* ActivityView.swift in Sources */,
 				C913CA8F24DC2BCD00A9BFA4 /* Search.swift in Sources */,
 				C946AA8524E0DF6900DF3A13 /* MessageStatus.swift in Sources */,
 				C98AFBFE24CC6604005BAD7A /* Endpoint.swift in Sources */,

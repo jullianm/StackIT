@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct AccountSectionView: View {
     @EnvironmentObject var viewManager: ViewManager
     @Environment(\.openURL) private var openURL
     @State private var isLogoutHovered = false
     @State private var showProfileSheet = false
+    @State private var accountSection: AccountSection?
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -55,16 +57,37 @@ struct AccountSectionView: View {
                             .padding(.leading)
                             .padding(.bottom, 5)
                             .onTapGesture {
-                                showProfileSheet = true
+                                accountSection = section
                                 viewManager.fetchAccountSectionSubject.send(.account(subsection: section))
                             }
                     }
                 }
                 .redacted(reason: viewManager.loadingSections.contains(.account) ? .placeholder: [])
-                .popover(isPresented: $showProfileSheet, arrowEdge: .leading) {
-                    ZStack {
-                        Color.stackITCode
-                        inboxSection
+                .popover(item: $accountSection, arrowEdge: .leading) { section in
+                    switch section {
+                    case .activity:
+                        ZStack {
+                            Color.stackITCode
+                            ActivityView {
+                                accountSection = nil
+                            }
+                        }
+                    case .messages:
+                        ZStack {
+                            Color.stackITCode
+                            InboxView {
+                                accountSection = nil
+                            }
+                        }
+                    case .profile:
+                        ZStack {
+                            Color.stackITCode
+                            let imageStr = viewManager.user?.profileImage ?? .init()
+                            ProfileView(imageManager: .init(imageStr)) {
+                                accountSection = nil
+                            }
+                        }
+                    
                     }
                 }
             } else {
@@ -88,46 +111,6 @@ struct AccountSectionView: View {
             }
             
         }.padding([.top])
-    }
-}
-
-extension AccountSectionView {
-    var inboxSection: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text("Messages").font(.largeTitle).padding(.leading)
-                Spacer()
-                Button {
-                    showProfileSheet = false
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }.buttonStyle(BorderlessButtonStyle())
-            }.padding(.bottom)
-            
-            ZStack {
-                List {
-                    ForEach(viewManager.inbox, id: \.id) { messageSummary in
-                        InboxMessageRow(imageManager: .init(messageSummary.profileImage),
-                                        messageSummary: messageSummary)
-                    }
-                    .listRowBackground(Color.stackITCode)
-                }.id(UUID())
-                
-                if viewManager.loadingSections.contains(.inbox) {
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                        Spacer()
-                    }
-                }
-            }
-        }
-        .frame(width: 800, height: 500)
-        .padding()
     }
 }
 

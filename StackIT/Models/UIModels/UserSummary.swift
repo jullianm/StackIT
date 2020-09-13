@@ -6,6 +6,32 @@
 //
 
 import Foundation
+import struct SwiftUI.Color
+
+
+enum BadgeType: Hashable {
+    case bronze(value: Int)
+    case silver(value: Int)
+    case gold(value: Int)
+    
+    var color: Color {
+        switch self {
+        case .bronze:
+            return Color("StackITBronze")
+        case .gold:
+            return Color("StackITGold")
+        case .silver:
+            return Color("StackITSilver")
+        }
+    }
+    
+    var value: String {
+        switch self {
+        case .bronze(let value), .gold(let value), .silver(let value):
+            return value.string()
+        }
+    }
+}
 
 struct UserSummary {
     let accountId: Int
@@ -14,7 +40,11 @@ struct UserSummary {
     let location: String
     let link, profileImage: String
     let displayName: String
-    let bronze, silver, gold: Int
+    private let bronze, silver, gold: Int
+    
+    var badges: [BadgeType] {
+        return [.bronze(value: bronze), .silver(value: silver), .gold(value: gold)]
+    }
 }
 
 extension UserSummary {

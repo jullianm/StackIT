@@ -99,10 +99,14 @@ enum Trending: String, CaseIterable {
     }
 }
 
-enum AccountSection: CaseIterable {
+enum AccountSection: CaseIterable, Identifiable {
     case profile
     case messages
     case activity
+    
+    var id: UUID {
+        UUID()
+    }
     
     var title: String {
         switch self {
@@ -111,7 +115,7 @@ enum AccountSection: CaseIterable {
         case .messages:
             return "Inbox"
         case .activity:
-            return "Historic"
+            return "Activity"
         }
     }
 }
