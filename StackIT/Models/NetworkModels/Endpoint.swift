@@ -181,7 +181,7 @@ enum Endpoint {
         case .inbox:
             return Bundle.main.data(from: "Inbox.json")
         case .timeline:
-            return Bundle.main.data(from: "Activity.json")
+            return Bundle.main.data(from: "Timeline.json")
         }
     }
 }
