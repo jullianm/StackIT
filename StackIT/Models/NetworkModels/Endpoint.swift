@@ -15,6 +15,7 @@ enum Endpoint {
     case user(token: String, key: String)
     case posts(token: String, key: String)
     case inbox(token: String, key: String)
+    case timeline(token: String, key: String)
     
     var url: URL? {
         var components = URLComponents()
@@ -104,6 +105,8 @@ enum Endpoint {
             return subendpoint.path
         case .answers(let subendpoint):
             return subendpoint.path
+        case .timeline:
+            return "/2.2/me/timeline"
         }
     }
     
@@ -152,6 +155,12 @@ enum Endpoint {
             return subendpoint.queryItems
         case .comments(let subendpoint):
             return subendpoint.queryItems
+        case .timeline(token: let token, key: let key):
+            return [
+                .init(name: "site", value: "stackoverflow"),
+                .init(name: "access_token", value: token),
+                .init(name: "key", value: key)
+            ]
         }
     }
     
@@ -171,6 +180,8 @@ enum Endpoint {
             return Bundle.main.data(from: "Posts.json")
         case .inbox:
             return Bundle.main.data(from: "Inbox.json")
+        case .timeline:
+            return Bundle.main.data(from: "Activity.json")
         }
     }
 }

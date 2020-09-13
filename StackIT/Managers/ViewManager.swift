@@ -18,6 +18,7 @@ class ViewManager: ObservableObject {
     @Published var showLoadMore: Bool = false
     @Published var user: UserSummary?
     @Published var inbox: [UserMessageSummary] = []
+    @Published var timeline: [TimelineSummary] = []
 
     /// Private properties
     private var serviceManager: ServiceManager
@@ -133,8 +134,8 @@ extension ViewManager {
                     switch subsection {
                     case .messages:
                         self?.loadingSections.insert(.inbox)
-                    case .activity:
-                        self?.loadingSections.insert(.activity)
+                    case .timeline:
+                        self?.loadingSections.insert(.timeline)
                     case .profile:
                         return /// ⚠️ We already have current user informations in `User` object.
                     }
@@ -148,8 +149,8 @@ extension ViewManager {
                     switch subsection {
                     case .messages:
                         self?.fetchInbox()
-                    case .activity:
-                        break /// ⚠️  To do.
+                    case .timeline:
+                        self?.fetchTimeline()
                     case .profile:
                         return /// ⚠️ We already have current user informations in `User` object.
                     }
@@ -298,6 +299,21 @@ extension ViewManager {
                                                      model: Comments.self).map(\.items)
         
         return Publishers.Zip(answersPublisher, commentsPublisher).eraseToAnyPublisher()
+    }
+    
+    private func fetchTimeline() {
+        guard let token = authenticationManager.stackConfig.token else {
+            return
+        }
+        
+        return serviceManager.fetch(endpoint: .timeline(token: token, key: authenticationManager.stackConfig.key), model: Timeline.self)
+            .map { $0.items.map(TimelineSummary.init) }
+            .replaceError(with: [])
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.loadingSections.remove(.timeline)
+            })
+            .assign(to: \.timeline, on: self)
+            .store(in: &subscriptions)
     }
 }
 

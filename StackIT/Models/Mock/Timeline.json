@@ -1,0 +1,116 @@
+{
+  "items": [
+    {
+      "post_id": 47882907,
+      "user_id": 9042825,
+      "timeline_type": "asked",
+      "post_type": "question",
+      "creation_date": 1513672661,
+      "title": "tableview reloadData crashes unexpected found nil while unwrapping optional value"
+    },
+    {
+      "post_id": 47882907,
+      "user_id": 9042825,
+      "timeline_type": "revision",
+      "post_type": "question",
+      "creation_date": 1513672661,
+      "detail": "added 217 characters in body",
+      "title": "tableview reloadData crashes unexpected found nil while unwrapping optional value"
+    },
+    {
+      "comment_id": 82436040,
+      "post_id": 47732903,
+      "user_id": 9042825,
+      "timeline_type": "commented",
+      "post_type": "answer",
+      "creation_date": 1512902140,
+      "detail": "Thanks for your reply and your advices. I will have a look at it. What I did following Paul's answer above seemed to have resolved all the crashes issues.",
+      "title": "UITableView Index Out of Range"
+    },
+    {
+      "comment_id": 82435995,
+      "post_id": 47729801,
+      "user_id": 9042825,
+      "timeline_type": "commented",
+      "post_type": "question",
+      "creation_date": 1512901978,
+      "detail": "thanks for your answer, I guess it explains the fatal error message. I've used an array of struct that contains all my data fetched from the API and used with indexPath to display what I need, thus I don't need the count variable anymore. It seems to work perfectly for the moment!",
+      "title": "UITableView Index Out of Range"
+    },
+    {
+      "badge_id": 3,
+      "post_id": 47729801,
+      "user_id": 9042825,
+      "timeline_type": "badge",
+      "post_type": "question",
+      "creation_date": 1512832231,
+      "detail": "Editor",
+      "title": "UITableView Index Out of Range"
+    },
+    {
+      "post_id": 47729801,
+      "user_id": 9042825,
+      "timeline_type": "asked",
+      "post_type": "question",
+      "creation_date": 1512831218,
+      "title": "UITableView Index Out of Range"
+    },
+    {
+      "post_id": 47729801,
+      "user_id": 9042825,
+      "timeline_type": "revision",
+      "post_type": "question",
+      "creation_date": 1512831218,
+      "detail": "added 211 characters in body",
+      "title": "UITableView Index Out of Range"
+    },
+    {
+      "post_id": 47729801,
+      "user_id": 9042825,
+      "timeline_type": "revision",
+      "post_type": "question",
+      "creation_date": 1512831218,
+      "detail": "edited tags; edited title",
+      "title": "UITableView Index Out of Range"
+    },
+    {
+      "badge_id": 10,
+      "post_id": 47609490,
+      "user_id": 9042825,
+      "timeline_type": "badge",
+      "post_type": "question",
+      "creation_date": 1512288177,
+      "detail": "Scholar",
+      "title": "Swift - JSON Nested Structures get all values with same key names"
+    },
+    {
+      "comment_id": 82191109,
+      "post_id": 47610333,
+      "user_id": 9042825,
+      "timeline_type": "commented",
+      "post_type": "answer",
+      "creation_date": 1512288089,
+      "detail": "Worked perfectly and the code is much more readable! thank you!",
+      "title": "Swift - JSON Nested Structures get all values with same key names"
+    },
+    {
+      "post_id": 47610333,
+      "user_id": 9042825,
+      "timeline_type": "accepted",
+      "post_type": "answer",
+      "creation_date": 1512234221,
+      "title": "Swift - JSON Nested Structures get all values with same key names"
+    },
+    {
+      "post_id": 47609490,
+      "user_id": 9042825,
+      "timeline_type": "asked",
+      "post_type": "question",
+      "creation_date": 1512228805,
+      "title": "Swift - JSON Nested Structures get all values with same key names"
+    }
+  ],
+  "has_more": false,
+  "quota_max": 10000,
+  "quota_remaining": 9998
+}

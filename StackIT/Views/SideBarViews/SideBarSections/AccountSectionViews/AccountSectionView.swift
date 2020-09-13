@@ -65,10 +65,10 @@ struct AccountSectionView: View {
                 .redacted(reason: viewManager.loadingSections.contains(.account) ? .placeholder: [])
                 .popover(item: $accountSection, arrowEdge: .leading) { section in
                     switch section {
-                    case .activity:
+                    case .timeline:
                         ZStack {
                             Color.stackITCode
-                            ActivityView {
+                            TimelineView {
                                 accountSection = nil
                             }
                         }

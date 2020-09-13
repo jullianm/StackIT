@@ -102,7 +102,7 @@ enum Trending: String, CaseIterable {
 enum AccountSection: CaseIterable, Identifiable {
     case profile
     case messages
-    case activity
+    case timeline
     
     var id: UUID {
         UUID()
@@ -114,8 +114,8 @@ enum AccountSection: CaseIterable, Identifiable {
             return "Profile"
         case .messages:
             return "Inbox"
-        case .activity:
-            return "Activity"
+        case .timeline:
+            return "Timeline"
         }
     }
 }
@@ -132,7 +132,7 @@ enum LoadingSection {
     case answers
     case account
     case inbox
-    case activity
+    case timeline
 }
 
 class Tag: Comparable {

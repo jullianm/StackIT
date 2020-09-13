@@ -56,7 +56,10 @@
 		C96EA6BA24ED498E00C64A32 /* StackConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = C96EA6B924ED498E00C64A32 /* StackConfig.plist */; };
 		C9730A15250E4DC4004D95BD /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A14250E4DC4004D95BD /* ProfileView.swift */; };
 		C9730A17250E5CA4004D95BD /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A16250E5CA4004D95BD /* InboxView.swift */; };
-		C9730A19250E6236004D95BD /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A18250E6236004D95BD /* ActivityView.swift */; };
+		C9730A19250E6236004D95BD /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A18250E6236004D95BD /* TimelineView.swift */; };
+		C9730A1B250ECFA8004D95BD /* Timeline.json in Resources */ = {isa = PBXBuildFile; fileRef = C9730A1A250ECFA8004D95BD /* Timeline.json */; };
+		C9730A1D250ECFCE004D95BD /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A1C250ECFCE004D95BD /* Timeline.swift */; };
+		C9730A1F250ED02F004D95BD /* TimelineSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9730A1E250ED02F004D95BD /* TimelineSummary.swift */; };
 		C98AFBE924CC65E2005BAD7A /* StackITApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98AFBE824CC65E2005BAD7A /* StackITApp.swift */; };
 		C98AFBED24CC65E7005BAD7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */; };
 		C98AFBF024CC65E7005BAD7A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C98AFBEF24CC65E7005BAD7A /* Preview Assets.xcassets */; };
@@ -122,7 +125,10 @@
 		C96EA6B924ED498E00C64A32 /* StackConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = StackConfig.plist; sourceTree = "<group>"; };
 		C9730A14250E4DC4004D95BD /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C9730A16250E5CA4004D95BD /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
-		C9730A18250E6236004D95BD /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		C9730A18250E6236004D95BD /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		C9730A1A250ECFA8004D95BD /* Timeline.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Timeline.json; sourceTree = "<group>"; };
+		C9730A1C250ECFCE004D95BD /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
+		C9730A1E250ED02F004D95BD /* TimelineSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineSummary.swift; sourceTree = "<group>"; };
 		C98AFBE524CC65E2005BAD7A /* StackIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StackIT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C98AFBE824CC65E2005BAD7A /* StackITApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackITApp.swift; sourceTree = "<group>"; };
 		C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -163,6 +169,7 @@
 				C913CA9624DEEB4800A9BFA4 /* CommentsSummary.swift */,
 				C90B509C24E054FC002DFA55 /* UserSummary.swift */,
 				C90B509A24E04591002DFA55 /* UserMessageSummary.swift */,
+				C9730A1E250ED02F004D95BD /* TimelineSummary.swift */,
 			);
 			path = UIModels;
 			sourceTree = "<group>";
@@ -183,7 +190,7 @@
 				C946AA9124E169BA00DF3A13 /* InboxMessageRow.swift */,
 				C9730A14250E4DC4004D95BD /* ProfileView.swift */,
 				C9730A16250E5CA4004D95BD /* InboxView.swift */,
-				C9730A18250E6236004D95BD /* ActivityView.swift */,
+				C9730A18250E6236004D95BD /* TimelineView.swift */,
 			);
 			path = AccountSectionViews;
 			sourceTree = "<group>";
@@ -317,6 +324,7 @@
 				C90B509224E036FD002DFA55 /* Posts.swift */,
 				C90B509824E039A3002DFA55 /* Inbox.swift */,
 				C913CAA124DF3FEA00A9BFA4 /* Token.swift */,
+				C9730A1C250ECFCE004D95BD /* Timeline.swift */,
 			);
 			path = NetworkModels;
 			sourceTree = "<group>";
@@ -332,6 +340,7 @@
 				C90B509424E037C1002DFA55 /* Posts.json */,
 				C913CA9F24DF3B4000A9BFA4 /* User.json */,
 				C90B509624E03999002DFA55 /* Inbox.json */,
+				C9730A1A250ECFA8004D95BD /* Timeline.json */,
 			);
 			path = Mock;
 			sourceTree = "<group>";
@@ -411,6 +420,7 @@
 			files = (
 				C95942CE24CDACAD001FA9FA /* Tags.json in Resources */,
 				C98AFBF024CC65E7005BAD7A /* Preview Assets.xcassets in Resources */,
+				C9730A1B250ECFA8004D95BD /* Timeline.json in Resources */,
 				C98AFBED24CC65E7005BAD7A /* Assets.xcassets in Resources */,
 				C913CA9324DEE46900A9BFA4 /* Comments.json in Resources */,
 				C913CAA024DF3B4000A9BFA4 /* User.json in Resources */,
@@ -446,6 +456,7 @@
 				C913CA9724DEEB4800A9BFA4 /* CommentsSummary.swift in Sources */,
 				C946AA9224E169BA00DF3A13 /* InboxMessageRow.swift in Sources */,
 				C913CA8D24DC275D00A9BFA4 /* SideBarView.swift in Sources */,
+				C9730A1D250ECFCE004D95BD /* Timeline.swift in Sources */,
 				C95942E224D1026C001FA9FA /* Webview.swift in Sources */,
 				C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */,
 				C946AA8724E167C600DF3A13 /* AccountSectionView.swift in Sources */,
@@ -471,11 +482,12 @@
 				C9A1DBE124D8B50E00464D32 /* ImageManager.swift in Sources */,
 				C946AAA324E1794B00DF3A13 /* Int.swift in Sources */,
 				C946AAAD24E1798D00DF3A13 /* Double.swift in Sources */,
-				C9730A19250E6236004D95BD /* ActivityView.swift in Sources */,
+				C9730A19250E6236004D95BD /* TimelineView.swift in Sources */,
 				C913CA8F24DC2BCD00A9BFA4 /* Search.swift in Sources */,
 				C946AA8524E0DF6900DF3A13 /* MessageStatus.swift in Sources */,
 				C98AFBFE24CC6604005BAD7A /* Endpoint.swift in Sources */,
 				C95942D824CE456A001FA9FA /* AnswersView.swift in Sources */,
+				C9730A1F250ED02F004D95BD /* TimelineSummary.swift in Sources */,
 				C913CA9524DEE4A000A9BFA4 /* Comments.swift in Sources */,
 				C946AAA524E1795000DF3A13 /* Date.swift in Sources */,
 				C9A1DBC124D606FF00464D32 /* AuthenticationManager.swift in Sources */,
