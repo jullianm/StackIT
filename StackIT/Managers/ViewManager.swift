@@ -21,9 +21,9 @@ class ViewManager: ObservableObject {
     @Published var timeline: [TimelineSummary] = []
 
     /// Private properties
-    private var serviceManager: ServiceManager
-    private var authenticationManager: AuthenticationManager
     private var subscriptions = Set<AnyCancellable>()
+    private var authManager: AuthenticationManager
+    private var networkProxy: NetworkManagerProxy
     
     /// Public properties
     var cachedQuestions: [QuestionsSummary] = []
@@ -37,12 +37,8 @@ class ViewManager: ObservableObject {
     var authenticationSubject = CurrentValueSubject<AppSection, Never>(.authentication(action: .checkAuthentication))
     
     init(serviceManager: ServiceManager = NetworkManager(), authenticationManager: AuthenticationManager = .shared) {
-//        #if DEBUG
-//        self.serviceManager = MockManager()
-//        #else
-        self.serviceManager = serviceManager
-//        #endif
-        self.authenticationManager = authenticationManager
+        authManager = authenticationManager
+        networkProxy = .init(serviceManager: serviceManager)
         setupBindings()
     }
     
@@ -82,10 +78,10 @@ class ViewManager: ObservableObject {
 // MARK: - Posts-related bindings
 extension ViewManager {
     private func bindFetchTags() {
-        fetchTags()
+        networkProxy.fetchTags()
             .map { [weak self] _ -> AnyPublisher<[Tag], Never> in
                 guard let self = self else { return Just([]).eraseToAnyPublisher() }
-                return self.fetchTags()
+                return self.networkProxy.fetchTags()
             }
             .switchToLatest()
             .handleEvents(receiveSubscription: { [weak self] _ in
@@ -113,7 +109,7 @@ extension ViewManager {
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
             .map(resolveEndpointType)
-            .map(fetchAnswers(endpoint:))
+            .map(networkProxy.fetchAnswers(endpoint:))
             .switchToLatest()
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections.remove(.answers)
@@ -140,22 +136,34 @@ extension ViewManager {
                         return /// ⚠️ We already have current user informations in `User` object.
                     }
                 default:
-                    break
+                    return
                 }
             })
             .sink { [weak self] section in
+                guard let self = self else { return }
+                
                 switch section {
                 case .account(let subsection):
                     switch subsection {
                     case .messages:
-                        self?.fetchInbox()
+                        self.networkProxy.fetchInbox()
+                            .handleEvents(receiveOutput: { [weak self] _ in
+                                self?.loadingSections.remove(.inbox)
+                            })
+                            .assign(to: \.inbox, on: self)
+                            .store(in: &self.subscriptions)
                     case .timeline:
-                        self?.fetchTimeline()
+                        self.networkProxy.fetchTimeline()
+                            .handleEvents(receiveOutput: { [weak self] _ in
+                                self?.loadingSections.remove(.timeline)
+                            })
+                            .assign(to: \.timeline, on: self)
+                            .store(in: &self.subscriptions)
                     case .profile:
-                        return /// ⚠️ We already have current user informations in `User` object.
+                        return
                     }
                 default:
-                    break
+                    return
                 }
             }.store(in: &subscriptions)
     }
@@ -167,13 +175,13 @@ extension ViewManager {
                 case .authentication(let action):
                     switch action {
                     case .checkAuthentication:
-                        self?.authenticationManager.checkTokenSubject.send(())
+                        self?.authManager.checkTokenSubject.send(())
                         self?.loadingSections.insert(.account)
                     case .signIn(let url):
-                        self?.authenticationManager.parseTokenSubject.send(url)
+                        self?.authManager.parseTokenSubject.send(url)
                         self?.loadingSections.insert(.account)
                     case .logOut:
-                        self?.authenticationManager.removeUserSubject.send(())
+                        self?.authManager.removeUserSubject.send(())
                     }
                 default:
                     break
@@ -181,141 +189,17 @@ extension ViewManager {
                 
             }.store(in: &subscriptions)
         
-        authenticationManager.addUserPublisher
+        authManager.addUserPublisher
             .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections.remove(.account)
+                guard let self = self else { return }
+                self.networkProxy.stackConfig = self.authManager.stackConfig
+                self.loadingSections.remove(.account)
             })
             .assign(to: \.user, on: self)
             .store(in: &subscriptions)
     }
 }
 
-// MARK: - Webservices call
-extension ViewManager {
-    private func fetchTags() -> AnyPublisher<[Tag], Never> {
-        return serviceManager.fetch(endpoint: .tags, model: Tags.self)
-            .map { $0.items.map(\.name).map { Tag(name: $0) } }
-            .replaceError(with: Tag.popular)
-            .eraseToAnyPublisher()
-    }
-    
-    private func fetchQuestions(endpoint: Endpoint) -> AnyPublisher<[QuestionsSummary], Never> {
-        return serviceManager.fetch(endpoint: endpoint, model: Questions.self)
-            .handleEvents(receiveOutput: { [weak self] questions in
-                self?.showLoadMore = questions.hasMore && questions.quotaRemaining > 0
-            })
-            .map { [weak self] questions -> AnyPublisher<(Questions, Comments), Error> in
-                guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
-                
-                let ids = questions.items.map(\.questionId).joinedString()
-                let commentsPublisher = self.serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByQuestionsIds(ids)), model: Comments.self)
-                let questionsPublisher = Just(questions).setFailureType(to: Error.self).eraseToAnyPublisher()
-                
-                return Publishers.CombineLatest(questionsPublisher, commentsPublisher).eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .map { (questions, comments) -> [QuestionsSummary] in
-                return questions.items.map { question in
-                    let comments = comments.items.filter { $0.postId == question.questionId }.map(CommentsSummary.init)
-                    return QuestionsSummary(from: question, comments: comments)
-                }
-            }
-            .replaceError(with: [])
-            .map { [weak self] in
-                guard let self = self else { return [] }
-                return $0.filtered(by: self.questionsFilter)
-            }
-            .eraseToAnyPublisher()
-    }
-    
-    private func fetchAnswers(endpoint: Endpoint) -> AnyPublisher<[AnswersSummary], Never> {
-        return serviceManager.fetch(endpoint: endpoint, model: Answers.self)
-            .map { [weak self] answers -> AnyPublisher<(Answers, Comments), Error> in
-                guard let self = self else { return Just((.empty, .empty)).setFailureType(to: Error.self).eraseToAnyPublisher() }
-                
-                let ids = answers.items.map(\.answerId).joinedString()
-                let commentsPublisher = self.serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByAnswersIds(ids)), model: Comments.self)
-                let answersPublisher = Just(answers).setFailureType(to: Error.self).eraseToAnyPublisher()
-                
-                return Publishers.CombineLatest(answersPublisher,
-                                                commentsPublisher).eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .map { (answers, comments) -> [AnswersSummary] in
-                return answers.items.map { answer in
-                    let comments = comments.items.filter { $0.postId == answer.answerId }.map(CommentsSummary.init)
-                    return AnswersSummary(from: answer, comments: comments)
-                }
-            }
-            .replaceError(with: [])
-            .eraseToAnyPublisher()
-    }
-    
-    private func fetchInbox() {
-        guard let token = authenticationManager.stackConfig.token else {
-            return
-        }
-        
-        serviceManager.fetch(endpoint: .inbox(token: token, key: authenticationManager.stackConfig.key), model: Inbox.self)
-            .map { [weak self] inbox -> AnyPublisher<[UserMessageSummary], Error> in
-                guard let self = self else { return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher() }
-                
-                let posts = inbox.items.map(MessageStatus.init)
-                let answersIds = posts.filter { $0.messageType == .answer }.compactMap(\.id).joinedString()
-                let commentsIds = posts.filter { $0.messageType == .comment }.compactMap(\.id).joinedString()
-                
-                return self.inboxPublisher(answersIds: answersIds, commentsIds: commentsIds)
-                    .map { answer, comment -> [UserMessageSummary] in
-                        let userAnswersSummary = answer.reduce([UserMessageSummary]()) { summary, answer in
-                            let answerStatus = posts.filter { $0.messageType == .answer }.first(where: { $0.id == answer.answerId })!
-                            var arr = summary
-                            arr.append(UserMessageSummary(answer: answer, messageStatus: answerStatus))
-                            return arr
-                        }
-                        
-                        let userCommentsSummary = comment.reduce([UserMessageSummary]()) { summary, comment in
-                            let commentStatus = posts.filter { $0.messageType == .comment }.first(where: { $0.id == comment.commentId })!
-                            var arr = summary
-                            arr.append(UserMessageSummary(comment: comment, messageStatus: commentStatus))
-                            return arr
-                        }
-                        
-                        return userAnswersSummary + userCommentsSummary
-                    }.eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .replaceError(with: [])
-            .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections.remove(.inbox)
-            })
-            .assign(to: \.inbox, on: self)
-            .store(in: &subscriptions)
-    }
-    
-    private func inboxPublisher(answersIds: String, commentsIds: String) -> AnyPublisher<([Answer], [Comment]), Error> {
-        let answersPublisher = serviceManager.fetch(endpoint: .answers(subendpoint: .answersByIds(answersIds)),
-                                                    model: Answers.self).map(\.items)
-        let commentsPublisher = serviceManager.fetch(endpoint: .comments(subendpoint: .commentsByIds(commentsIds)),
-                                                     model: Comments.self).map(\.items)
-        
-        return Publishers.Zip(answersPublisher, commentsPublisher).eraseToAnyPublisher()
-    }
-    
-    private func fetchTimeline() {
-        guard let token = authenticationManager.stackConfig.token else {
-            return
-        }
-        
-        return serviceManager.fetch(endpoint: .timeline(token: token, key: authenticationManager.stackConfig.key), model: Timeline.self)
-            .map { $0.items.map(TimelineSummary.init) }
-            .replaceError(with: [])
-            .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections.remove(.timeline)
-            })
-            .assign(to: \.timeline, on: self)
-            .store(in: &subscriptions)
-    }
-}
 
 // MARK: - Webservice helpers
 extension ViewManager {
@@ -324,18 +208,16 @@ extension ViewManager {
         case .questions(let subsection, let status):
             switch subsection {
             case .search(let keywords):
-                return serviceManager.fetch(endpoint: .questions(subendpoint: .questionsByKeywords(keywords, status: status)),
-                                            model: Search.self)
-                    .map { $0.items.map(\.questionId).joinedString() }
-                    .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
-                        guard let self = self else { return Just([]).eraseToAnyPublisher() }
-                        return self.fetchQuestions(endpoint: .questions(subendpoint: .questionsByIds(ids)))
-                    }
-                    .switchToLatest()
-                    .replaceError(with: [])
-                    .eraseToAnyPublisher()
+                return networkProxy.fetchQuestionsByKeywords(keywords: keywords,
+                                                             status: status,
+                                                             filteredBy: questionsFilter)
             default:
-                return fetchQuestions(endpoint: self.resolveEndpointType(from: output))
+                let handleOutputEvent: (Questions) -> Void = { [weak self] in
+                    self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
+                }
+                return networkProxy.fetchQuestions(endpoint: resolveEndpointType(from: output),
+                                                   filteredBy: questionsFilter,
+                                                   onOutputReceived: handleOutputEvent)
             }
             
         default:
@@ -349,11 +231,16 @@ extension ViewManager {
         case let .questions(subsection, status):
             switch subsection {
             case let .trending(trending):
-                return .questions(subendpoint: .questionsByFilters(tags: [], trending: trending, status: status))
+                return .questions(subendpoint: .questionsByFilters(tags: [],
+                                                                   trending: trending,
+                                                                   status: status))
             case .tag:
-                return .questions(subendpoint: .questionsByFilters(tags: tags.filter(\.isFavorite), trending: .votes, status: status))
+                return .questions(subendpoint: .questionsByFilters(tags: tags.filter(\.isFavorite),
+                                                                   trending: .votes,
+                                                                   status: status))
             case let .search(keywords):
-                return .questions(subendpoint: .questionsByKeywords(keywords, status: status))
+                return .questions(subendpoint: .questionsByKeywords(keywords,
+                                                                    status: status))
             }
         case let .answers(question, _):
             return .answers(subendpoint: .answersByQuestionId(question.questionId))
