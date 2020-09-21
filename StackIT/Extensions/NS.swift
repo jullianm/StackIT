@@ -12,7 +12,7 @@ extension NSTableView {
         super.viewDidMoveToWindow()
         
         backgroundColor = .clear
-        enclosingScrollView!.drawsBackground = false
+        enclosingScrollView?.drawsBackground = false
     }
 }
 
