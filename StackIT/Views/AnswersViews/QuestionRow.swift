@@ -57,10 +57,23 @@ struct QuestionRow: View {
                     }
                 }.padding([.leading, .trailing])
             }
+
+            VStack(alignment: .leading) {
+                ForEach(question.body, id: \.self) { messageDetail in
+                    switch messageDetail {
+                    case .plainText(let text):
+                        NSTextFieldRepresentable(attributedString: text)
+                    case .codeText(let code):
+                        CodeView(code: code)
+                    }
+                }
+            }.padding()
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.2), lineWidth: 1))
             
-            NSTextFieldRepresentable(htmlString: question.body)
-                .padding()
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+           // NSTextFieldRepresentable(htmlString: question.body)
+             //   .padding()
+               // .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.2), lineWidth: 1))
+            
             Button {
                 showComments.toggle()
             } label: {

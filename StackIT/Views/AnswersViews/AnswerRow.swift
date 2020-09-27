@@ -57,10 +57,19 @@ struct AnswerRow: View {
                     }
                 }.padding([.leading, .trailing])
             }
-            
-            NSTextFieldRepresentable(htmlString: answer.body)
-                .padding()
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(answer.isAccepted ? Color("StackITGreen"): Color.gray.opacity(0.2), lineWidth: 1))
+
+            VStack(alignment: .leading) {
+                ForEach(answer.body, id: \.self) { messageDetail in
+                    switch messageDetail {
+                    case .plainText(let text):
+                        NSTextFieldRepresentable(attributedString: text)
+                    case .codeText(let code):
+                        CodeView(code: code)
+                    }
+                }
+            }.padding()
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(answer.isAccepted ? Color("StackITGreen"): Color.gray.opacity(0.2), lineWidth: 1))
+
             Button {
                 showComments.toggle()
             } label: {
