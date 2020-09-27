@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StackAPI
 
 struct UserMessageSummary: Identifiable {
     let id = UUID()

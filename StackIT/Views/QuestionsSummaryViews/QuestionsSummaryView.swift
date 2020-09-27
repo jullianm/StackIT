@@ -55,7 +55,9 @@ extension QuestionsSummaryView {
                     .background(selectedIndex == questionSummary.id ? Color.white.opacity(0.3): Color.clear)
                     .onTapGesture {
                         selectedIndex = questionSummary.id
-                        viewManager.fetchAnswersSubject.send(.answers(question: questionSummary, .active))
+                        viewManager.fetchAnswersSubject.send(
+                            .answers(question: questionSummary)
+                        )
                     }
             }.redacted(reason: viewManager.loadingSections.contains(.questions) ? .placeholder: [])
             
@@ -64,7 +66,9 @@ extension QuestionsSummaryView {
                     Spacer()
                     
                     Button {
-                        viewManager.fetchQuestionsSubject.send(viewManager.fetchQuestionsSubject.value.enablePaging())
+                        viewManager.fetchQuestionsSubject.send(
+                            viewManager.fetchQuestionsSubject.value.enablePaging()
+                        )
                     } label: {
                         Text("Next page")
                     }.buttonStyle(BorderlessButtonStyle())

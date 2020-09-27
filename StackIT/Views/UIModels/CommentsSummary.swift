@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StackAPI
 
 struct CommentsSummary: Identifiable {
     var id = UUID()

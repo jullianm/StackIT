@@ -44,9 +44,13 @@ struct SideBarView: View {
                 ZStack(alignment: .trailing) {
                     TextField("", text: $search, onEditingChanged: { text in
                     }, onCommit: {
+                        
                         NSApplication.shared.endEditing()
                         guard !search.isEmpty else { return }
-                        self.viewManager.fetchQuestionsSubject.send(.questions(subsection: .search(keywords: search), .active))
+                        self.viewManager.fetchQuestionsSubject.send(
+                            .questions(subsection: .search(keywords: search))
+                        )
+                        
                     }).textFieldStyle(RoundedBorderTextFieldStyle())
                     
                     Image(systemName: "magnifyingglass")

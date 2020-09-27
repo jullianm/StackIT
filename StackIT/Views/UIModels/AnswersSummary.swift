@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StackAPI
 
 struct AnswersSummary: Identifiable {
     var id = UUID()

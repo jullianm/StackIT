@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import StackAPI
 
 class AuthenticationManager {
     private(set) static var shared = AuthenticationManager()
@@ -98,7 +99,7 @@ extension AuthenticationManager {
     }
     
     private func getUser(token: String) -> AnyPublisher<UserSummary?, Never> {
-        return NetworkManager().fetch(endpoint: .user(token: token, key: self.stackConfig.key), model: User.self)
+        return StackITAPI().fetchUser(token: token, key: stackConfig.key)
             .map { $0.items.map(UserSummary.init) }
             .replaceError(with: [])
             .map(\.first)

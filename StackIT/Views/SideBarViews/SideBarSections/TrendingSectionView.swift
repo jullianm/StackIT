@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import enum StackAPI.Trending
 
 struct TrendingSectionView: View {
     @EnvironmentObject var viewManager: ViewManager
@@ -33,7 +34,9 @@ struct TrendingSectionView: View {
                 .padding(.leading)
                 .padding(.bottom, 5)
                 .onTapGesture {
-                    self.viewManager.fetchQuestionsSubject.send(.questions(subsection: .trending(trending: trending), .active))
+                    self.viewManager.fetchQuestionsSubject.send(
+                        .questions(subsection: .trending(trending: trending))
+                    )
                 }
             }
         }.padding([.top])

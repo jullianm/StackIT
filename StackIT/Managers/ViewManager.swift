@@ -7,10 +7,11 @@
 
 import Combine
 import Foundation
+import StackAPI
 
 class ViewManager: ObservableObject {
     /// Published properties
-    @Published var tags: [Tag] = Tag.popular
+    @Published var tags: [TagSummary] = TagSummary.popular
     @Published var questionsSummary: [QuestionsSummary] = QuestionsSummary.placeholders
     @Published var questionsFilter: Set<QuestionsFilter> = []
     @Published var answersSummary: [AnswersSummary] = []
@@ -23,7 +24,7 @@ class ViewManager: ObservableObject {
     /// Private properties
     private var subscriptions = Set<AnyCancellable>()
     private var authManager: AuthenticationManager
-    private var networkProxy: NetworkManagerProxy
+    private var proxy: ViewManagerProxy
     
     /// Public properties
     var cachedQuestions: [QuestionsSummary] = []
@@ -36,9 +37,9 @@ class ViewManager: ObservableObject {
     var fetchAccountSectionSubject = PassthroughSubject<AppSection, Never>()
     var authenticationSubject = CurrentValueSubject<AppSection, Never>(.authentication(action: .checkAuthentication))
     
-    init(serviceManager: ServiceManager = NetworkManager(), authenticationManager: AuthenticationManager = .shared) {
+    init(authenticationManager: AuthenticationManager = .shared, enableMock: Bool = false) {
         authManager = authenticationManager
-        networkProxy = .init(serviceManager: serviceManager)
+        proxy = ViewManagerProxy(api: .init(enableMock: enableMock))
         setupBindings()
     }
     
@@ -78,10 +79,10 @@ class ViewManager: ObservableObject {
 // MARK: - Posts-related bindings
 extension ViewManager {
     private func bindFetchTags() {
-        networkProxy.fetchTags()
-            .map { [weak self] _ -> AnyPublisher<[Tag], Never> in
+        proxy.fetchTags()
+            .map { [weak self] _ -> AnyPublisher<[TagSummary], Never> in
                 guard let self = self else { return Just([]).eraseToAnyPublisher() }
-                return self.networkProxy.fetchTags()
+                return self.proxy.fetchTags()
             }
             .switchToLatest()
             .handleEvents(receiveSubscription: { [weak self] _ in
@@ -98,7 +99,32 @@ extension ViewManager {
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
             .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
-            .map(resolveQuestionsEndpointCall)
+            .map { [self] section -> AnyPublisher<[QuestionsSummary], Never> in
+                guard case let .questions(subsection, action) = section else {
+                    fatalError()
+                }
+                
+                let outputEvent: (Questions) -> Void = { [weak self] in
+                    self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
+                }
+                
+                switch subsection {
+                case .search(let keywords):
+                    return proxy.fetchQuestionsByKeywords(keywords: keywords,
+                                                          action: action,
+                                                          outputEvent: outputEvent)
+                case let .trending(trending):
+                    return proxy.fetchQuestionsWithFilters(tags: [],
+                                                           trending: trending,
+                                                           action: action,
+                                                           outputEvent: outputEvent)
+                case .tag:
+                    return proxy.fetchQuestionsWithFilters(tags: tags.filter(\.isFavorite).map(\.name),
+                                                           trending: .votes,
+                                                           action: action,
+                                                           outputEvent: outputEvent)
+                }
+            }
             .switchToLatest()
             .assign(to: \.questionsSummary, on: self)
             .store(in: &subscriptions)
@@ -108,8 +134,13 @@ extension ViewManager {
         fetchAnswersSubject
             .dropFirst()
             .handleEvents(receiveOutput: handleOutputSectionEvent)
-            .map(resolveEndpointType)
-            .map(networkProxy.fetchAnswers(endpoint:))
+            .map { [self] section -> AnyPublisher<[AnswersSummary], Never> in
+                guard case let .answers(question, _) = section else {
+                    return Just([]).eraseToAnyPublisher()
+                }
+                
+                return proxy.fetchAnswersByQuestionId(question.questionId)
+            }
             .switchToLatest()
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections.remove(.answers)
@@ -133,7 +164,8 @@ extension ViewManager {
                     case .timeline:
                         self?.loadingSections.insert(.timeline)
                     case .profile:
-                        return /// ⚠️ We already have current user informations in `User` object.
+                        /// ⚠️ We already have current user informations in `User` object.
+                        return
                     }
                 default:
                     return
@@ -146,14 +178,14 @@ extension ViewManager {
                 case .account(let subsection):
                     switch subsection {
                     case .messages:
-                        self.networkProxy.fetchInbox()
+                        self.proxy.fetchInbox()
                             .handleEvents(receiveOutput: { [weak self] _ in
                                 self?.loadingSections.remove(.inbox)
                             })
                             .assign(to: \.inbox, on: self)
                             .store(in: &self.subscriptions)
                     case .timeline:
-                        self.networkProxy.fetchTimeline()
+                        self.proxy.fetchTimeline()
                             .handleEvents(receiveOutput: { [weak self] _ in
                                 self?.loadingSections.remove(.timeline)
                             })
@@ -192,7 +224,7 @@ extension ViewManager {
         authManager.addUserPublisher
             .handleEvents(receiveOutput: { [weak self] _ in
                 guard let self = self else { return }
-                self.networkProxy.stackConfig = self.authManager.stackConfig
+                self.proxy.stackConfig = self.authManager.stackConfig
                 self.loadingSections.remove(.account)
             })
             .assign(to: \.user, on: self)
@@ -203,57 +235,10 @@ extension ViewManager {
 
 // MARK: - Webservice helpers
 extension ViewManager {
-    private func resolveQuestionsEndpointCall(from output: AppSection) -> AnyPublisher<[QuestionsSummary], Never> {
-        switch output {
-        case .questions(let subsection, let status):
-            switch subsection {
-            case .search(let keywords):
-                return networkProxy.fetchQuestionsByKeywords(keywords: keywords,
-                                                             status: status,
-                                                             filteredBy: questionsFilter)
-            default:
-                let handleOutputEvent: (Questions) -> Void = { [weak self] in
-                    self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
-                }
-                return networkProxy.fetchQuestions(endpoint: resolveEndpointType(from: output),
-                                                   filteredBy: questionsFilter,
-                                                   onOutputReceived: handleOutputEvent)
-            }
-            
-        default:
-            assertionFailure("⚠️ We should not fall into that case.")
-            return Just([]).eraseToAnyPublisher()
-        }
-    }
-    
-    private func resolveEndpointType(from output: AppSection) -> Endpoint {
-        switch output {
-        case let .questions(subsection, status):
-            switch subsection {
-            case let .trending(trending):
-                return .questions(subendpoint: .questionsByFilters(tags: [],
-                                                                   trending: trending,
-                                                                   status: status))
-            case .tag:
-                return .questions(subendpoint: .questionsByFilters(tags: tags.filter(\.isFavorite),
-                                                                   trending: .votes,
-                                                                   status: status))
-            case let .search(keywords):
-                return .questions(subendpoint: .questionsByKeywords(keywords,
-                                                                    status: status))
-            }
-        case let .answers(question, _):
-            return .answers(subendpoint: .answersByQuestionId(question.questionId))
-        default:
-            assertionFailure("⚠️ We should not fall into that case.")
-            return .tags
-        }
-    }
-    
     private func handleOutputSectionEvent(output: AppSection) {
         switch output {
-        case let .questions(subsection, status):
-            handleQuestionsSubsection(subsection, status: status)
+        case let .questions(subsection, action):
+            handleQuestionsSubsection(subsection, action: action)
         case .answers(let question, _):
             questionsSummary.first(where: \.isSelected)?.setSelected(false)
             questionsSummary.first(where: { $0.id == question.id })?.setSelected(true)
@@ -263,12 +248,12 @@ extension ViewManager {
         }
     }
     
-    private func handleQuestionsSubsection(_ subsection: SubSection, status: SectionStatus) {
-        if status == .active { answersSummary = [] }
+    private func handleQuestionsSubsection(_ subsection: SubSection, action: Action?) {
+        if action == nil { answersSummary = [] }
         loadingSections.insert(.questions)
         
         switch subsection {
-        case .tag(let tag) where status == .active:
+        case .tag(let tag) where action == nil:
             tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
         case .search:
             tags.forEach { $0.isFavorite = false }

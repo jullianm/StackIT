@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StackAPI
 
 class QuestionsSummary: Identifiable, Equatable {
     var id = UUID()

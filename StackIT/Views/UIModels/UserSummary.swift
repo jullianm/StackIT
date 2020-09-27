@@ -7,6 +7,7 @@
 
 import Foundation
 import struct SwiftUI.Color
+import StackAPI
 
 
 enum BadgeType: Hashable {

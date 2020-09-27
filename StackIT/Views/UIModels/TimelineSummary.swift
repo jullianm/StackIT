@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import StackAPI
 
 struct TimelineSummary: Identifiable {
     let id = UUID()
