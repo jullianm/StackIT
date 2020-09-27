@@ -18,11 +18,11 @@ enum AppSection: Equatable {
     func enablePaging() -> Self {
         switch self {
         case .questions(let subsection, let action):
-            guard let action = action else { return self }
-            return .questions(subsection: subsection, .paging(count: action.pageCount + 1))
+            let pageCount = action?.pageCount ?? 1
+            return .questions(subsection: subsection, .paging(count: pageCount + 1))
         case .answers(let question, let action):
-            guard let action = action else { return self }
-            return .answers(question: question, action.updatePagingCount())
+            let pageCount = action?.pageCount ?? 1
+            return .answers(question: question, .paging(count: pageCount + 1))
         default:
             return self
         }

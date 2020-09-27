@@ -104,21 +104,31 @@ extension ViewManager {
                     fatalError()
                 }
                 
-                let outputEvent: (Questions) -> Void = { [weak self] in
-                    self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
-                }
+                print(action)
                 
                 switch subsection {
                 case .search(let keywords):
+                    let outputEvent: (Search) -> Void = { [weak self] in
+                        self?.showLoadMore = $0.hasMore
+                    }
+                    
                     return proxy.fetchQuestionsByKeywords(keywords: keywords,
                                                           action: action,
                                                           outputEvent: outputEvent)
                 case let .trending(trending):
+                    let outputEvent: (Questions) -> Void = { [weak self] in
+                        self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
+                    }
+                    
                     return proxy.fetchQuestionsWithFilters(tags: [],
                                                            trending: trending,
                                                            action: action,
                                                            outputEvent: outputEvent)
                 case .tag:
+                    let outputEvent: (Questions) -> Void = { [weak self] in
+                        self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
+                    }
+                    
                     return proxy.fetchQuestionsWithFilters(tags: tags.filter(\.isFavorite).map(\.name),
                                                            trending: .votes,
                                                            action: action,

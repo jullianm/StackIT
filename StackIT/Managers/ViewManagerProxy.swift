@@ -8,7 +8,8 @@
 import Combine
 import StackAPI
 
-typealias OutputEvent = ((Questions) -> Void)?
+typealias OutputQuestionsEvent = ((Questions) -> Void)?
+typealias OutputSearchEvent = ((Search) -> Void)?
 
 /// This class acts as a middle man between the `ViewManager` and the `StackITAPI`
 /// It should be used to trigger API calls.
@@ -40,15 +41,15 @@ extension ViewManagerProxy {
 extension ViewManagerProxy {
     func fetchQuestionsByKeywords(keywords: String,
                                   action: Action?,
-                                  outputEvent: OutputEvent) -> AnyPublisher<[QuestionsSummary], Never> {
+                                  outputEvent: OutputSearchEvent) -> AnyPublisher<[QuestionsSummary], Never> {
         return api.fetchQuestionsByKeywords(keywords: keywords, action: action)
+            .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(\.questionId).joinedString() }
             .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
                 guard let self = self else { return Just([]).eraseToAnyPublisher() }
                 
                 return self.publishQuestionsSummary(
-                    input: self.api.fetchQuestionsByIds(ids),
-                    outputEvent: outputEvent
+                    input: self.api.fetchQuestionsByIds(ids)
                 )
             }
             .switchToLatest()
@@ -59,9 +60,10 @@ extension ViewManagerProxy {
     func fetchQuestionsWithFilters(tags: [String],
                                    trending: Trending,
                                    action: Action?,
-                                   outputEvent: OutputEvent) -> AnyPublisher<[QuestionsSummary], Never> {
+                                   outputEvent: OutputQuestionsEvent) -> AnyPublisher<[QuestionsSummary], Never> {
         return self.publishQuestionsSummary(
-            input: api.fetchQuestionsWithFilters(tags: tags, trending: trending, action: action)
+            input: api.fetchQuestionsWithFilters(tags: tags, trending: trending, action: action),
+            outputEvent: outputEvent
         )
     }
     
@@ -151,7 +153,7 @@ extension ViewManagerProxy {
 
 extension ViewManagerProxy {
     private func publishQuestionsSummary(input: AnyPublisher<Questions, Error>,
-                                         outputEvent: OutputEvent = nil) -> AnyPublisher<[QuestionsSummary], Never> {
+                                         outputEvent: OutputQuestionsEvent = nil) -> AnyPublisher<[QuestionsSummary], Never> {
         return input
             .handleEvents(receiveOutput: outputEvent)
             .map { [weak self] questions -> AnyPublisher<(Questions, Comments), Never> in
