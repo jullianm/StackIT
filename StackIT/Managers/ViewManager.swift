@@ -104,8 +104,6 @@ extension ViewManager {
                     fatalError()
                 }
                 
-                print(action)
-                
                 switch subsection {
                 case .search(let keywords):
                     let outputEvent: (Search) -> Void = { [weak self] in

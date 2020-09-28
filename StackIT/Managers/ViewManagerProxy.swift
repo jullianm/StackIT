@@ -67,7 +67,7 @@ extension ViewManagerProxy {
         )
     }
     
-    func fetchQuestionsByIds(_ ids: String) -> AnyPublisher<[QuestionsSummary], Never> {
+    private func fetchQuestionsByIds(_ ids: String) -> AnyPublisher<[QuestionsSummary], Never> {
         return self.publishQuestionsSummary(
             input: api.fetchQuestionsByIds(ids)
         )
@@ -76,7 +76,7 @@ extension ViewManagerProxy {
 
 // MARK: Answers API calls
 extension ViewManagerProxy {
-    func fetchAnswersByIds(_ ids: String) -> AnyPublisher<[AnswersSummary], Never> {
+    private func fetchAnswersByIds(_ ids: String) -> AnyPublisher<[AnswersSummary], Never> {
         return publishAnswersSummary(
             input: self.api.fetchAnswersByIds(ids)
         )
