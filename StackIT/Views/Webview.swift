@@ -35,7 +35,7 @@ extension NSTextFieldRepresentable {
         textField.backgroundColor = backgroundColor
         textField.drawsBackground = true
         textField.isEditable = false
-        textField.isSelectable = false
+        textField.isSelectable = true
         textField.lineBreakMode = .byWordWrapping
         textField.maximumNumberOfLines = 0
         textField.translatesAutoresizingMaskIntoConstraints = false

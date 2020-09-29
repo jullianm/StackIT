@@ -36,7 +36,7 @@ public class MessageExtractor {
                     code.append("\n")
 
                     result.append(.codeText(text: code))
-                } else if element.tag().getName() == "p" {
+                } else {
                     if element.children().contains(where: { element -> Bool in element.tag().getName() == "a" || element.tag().getName() == "img" }) {
                         if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
                             inP = false
@@ -53,11 +53,6 @@ public class MessageExtractor {
                         currentP += html
                     }
                 }
-
-                /*else if let html = try? element.outerHtml() {
-                    inP = true
-                    currentP += html
-                }*/
             }
 
             if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
