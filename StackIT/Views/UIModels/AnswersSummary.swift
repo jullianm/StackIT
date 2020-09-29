@@ -8,7 +8,7 @@
 import Foundation
 import StackAPI
 
-struct AnswersSummary: Identifiable {
+struct AnswersSummary: Identifiable, Equatable {
     var id = UUID()
     var lastActivityDate: String
     var score: String
@@ -18,6 +18,10 @@ struct AnswersSummary: Identifiable {
     var authorReputation: String
     var authorImage: String
     var comments: [CommentsSummary]
+    
+    static func == (lhs: AnswersSummary, rhs: AnswersSummary) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 extension AnswersSummary {

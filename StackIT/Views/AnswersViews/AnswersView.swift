@@ -8,35 +8,34 @@
 import SwiftUI
 
 struct AnswersView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var answersViewManager: AnswersViewManager
     
     var body: some View {
         ZStack {
             List {
-                if let question = viewManager.questionsSummary.first(where: \.isSelected), !viewManager.answersSummary.isEmpty  {
+                if let question = answersViewManager.selectedQuestion, !answersViewManager.answersSummary.isEmpty  {
                     HStack {
                         Text("Question").font(.largeTitle).padding(.leading)
                         Spacer()
                     }
                     QuestionRow(imageManager: .init(question.authorImage), question: question)
-                    
                 }
-                if !viewManager.answersSummary.isEmpty {
+                if !answersViewManager.answersSummary.isEmpty {
                     HStack {
                         Text("Answers").font(.largeTitle).padding(.leading)
                         Spacer()
                     }
                 }
-                ForEach(viewManager.answersSummary, id: \.id) { answer in
+                ForEach(answersViewManager.answersSummary, id: \.id) { answer in
                     AnswerRow(imageManager: .init(answer.authorImage), answer: answer)
                 }
             }.id(UUID())
             
-            if viewManager.loadingSections.contains(.answers) {
+            if answersViewManager.loadingSections.contains(.answers) {
                 ProgressView()
             }
             
-            if viewManager.answersSummary.isEmpty && !viewManager.loadingSections.contains(.answers) {
+            if answersViewManager.answersSummary.isEmpty && !answersViewManager.loadingSections.contains(.answers) {
                 VStack {
                     Spacer()
                     HStack {

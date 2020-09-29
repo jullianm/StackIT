@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TimelineView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var accountViewManager: AccountViewManager
     var onCloseTapped: () -> Void
     
     var body: some View {
@@ -25,7 +25,7 @@ struct TimelineView: View {
             
             ZStack {
                 List {
-                    ForEach(viewManager.timeline, id: \.id) { timelineItem in
+                    ForEach(accountViewManager.timeline, id: \.id) { timelineItem in
                         if let title = timelineItem.title {
                             DisclosureGroup(timelineItem.creationDate + " - " + timelineItem.timelineType) {
                                 if let detail = timelineItem.detail {
@@ -61,7 +61,7 @@ struct TimelineView: View {
                     .listRowBackground(Color.stackITCode)
                 }.id(UUID())
                 
-                if viewManager.loadingSections.contains(.timeline) {
+                if accountViewManager.loadingSections.contains(.timeline) {
                     VStack {
                         Spacer()
                         HStack {

@@ -9,7 +9,7 @@ import SwiftUI
 import enum StackAPI.Trending
 
 struct TrendingSectionView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var questionsViewManager: QuestionsViewManager
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -34,7 +34,7 @@ struct TrendingSectionView: View {
                 .padding(.leading)
                 .padding(.bottom, 5)
                 .onTapGesture {
-                    self.viewManager.fetchQuestionsSubject.send(
+                    self.questionsViewManager.fetchQuestionsSubject.send(
                         .questions(subsection: .trending(trending: trending))
                     )
                 }
@@ -45,6 +45,6 @@ struct TrendingSectionView: View {
 
 struct TrendingSectionView_Previews: PreviewProvider {
     static var previews: some View {
-        TrendingSectionView()
+        TrendingSectionView(questionsViewManager: .init())
     }
 }

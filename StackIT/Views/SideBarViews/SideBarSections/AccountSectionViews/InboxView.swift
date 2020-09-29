@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct InboxView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var accountViewManager: AccountViewManager
     var onCloseTapped: () -> Void
     
     var body: some View {
@@ -25,14 +25,14 @@ struct InboxView: View {
             
             ZStack {
                 List {
-                    ForEach(viewManager.inbox, id: \.id) { messageSummary in
+                    ForEach(accountViewManager.inbox, id: \.id) { messageSummary in
                         InboxMessageRow(imageManager: .init(messageSummary.profileImage),
                                         messageSummary: messageSummary)
                     }
                     .listRowBackground(Color.stackITCode)
                 }.id(UUID())
                 
-                if viewManager.loadingSections.contains(.inbox) {
+                if accountViewManager.loadingSections.contains(.inbox) {
                     VStack {
                         Spacer()
                         HStack {

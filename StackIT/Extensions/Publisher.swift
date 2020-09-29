@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 extension Publisher where Output == [QuestionsSummary], Failure == Never {
-    func assign(to keyPath: ReferenceWritableKeyPath<ViewManager, Self.Output>,
-                on object: ViewManager) -> AnyCancellable {
+    func assign(to keyPath: ReferenceWritableKeyPath<QuestionsViewManager, Self.Output>,
+                on object: QuestionsViewManager) -> AnyCancellable {
             sink { output in
                 guard case let .questions(_, status) = object.fetchQuestionsSubject.value else { return }
                 

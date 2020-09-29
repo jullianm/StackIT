@@ -11,7 +11,7 @@ import StackAPI
 typealias OutputQuestionsEvent = ((Questions) -> Void)?
 typealias OutputSearchEvent = ((Search) -> Void)?
 
-/// This class acts as a middle man between the `ViewManager` and the `StackITAPI`
+/// This class acts as a middle man between the different view managers and the `StackITAPI`
 /// It should be used to trigger API calls.
 class ViewManagerProxy {
     let api: StackITAPI

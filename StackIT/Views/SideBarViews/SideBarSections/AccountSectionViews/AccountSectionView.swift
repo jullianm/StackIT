@@ -9,7 +9,7 @@ import SwiftUI
 import Foundation
 
 struct AccountSectionView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var accountViewManager: AccountViewManager
     @Environment(\.openURL) private var openURL
     @State private var isLogoutHovered = false
     @State private var showProfileSheet = false
@@ -30,7 +30,7 @@ struct AccountSectionView: View {
                 }
                 
                 Button(action: {
-                    viewManager.authenticationSubject.send(.authentication(action: .logOut))
+                    accountViewManager.authenticationSubject.send(.authentication(action: .logOut))
                 }) {
                     Image(systemName: "xmark.circle.fill")
                 }
@@ -50,7 +50,7 @@ struct AccountSectionView: View {
                 .padding(.leading)
             
             
-            if viewManager.user != nil {
+            if accountViewManager.user != nil {
                 VStack(alignment: .leading) {
                     ForEach(AccountSection.allCases, id: \.self) { section in
                         Text(section.title)
@@ -58,32 +58,33 @@ struct AccountSectionView: View {
                             .padding(.bottom, 5)
                             .onTapGesture {
                                 accountSection = section
-                                viewManager.fetchAccountSectionSubject.send(.account(subsection: section))
+                                accountViewManager.fetchAccountSectionSubject.send(.account(subsection: section))
                             }
                     }
                 }
-                .redacted(reason: viewManager.loadingSections.contains(.account) ? .placeholder: [])
+                .redacted(reason: accountViewManager.loadingSections.contains(.account) ? .placeholder: [])
                 .popover(item: $accountSection, arrowEdge: .leading) { section in
                     switch section {
                     case .timeline:
                         ZStack {
                             Color.stackITCode
-                            TimelineView {
+                            TimelineView(accountViewManager: accountViewManager) {
                                 accountSection = nil
                             }
                         }
                     case .messages:
                         ZStack {
                             Color.stackITCode
-                            InboxView {
+                            InboxView(accountViewManager: accountViewManager) {
                                 accountSection = nil
                             }
                         }
                     case .profile:
                         ZStack {
                             Color.stackITCode
-                            let imageStr = viewManager.user?.profileImage ?? .init()
-                            ProfileView(imageManager: .init(imageStr)) {
+                            let imageStr = accountViewManager.user?.profileImage ?? .init()
+                            ProfileView(imageManager: .init(imageStr),
+                                        accountViewManager: accountViewManager) {
                                 accountSection = nil
                             }
                         }
@@ -106,7 +107,7 @@ struct AccountSectionView: View {
                         Text("Sign up")
                     }.cornerRadius(5.0)
                 }
-                .redacted(reason: viewManager.loadingSections.contains(.account) ? .placeholder: [])
+                .redacted(reason: accountViewManager.loadingSections.contains(.account) ? .placeholder: [])
                 .padding(.leading)
             }
             
@@ -116,6 +117,6 @@ struct AccountSectionView: View {
 
 struct AccountSectionView_Previews: PreviewProvider {
     static var previews: some View {
-        AccountSectionView()
+        AccountSectionView(accountViewManager: .init())
     }
 }

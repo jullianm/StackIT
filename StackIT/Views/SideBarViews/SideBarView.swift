@@ -8,26 +8,29 @@
 import SwiftUI
 
 struct SideBarView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    /// Managers
+    @ObservedObject var questionsViewManager = QuestionsViewManager()
+    private let answersViewManager = AnswersViewManager()
+    private let accountViewManager = AccountViewManager()
+    
     @State private var isActive = true
     @State private var search: String = .init()
     
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
-                AccountSectionView()
-                TrendingSectionView()
-                TagSectionView()
+                AccountSectionView(accountViewManager: accountViewManager)
+                TrendingSectionView(questionsViewManager: questionsViewManager)
+                TagSectionView(questionsViewManager: questionsViewManager)
             }
             .padding(.top, 5)
             .frame(minWidth: 250, maxWidth: 250, minHeight: 650, maxHeight: .infinity)
-            .onAppear {
-                viewManager.fetchTagsSubject.send(.tags)
-            }
+            .onAppear { questionsViewManager.fetchTagsSubject.send(.tags) }
             
-            QuestionsSummaryView()
+            QuestionsSummaryView(questionsViewManager: questionsViewManager,
+                                 answersViewManager: answersViewManager)
             
-            AnswersView()
+            AnswersView(answersViewManager: answersViewManager)
         }
         .listStyle(SidebarListStyle())
         .navigationTitle(String.init())
@@ -47,7 +50,7 @@ struct SideBarView: View {
                         
                         NSApplication.shared.endEditing()
                         guard !search.isEmpty else { return }
-                        self.viewManager.fetchQuestionsSubject.send(
+                        self.questionsViewManager.fetchQuestionsSubject.send(
                             .questions(subsection: .search(keywords: search))
                         )
                         
@@ -59,11 +62,14 @@ struct SideBarView: View {
                         .padding()
                 }.frame(width: 500, height: 30)
             }
+        }.onOpenURL { url in
+            accountViewManager.authenticationSubject.send(.authentication(action: .signIn(url: url)))
         }
     }
     
     private func resetAll() {
-        viewManager.resetAllSubject.send()
+        questionsViewManager.emptyQuestionsSubject.send()
+        answersViewManager.emptyAnswersSubject.send()
         search = .init()
     }
 }

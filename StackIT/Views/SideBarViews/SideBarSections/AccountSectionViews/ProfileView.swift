@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject var imageManager: ImageManager
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var accountViewManager: AccountViewManager
     @Environment(\.openURL) private var openURL
     var onCloseTapped: () -> Void
     
@@ -41,8 +41,8 @@ struct ProfileView: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text(viewManager.user?.displayName ?? .init())
-                    Text(viewManager.user?.location ?? .init())
+                    Text(accountViewManager.user?.displayName ?? .init())
+                    Text(accountViewManager.user?.location ?? .init())
                 }
                 
                 Spacer()
@@ -51,7 +51,7 @@ struct ProfileView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Reputation")
-                    Text(viewManager.user?.reputation.string() ?? .init())
+                    Text(accountViewManager.user?.reputation.string() ?? .init())
                 }
                 
                 Spacer()
@@ -60,7 +60,7 @@ struct ProfileView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Badges")
-                    ForEach(viewManager.user?.badges ?? [], id: \.self) { badge in
+                    ForEach(accountViewManager.user?.badges ?? [], id: \.self) { badge in
                         HStack {
                             Image(systemName: "circle.fill")
                                 .renderingMode(.template)
@@ -75,7 +75,7 @@ struct ProfileView: View {
             
             HStack {
                 Button {
-                    openURL(URL(string: viewManager.user?.link ?? .init())!)
+                    openURL(URL(string: accountViewManager.user?.link ?? .init())!)
                 } label: {
                     Text("Edit profile")
                 }

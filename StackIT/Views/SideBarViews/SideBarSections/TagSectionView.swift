@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TagSectionView: View {
-    @EnvironmentObject var viewManager: ViewManager
+    @ObservedObject var questionsViewManager: QuestionsViewManager
     private let columns = [GridItem(.adaptive(minimum: 80))]
     
     var body: some View {
@@ -24,7 +24,7 @@ struct TagSectionView: View {
                 .padding(.leading)
             
             LazyVGrid(columns: columns) {
-                ForEach(viewManager.tags, id: \.id) { tag in
+                ForEach(questionsViewManager.tags, id: \.id) { tag in
                     ZStack {
                         Rectangle()
                             .foregroundColor(tag.isFavorite ? Color.gray: Color.gray.opacity(0.4))
@@ -33,9 +33,9 @@ struct TagSectionView: View {
                         
                         Text(tag.name)
                     }
-                    .redacted(reason: viewManager.loadingSections.contains(.tags) ? .placeholder: [])
+                    .redacted(reason: questionsViewManager.loadingSections.contains(.tags) ? .placeholder: [])
                     .onTapGesture {
-                        viewManager.fetchQuestionsSubject.send(
+                        questionsViewManager.fetchQuestionsSubject.send(
                             .questions(subsection: .tag(tag: tag))
                         )
                     }
@@ -47,6 +47,6 @@ struct TagSectionView: View {
 
 struct TagSectionView_Previews: PreviewProvider {
     static var previews: some View {
-        TagSectionView()
+        TagSectionView(questionsViewManager: .init())
     }
 }
