@@ -12,6 +12,7 @@
 		4996F35A251F807F00934EC3 /* MessageExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4996F359251F807F00934EC3 /* MessageExtractor.swift */; };
 		4996F35D251FDF3500934EC3 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 4996F35C251FDF3500934EC3 /* SwiftSoup */; };
 		4996F35F252136FA00934EC3 /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4996F35E252136FA00934EC3 /* CodeView.swift */; };
+		49B7502225239EDB006C450B /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B7502125239EDB006C450B /* ImageView.swift */; };
 		C90B509324E036FD002DFA55 /* Posts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90B509224E036FD002DFA55 /* Posts.swift */; };
 		C90B509524E037C1002DFA55 /* Posts.json in Resources */ = {isa = PBXBuildFile; fileRef = C90B509424E037C1002DFA55 /* Posts.json */; };
 		C90B509724E03999002DFA55 /* Inbox.json in Resources */ = {isa = PBXBuildFile; fileRef = C90B509624E03999002DFA55 /* Inbox.json */; };
@@ -77,6 +78,7 @@
 		4996F357251F7B5200934EC3 /* MessageDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetail.swift; sourceTree = "<group>"; };
 		4996F359251F807F00934EC3 /* MessageExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageExtractor.swift; sourceTree = "<group>"; };
 		4996F35E252136FA00934EC3 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
+		49B7502125239EDB006C450B /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		C90B509224E036FD002DFA55 /* Posts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Posts.swift; sourceTree = "<group>"; };
 		C90B509424E037C1002DFA55 /* Posts.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Posts.json; sourceTree = "<group>"; };
 		C90B509624E03999002DFA55 /* Inbox.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Inbox.json; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				C946AA9924E16C1800DF3A13 /* CommentRow.swift */,
 				4996F356251F7B2900934EC3 /* Answer details */,
 				4996F35E252136FA00934EC3 /* CodeView.swift */,
+				49B7502125239EDB006C450B /* ImageView.swift */,
 			);
 			path = AnswersViews;
 			sourceTree = "<group>";
@@ -451,6 +454,7 @@
 				C95942D824CE456A001FA9FA /* AnswersView.swift in Sources */,
 				C9A36B6B2523DEF700C2A31F /* AnswersViewManager.swift in Sources */,
 				4996F358251F7B5200934EC3 /* MessageDetail.swift in Sources */,
+				49B7502225239EDB006C450B /* ImageView.swift in Sources */,
 				C9730A1F250ED02F004D95BD /* TimelineSummary.swift in Sources */,
 				C946AAA524E1795000DF3A13 /* Date.swift in Sources */,
 				C9A36B7A2524C35B00C2A31F /* CommentsViewManager.swift in Sources */,

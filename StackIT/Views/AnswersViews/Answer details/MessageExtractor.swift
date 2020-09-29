@@ -36,10 +36,28 @@ public class MessageExtractor {
                     code.append("\n")
 
                     result.append(.codeText(text: code))
-                } else if let html = try? element.outerHtml() {
+                } else if element.tag().getName() == "p" {
+                    if element.children().contains(where: { element -> Bool in element.tag().getName() == "a" || element.tag().getName() == "img" }) {
+                        if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
+                            inP = false
+                            result.append(.plainText(text: attributedText))
+                            currentP = "".addStyling()
+                        }
+
+                        if let image = extractImage(element: element) {
+                            result.append(.image(image: image))
+                        }
+
+                    } else if let html = try? element.outerHtml() {
+                        inP = true
+                        currentP += html
+                    }
+                }
+
+                /*else if let html = try? element.outerHtml() {
                     inP = true
                     currentP += html
-                }
+                }*/
             }
 
             if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
@@ -49,6 +67,31 @@ public class MessageExtractor {
         }
 
         return result
+    }
+
+    private func extractImage(element: Element) -> ImageData? {
+        var finalUrl: URL? = nil
+        var legend: NSAttributedString?
+
+        for content in element.children() {
+            if content.tag().getName() == "a" {
+                if let img = content.children().filter({ element -> Bool in element.tag().getName() == "img" }).first, let src = try? img.attr("src"), let url = URL(string: src) {
+                    finalUrl = url
+                }
+            } else if content.tag().getName() == "sub", let html = try? content.outerHtml() {
+                legend = convertToAttributedText(htmlString: html.addStyling())
+            } else if content.tag().getName() == "img" {
+                if let src = try? content.attr("src"), let url = URL(string: src) {
+                    finalUrl = url
+                }
+            }
+        }
+
+        if let url = finalUrl {
+            return ImageData(url: url, legend: legend)
+        }
+
+        return nil
     }
 
     private func getDocument(html: String) -> Document? {

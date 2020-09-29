@@ -65,6 +65,8 @@ struct AnswerRow: View {
                         NSTextFieldRepresentable(attributedString: text)
                     case .codeText(let code):
                         CodeView(code: code)
+                    case .image(let image):
+                        ImageView(imageManager: .init(image.url), legend: image.legend)
                     }
                 }
             }.padding()
