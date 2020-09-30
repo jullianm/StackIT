@@ -41,7 +41,11 @@ struct TagSectionView: View {
                     }
                 }
             }.padding(.horizontal)
-        }.padding([.top])
+        }
+        .padding([.top])
+        .onAppear {
+            questionsViewManager.fetchTagsSubject.send(.tags)
+        }
     }
 }
 

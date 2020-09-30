@@ -24,19 +24,19 @@ class AnswersViewManager: ObservableObject {
     /// Subjects properties
     var fetchAnswersSubject = CurrentValueSubject<AppSection, Never>(.questions)
     var fetchCommentsSubject = PassthroughSubject<AppSection, Never>()
-    var emptyAnswersSubject = PassthroughSubject<Void, Never>()
+    var resetSubject = PassthroughSubject<Void, Never>()
     
     init(enableMock: Bool = false) {
         proxy = ViewManagerProxy(api: .init(enableMock: enableMock))
         bindFetchAnswers()
-        bindResetAnswers()
+        bindResetSubject()
     }
 }
 
 // MARK: - Posts-related bindings
 extension AnswersViewManager {
-    private func bindResetAnswers() {
-        emptyAnswersSubject
+    private func bindResetSubject() {
+        resetSubject
             .sink { [weak self] _ in
                 self?.answersSummary = []
             }.store(in: &subscriptions)

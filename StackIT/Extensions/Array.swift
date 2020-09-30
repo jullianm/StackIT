@@ -19,6 +19,11 @@ extension Array where Element == QuestionsSummary {
     }
 }
 
+extension Array where Element == String {
+    func toData() -> Data {
+        return (try? JSONEncoder().encode(self)) ?? .init()
+    }
+}
 
 extension Array where Element == Int {
     func joinedString() -> String {

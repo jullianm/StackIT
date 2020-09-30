@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import StackAPI
+import SwiftUI
 
 class QuestionsViewManager: ObservableObject {
     /// Published properties
@@ -16,6 +17,7 @@ class QuestionsViewManager: ObservableObject {
     @Published var questionsFilter: Set<QuestionsFilter> = []
     @Published var loadingSections: Set<QuestionsLoadingSection> = []
     @Published var showLoadMore: Bool = false
+    @AppStorage("favorites") private var favoritesTags: Data?
 
     /// Private properties
     private var subscriptions = Set<AnyCancellable>()
@@ -25,7 +27,7 @@ class QuestionsViewManager: ObservableObject {
     var cachedQuestions: [QuestionsSummary] = []
 
     /// Subjects properties
-    var emptyQuestionsSubject = PassthroughSubject<Void, Never>()
+    var resetSubject = PassthroughSubject<Void, Never>()
     var fetchTagsSubject = PassthroughSubject<AppSection, Never>()
     var fetchQuestionsSubject = CurrentValueSubject<AppSection, Never>(.questions)
     
@@ -33,14 +35,15 @@ class QuestionsViewManager: ObservableObject {
         proxy = ViewManagerProxy(api: .init(enableMock: enableMock))
         bindFetchTags()
         bindFetchQuestions()
-        bindEmptyQuestions()
+        bindReset()
     }
     
-    private func bindEmptyQuestions() {
-        emptyQuestionsSubject
+    private func bindReset() {
+        resetSubject
             .sink { [weak self] _ in
                 self?.tags.forEach { $0.isFavorite = false }
                 self?.fetchQuestionsSubject.send(AppSection.questions)
+                self?.favoritesTags = nil
             }.store(in: &subscriptions)
     }
 }
@@ -56,11 +59,17 @@ extension QuestionsViewManager {
             .switchToLatest()
             .handleEvents(receiveSubscription: { [weak self] _ in
                 self?.loadingSections.insert(.tags)
-            }, receiveOutput: { [weak self] _ in
+            }, receiveOutput: { [weak self] tags in
                 self?.loadingSections.remove(.tags)
+                self?.tags = tags
             })
-            .assign(to: \.tags, on: self)
-            .store(in: &subscriptions)
+            .map { [weak self] _ in
+                self?.favoritesTags.toArray().forEach { favorite in
+                    self?.tags.first(where: { $0.name == favorite })?.isFavorite.toggle()
+                }
+            }.sink { [weak self] _ in
+                self?.fetchQuestionsSubject.send(.questions)
+            }.store(in: &subscriptions)
     }
     
     private func bindFetchQuestions() {
@@ -76,6 +85,7 @@ extension QuestionsViewManager {
                 switch subsection {
                 case .tag(let tag) where action == nil:
                     self?.tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
+                    self?.favoritesTags = self?.tags.filter(\.isFavorite).map(\.name).toData()
                 case .search:
                     self?.tags.forEach { $0.isFavorite = false }
                 default:
@@ -115,6 +125,7 @@ extension QuestionsViewManager {
                                                            trending: .votes,
                                                            action: action,
                                                            outputEvent: outputEvent)
+                                    
                 }
             }
             .switchToLatest()

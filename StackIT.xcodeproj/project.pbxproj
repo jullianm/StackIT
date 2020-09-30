@@ -59,6 +59,7 @@
 		C9A36B6B2523DEF700C2A31F /* AnswersViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B6A2523DEF700C2A31F /* AnswersViewManager.swift */; };
 		C9A36B702523E7FD00C2A31F /* AccountViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */; };
 		C9A36B7A2524C35B00C2A31F /* CommentsViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */; };
+		C9A36B7E2525308300C2A31F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B7D2525308300C2A31F /* Data.swift */; };
 		C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */; };
 /* End PBXBuildFile section */
 
@@ -117,6 +118,7 @@
 		C9A36B6A2523DEF700C2A31F /* AnswersViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswersViewManager.swift; sourceTree = "<group>"; };
 		C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewManager.swift; sourceTree = "<group>"; };
 		C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewManager.swift; sourceTree = "<group>"; };
+		C9A36B7D2525308300C2A31F /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -208,6 +210,7 @@
 				C946AAB224E17A3300DF3A13 /* URL.swift */,
 				C946AAB424E17A5800DF3A13 /* NS.swift */,
 				C950FC5C2520B23300532432 /* Bundle.swift */,
+				C9A36B7D2525308300C2A31F /* Data.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -396,6 +399,7 @@
 				C98AFBE924CC65E2005BAD7A /* StackITApp.swift in Sources */,
 				C946AAA924E1798000DF3A13 /* Optional.swift in Sources */,
 				C946AAA124E1793F00DF3A13 /* String.swift in Sources */,
+				C9A36B7E2525308300C2A31F /* Data.swift in Sources */,
 				C9730A15250E4DC4004D95BD /* ProfileView.swift in Sources */,
 				C90B509B24E04591002DFA55 /* UserMessageSummary.swift in Sources */,
 				C9A1DBE124D8B50E00464D32 /* ImageManager.swift in Sources */,

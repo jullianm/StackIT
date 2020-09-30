@@ -77,11 +77,7 @@ extension QuestionsSummaryView {
                     Spacer()
                 }.padding()
             }
-        }
-        .listRowBackground(Color.stackITDarkGray)
-        .onAppear {
-            questionsViewManager.fetchQuestionsSubject.send(.questions)
-        }
+        }.listRowBackground(Color.stackITDarkGray)
     }
 }
 

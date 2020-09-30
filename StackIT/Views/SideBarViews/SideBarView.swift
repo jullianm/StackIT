@@ -25,7 +25,6 @@ struct SideBarView: View {
             }
             .padding(.top, 5)
             .frame(minWidth: 250, maxWidth: 250, minHeight: 650, maxHeight: .infinity)
-            .onAppear { questionsViewManager.fetchTagsSubject.send(.tags) }
             
             QuestionsSummaryView(questionsViewManager: questionsViewManager,
                                  answersViewManager: answersViewManager)
@@ -68,8 +67,8 @@ struct SideBarView: View {
     }
     
     private func resetAll() {
-        questionsViewManager.emptyQuestionsSubject.send()
-        answersViewManager.emptyAnswersSubject.send()
+        questionsViewManager.resetSubject.send()
+        answersViewManager.resetSubject.send()
         search = .init()
     }
 }
