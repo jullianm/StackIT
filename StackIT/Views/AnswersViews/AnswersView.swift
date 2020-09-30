@@ -18,7 +18,9 @@ struct AnswersView: View {
                         Text("Question").font(.largeTitle).padding(.leading)
                         Spacer()
                     }
-                    QuestionRow(imageManager: .init(question.authorImage), question: question)
+                    QuestionRow(imageManager: .init(question.authorImage),
+                                commentsViewManager: CommentsViewManager(),
+                                question: question)
                 }
                 if !answersViewManager.answersSummary.isEmpty {
                     HStack {
@@ -27,7 +29,9 @@ struct AnswersView: View {
                     }
                 }
                 ForEach(answersViewManager.answersSummary, id: \.id) { answer in
-                    AnswerRow(imageManager: .init(answer.authorImage), answer: answer)
+                    AnswerRow(imageManager: .init(answer.authorImage),
+                              commentsViewManager: CommentsViewManager(),
+                              answer: answer)
                 }
             }.id(UUID())
             

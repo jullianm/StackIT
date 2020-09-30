@@ -13,6 +13,7 @@ class AnswersViewManager: ObservableObject {
     /// Published properties
     var selectedQuestion: QuestionsSummary?
     @Published var answersSummary: [AnswersSummary] = []
+    @Published var commentsSummary: [CommentsSummary] = []
     @Published var loadingSections: Set<AnswersLoadingSection> = []
     @Published var showLoadMore: Bool = false
 
@@ -22,6 +23,7 @@ class AnswersViewManager: ObservableObject {
 
     /// Subjects properties
     var fetchAnswersSubject = CurrentValueSubject<AppSection, Never>(.questions)
+    var fetchCommentsSubject = PassthroughSubject<AppSection, Never>()
     var emptyAnswersSubject = PassthroughSubject<Void, Never>()
     
     init(enableMock: Bool = false) {

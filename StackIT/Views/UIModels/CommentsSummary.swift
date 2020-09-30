@@ -9,7 +9,7 @@ import Foundation
 import StackAPI
 
 struct CommentsSummary: Identifiable {
-    var id = UUID()
+    let id = UUID()
     var body: String
     var authorName: String
     var authorReputation: String

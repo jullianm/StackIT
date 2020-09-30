@@ -58,6 +58,7 @@
 		C9A1DBE724D9EDFD00464D32 /* AnswersSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A1DBE624D9EDFD00464D32 /* AnswersSummary.swift */; };
 		C9A36B6B2523DEF700C2A31F /* AnswersViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B6A2523DEF700C2A31F /* AnswersViewManager.swift */; };
 		C9A36B702523E7FD00C2A31F /* AccountViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */; };
+		C9A36B7A2524C35B00C2A31F /* CommentsViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */; };
 		C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */; };
 /* End PBXBuildFile section */
 
@@ -115,6 +116,7 @@
 		C9A1DBE624D9EDFD00464D32 /* AnswersSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswersSummary.swift; sourceTree = "<group>"; };
 		C9A36B6A2523DEF700C2A31F /* AnswersViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswersViewManager.swift; sourceTree = "<group>"; };
 		C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewManager.swift; sourceTree = "<group>"; };
+		C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewManager.swift; sourceTree = "<group>"; };
 		C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -269,8 +271,9 @@
 				C98AFBFF24CC660F005BAD7A /* QuestionsViewManager.swift */,
 				C9A36B6A2523DEF700C2A31F /* AnswersViewManager.swift */,
 				C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */,
-				C9730A2225137F7A004D95BD /* ViewManagerProxy.swift */,
+				C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */,
 				C9A1DBE024D8B50E00464D32 /* ImageManager.swift */,
+				C9730A2225137F7A004D95BD /* ViewManagerProxy.swift */,
 				C9A1DBC024D606FF00464D32 /* AuthenticationManager.swift */,
 			);
 			path = Managers;
@@ -406,6 +409,7 @@
 				C9A36B6B2523DEF700C2A31F /* AnswersViewManager.swift in Sources */,
 				C9730A1F250ED02F004D95BD /* TimelineSummary.swift in Sources */,
 				C946AAA524E1795000DF3A13 /* Date.swift in Sources */,
+				C9A36B7A2524C35B00C2A31F /* CommentsViewManager.swift in Sources */,
 				C9A1DBC124D606FF00464D32 /* AuthenticationManager.swift in Sources */,
 				C9402E8924DA28E1002B8804 /* StackConfig.swift in Sources */,
 				C98AFC0124CC6610005BAD7A /* QuestionsViewManager.swift in Sources */,

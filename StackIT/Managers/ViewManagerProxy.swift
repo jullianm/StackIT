@@ -48,9 +48,11 @@ extension ViewManagerProxy {
             .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
                 guard let self = self else { return Just([]).eraseToAnyPublisher() }
                 
-                return self.publishQuestionsSummary(
-                    input: self.api.fetchQuestionsByIds(ids)
-                )
+                return self.api.fetchQuestionsByIds(ids)
+                    .map { $0.items.map(QuestionsSummary.init) }
+                    .replaceError(with: [])
+                    .map { [self] in $0.filtered(by: self.questionsFilter) }
+                    .eraseToAnyPublisher()
             }
             .switchToLatest()
             .replaceError(with: [])
@@ -61,31 +63,55 @@ extension ViewManagerProxy {
                                    trending: Trending,
                                    action: Action?,
                                    outputEvent: OutputQuestionsEvent) -> AnyPublisher<[QuestionsSummary], Never> {
-        return self.publishQuestionsSummary(
-            input: api.fetchQuestionsWithFilters(tags: tags, trending: trending, action: action),
-            outputEvent: outputEvent
-        )
+        api.fetchQuestionsWithFilters(tags: tags, trending: trending, action: action)
+            .handleEvents(receiveOutput: outputEvent)
+            .map { $0.items.map(QuestionsSummary.init) }
+            .replaceError(with: [])
+            .map { [self] in $0.filtered(by: questionsFilter) }
+            .eraseToAnyPublisher()
     }
     
     private func fetchQuestionsByIds(_ ids: String) -> AnyPublisher<[QuestionsSummary], Never> {
-        return self.publishQuestionsSummary(
-            input: api.fetchQuestionsByIds(ids)
-        )
+        api.fetchQuestionsByIds(ids)
+            .map { $0.items.map(QuestionsSummary.init) }
+            .replaceError(with: [])
+            .map { [self] in $0.filtered(by: questionsFilter) }
+            .eraseToAnyPublisher()
     }
 }
 
 // MARK: Answers API calls
 extension ViewManagerProxy {
     private func fetchAnswersByIds(_ ids: String) -> AnyPublisher<[AnswersSummary], Never> {
-        return publishAnswersSummary(
-            input: self.api.fetchAnswersByIds(ids)
-        )
+        api.fetchAnswersByIds(ids)
+            .map { $0.items.map(AnswersSummary.init) }
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
     }
-
+    
     func fetchAnswersByQuestionId(_ questionId: String) -> AnyPublisher<[AnswersSummary], Never> {
-        return publishAnswersSummary(
-            input: self.api.fetchAnswersByQuestionId(questionId)
-        )
+        api.fetchAnswersByQuestionId(questionId)
+            .map { $0.items.map(AnswersSummary.init) }
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
+        
+    }
+}
+
+// MARK: Comments API calls
+extension ViewManagerProxy {
+    func fetchCommentsByAnswerId(_ answerId: String) -> AnyPublisher<[CommentsSummary], Never> {
+        api.fetchCommentsByAnswersIds(answerId)
+            .map { $0.items.map(CommentsSummary.init) }
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchCommentsByQuestionId(_ questionId: String) -> AnyPublisher<[CommentsSummary], Never> {
+        api.fetchCommentsByQuestionsIds(questionId)
+            .map { $0.items.map(CommentsSummary.init) }
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
     }
 }
 
@@ -145,80 +171,6 @@ extension ViewManagerProxy {
         
         return api.fetchTimeline(token: token, key: key)
             .map { $0.items.map(TimelineSummary.init) }
-            .replaceError(with: [])
-            .eraseToAnyPublisher()
-    }
-}
-
-
-extension ViewManagerProxy {
-    private func publishQuestionsSummary(input: AnyPublisher<Questions, Error>,
-                                         outputEvent: OutputQuestionsEvent = nil) -> AnyPublisher<[QuestionsSummary], Never> {
-        return input
-            .handleEvents(receiveOutput: outputEvent)
-            .map { [weak self] questions -> AnyPublisher<(Questions, Comments), Never> in
-                guard let self = self else {
-                    return Just((.empty, .empty)).eraseToAnyPublisher()
-                }
-                let ids = questions.items.map(\.questionId).joinedString()
-                
-                let commentsPublisher = self.api.fetchCommentsByQuestionsIds(ids)
-                    .eraseToAnyPublisher()
-                
-                let questionsPublisher = Just(questions)
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
-                
-                let combined = Publishers.CombineLatest(questionsPublisher,
-                                                        commentsPublisher).eraseToAnyPublisher()
-                
-                return combined
-                    .replaceError(with: (.empty, .empty))
-                    .eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .map { (questions, comments) -> [QuestionsSummary] in
-                return questions.items.map { question in
-                    
-                    let comments = comments.items.filter {
-                        $0.postId == question.questionId
-                    }.map(CommentsSummary.init)
-                    
-                    return QuestionsSummary(from: question, comments: comments)
-                }
-            }
-            .replaceError(with: [])
-            .map { [self] in $0.filtered(by: questionsFilter) }
-            .eraseToAnyPublisher()
-    }
-    
-    private func publishAnswersSummary(input: AnyPublisher<Answers, Error>) -> AnyPublisher<[AnswersSummary], Never>  {
-        return input
-            .map { [weak self] answers -> AnyPublisher<(Answers, Comments), Error> in
-                guard let self = self else {
-                    return Just((.empty, .empty))
-                        .setFailureType(to: Error.self)
-                        .eraseToAnyPublisher()
-                }
-                let ids = answers.items.map(\.answerId).joinedString()
-                let commentsPublisher = self.api.fetchCommentsByAnswersIds(ids)
-                let answersPublisher = Just(answers).setFailureType(to: Error.self).eraseToAnyPublisher()
-                
-                let combined = Publishers.CombineLatest(answersPublisher, commentsPublisher)
-                
-                return combined.eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .map { (answers, comments) -> [AnswersSummary] in
-                return answers.items.map { answer in
-                    
-                    let comments = comments.items.filter {
-                        $0.postId == answer.answerId
-                    }.map(CommentsSummary.init)
-                    
-                    return AnswersSummary(from: answer, comments: comments)
-                }
-            }
             .replaceError(with: [])
             .eraseToAnyPublisher()
     }

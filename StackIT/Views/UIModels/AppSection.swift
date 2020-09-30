@@ -8,10 +8,16 @@
 import Foundation
 import StackAPI
 
+enum CommentsSection: Equatable {
+    case question(QuestionsSummary)
+    case answer(AnswersSummary)
+}
+
 enum AppSection: Equatable {
     case tags
     case questions(subsection: SubSection, Action? = nil)
     case answers(question: QuestionsSummary, Action? = nil)
+    case comments(subsection: CommentsSection, Action? = nil)
     case account(subsection: AccountSection)
     case authentication(action: AuthenticationAction)
     

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AnswerRow: View {
     @ObservedObject var imageManager: ImageManager
+    @ObservedObject var commentsViewManager: CommentsViewManager
     @State private var showComments = false
     var answer: AnswersSummary
     
@@ -65,7 +66,7 @@ struct AnswerRow: View {
             } label: {
                 HStack {
                     Image(systemName: "message.fill")
-                    Text("\(answer.comments.count)")
+                    Text(answer.commentCount)
                     Spacer()
                 }
             }.onTapGesture {
@@ -74,7 +75,13 @@ struct AnswerRow: View {
                 ZStack {
                     Color.stackITCode
                     commentsSection
-                }.frame(width: 500, height: 350)
+                }
+                .frame(width: 500, height: 350)
+                .onAppear {
+                    commentsViewManager.fetchCommentsSubject.send(
+                        .comments(subsection: .answer(answer))
+                    )
+                }
             }
         }.padding()
     }
@@ -83,19 +90,29 @@ struct AnswerRow: View {
 extension AnswerRow {
     private var commentsSection: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text("Comments").font(.largeTitle)
-                Spacer()
-                Button {
-                    showComments = false
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }.buttonStyle(BorderlessButtonStyle())
-                
-            }.padding([.top, .leading, .trailing])
+            if !commentsViewManager.commentsSummary.isEmpty {
+                HStack {
+                    Text("Comments").font(.largeTitle)
+                    Spacer()
+                    Button {
+                        showComments = false
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                    }.buttonStyle(BorderlessButtonStyle())
+                    
+                }.padding([.top, .leading, .trailing])
+            }
             
-            List(answer.comments, id: \.id) { comment in
-                CommentRow(imageManager: .init(comment.authorImage), comment: comment)
+            ZStack {
+                if !commentsViewManager.commentsSummary.isEmpty {
+                    List(commentsViewManager.commentsSummary, id: \.id) { comment in
+                        CommentRow(imageManager: .init(comment.authorImage), comment: comment)
+                    }
+                }
+                
+                if commentsViewManager.loadingSections.contains(.comments) && commentsViewManager.commentsSummary.isEmpty {
+                    ProgressView()
+                }
             }
         }
     }
