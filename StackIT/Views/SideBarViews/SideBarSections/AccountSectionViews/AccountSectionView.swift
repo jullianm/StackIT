@@ -25,21 +25,23 @@ struct AccountSectionView: View {
                 
                 Spacer()
                 
-                if isLogoutHovered {
-                    Text("Log out from account").font(.footnote).foregroundColor(Color.red)
-                }
-                
-                Button(action: {
-                    accountViewManager.authenticationSubject.send(.authentication(action: .logOut))
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                }
-                .cornerRadius(5.0)
-                .buttonStyle(BorderlessButtonStyle())
-                .padding(.trailing)
-                .onHover { hovered in
-                    withAnimation {
-                        isLogoutHovered = hovered
+                if accountViewManager.user != nil { /// user is logged in
+                    if isLogoutHovered {
+                        Text("Log out from account").font(.footnote).foregroundColor(Color.red)
+                    }
+                    
+                    Button(action: {
+                        accountViewManager.authenticationSubject.send(.authentication(action: .logOut))
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                    }
+                    .cornerRadius(5.0)
+                    .buttonStyle(BorderlessButtonStyle())
+                    .padding(.trailing)
+                    .onHover { hovered in
+                        withAnimation {
+                            isLogoutHovered = hovered
+                        }
                     }
                 }
             }
@@ -48,7 +50,6 @@ struct AccountSectionView: View {
                 .background(Color.gray)
                 .opacity(0.1)
                 .padding(.leading)
-            
             
             if accountViewManager.user != nil {
                 VStack(alignment: .leading) {

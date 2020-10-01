@@ -28,8 +28,10 @@ struct SideBarView: View {
             
             QuestionsSummaryView(questionsViewManager: questionsViewManager,
                                  answersViewManager: answersViewManager)
+                .frame(width: 500)
             
             AnswersView(answersViewManager: answersViewManager)
+                .frame(minWidth: 500, idealWidth: 550, maxWidth: .infinity)
         }
         .listStyle(SidebarListStyle())
         .navigationTitle(String.init())

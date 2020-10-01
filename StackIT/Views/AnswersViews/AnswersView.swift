@@ -54,6 +54,6 @@ struct AnswersView: View {
                     Spacer()
                 }
             }
-        }.frame(minWidth: 500, idealWidth: 550, maxWidth: .infinity)
+        }
     }
 }

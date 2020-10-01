@@ -22,7 +22,9 @@ class AccountViewManager: ObservableObject {
     private var proxy: ViewManagerProxy
 
     var fetchAccountSectionSubject = PassthroughSubject<AppSection, Never>()
-    var authenticationSubject = CurrentValueSubject<AppSection, Never>(.authentication(action: .checkAuthentication))
+    var authenticationSubject = CurrentValueSubject<AppSection, Never>(
+        .authentication(action: .checkAuthentication)
+    )
     
     init(authenticationManager: AuthenticationManager = .shared, enableMock: Bool = false) {
         authManager = authenticationManager
@@ -31,6 +33,7 @@ class AccountViewManager: ObservableObject {
     }
     
     private func setupBindings() {
+        bindUser()
         bindAuthentication()
         bindFetchAccount()
     }
@@ -38,6 +41,17 @@ class AccountViewManager: ObservableObject {
 
 // MARK: - Account-related bindings
 extension AccountViewManager {
+    private func bindUser() {
+        authManager.addUserPublisher
+            .handleEvents(receiveOutput: { [weak self] _ in
+                guard let self = self else { return }
+                self.proxy.stackConfig = self.authManager.stackConfig
+                self.loadingSections.remove(.account)
+            })
+            .assign(to: \.user, on: self)
+            .store(in: &subscriptions)
+    }
+    
     private func bindFetchAccount() {
         fetchAccountSectionSubject
             .handleEvents(receiveOutput: { [weak self] section in
@@ -103,16 +117,6 @@ extension AccountViewManager {
                 default:
                     break
                 }
-                
             }.store(in: &subscriptions)
-        
-        authManager.addUserPublisher
-            .handleEvents(receiveOutput: { [weak self] _ in
-                guard let self = self else { return }
-                self.proxy.stackConfig = self.authManager.stackConfig
-                self.loadingSections.remove(.account)
-            })
-            .assign(to: \.user, on: self)
-            .store(in: &subscriptions)
     }
 }

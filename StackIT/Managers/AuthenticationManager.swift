@@ -39,17 +39,16 @@ class AuthenticationManager {
                 guard let self = self else { return .init() }
                 return self.keychainManager.retrieveToken() ?? .init()
             }
-            .handleEvents(receiveOutput: { [weak self] token in
-                if token.isEmpty {
-                    self?.addUserSubject.send(nil)
-                } else {
-                    self?.stackConfig.token = token
-                }
+            .handleEvents(receiveOutput: { token in
+                self.stackConfig.token = token
             })
-            .filter { !$0.isEmpty }
             .map { [weak self] token -> AnyPublisher<UserSummary?, Never> in
                 guard let self = self else { return Just(nil).eraseToAnyPublisher() }
-                return self.getUser(token: token)
+                if token.isEmpty {
+                    return Just(nil).eraseToAnyPublisher()
+                } else {
+                    return self.getUser(token: token)
+                }
             }
             .switchToLatest()
             .receive(on: DispatchQueue.main)

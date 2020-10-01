@@ -19,7 +19,7 @@ struct QuestionsSummaryView: View {
         VStack {
             filterView
             listView
-        }.frame(width: 500)
+        }
     }
 }
 
