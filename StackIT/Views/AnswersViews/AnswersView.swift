@@ -12,28 +12,34 @@ struct AnswersView: View {
     
     var body: some View {
         ZStack {
-            List {
-                if let question = answersViewManager.selectedQuestion, !answersViewManager.answersSummary.isEmpty  {
-                    HStack {
-                        Text("Question").font(.largeTitle).padding(.leading)
-                        Spacer()
+            ScrollView(.vertical) {
+                LazyVStack {
+                    if let question = answersViewManager.selectedQuestion, !answersViewManager.answersSummary.isEmpty  {
+                        HStack {
+                            Text("Question").font(.largeTitle).padding(.leading)
+                            Spacer()
+                        }
+                        QuestionRow(imageManager: .init(question.authorImage),
+                                    commentsViewManager: CommentsViewManager(),
+                                    question: question)
                     }
-                    QuestionRow(imageManager: .init(question.authorImage),
-                                commentsViewManager: CommentsViewManager(),
-                                question: question)
-                }
-                if !answersViewManager.answersSummary.isEmpty {
-                    HStack {
-                        Text("Answers").font(.largeTitle).padding(.leading)
-                        Spacer()
+                    if !answersViewManager.answersSummary.isEmpty {
+                        HStack {
+                            Text("Answers").font(.largeTitle).padding(.leading)
+                            Spacer()
+                        }
                     }
-                }
-                ForEach(answersViewManager.answersSummary, id: \.id) { answer in
-                    AnswerRow(imageManager: .init(answer.authorImage),
-                              commentsViewManager: CommentsViewManager(),
-                              answer: answer)
-                }
-            }.id(UUID())
+                    ForEach(answersViewManager.answersSummary, id: \.id) { answer in
+                        AnswerRow(imageManager: .init(answer.authorImage),
+                                  commentsViewManager: CommentsViewManager(),
+                                  answer: answer)
+                            .onAppear(perform: {
+                                print("*** Answer : \(answer.id)")
+                            })
+                    }
+
+                }.id(UUID())
+            }
             
             if answersViewManager.loadingSections.contains(.answers) {
                 ProgressView()
