@@ -22,17 +22,6 @@ struct AnswersSummary: Identifiable, Equatable {
 }
 
 extension AnswersSummary {
-    init(from answer: Answer, comments: [CommentsSummary]) {
-        self.lastActivityDate = "Last activity on \(answer.lastActivityDate.stringDate())"
-        self.score = answer.score.string()
-        self.body = MessageExtractor.sharedInstance.parse(html: answer.body)
-        //self.body = answer.body.addStyling()
-        self.isAccepted = answer.isAccepted
-        self.authorName = answer.owner.displayName.unwrapped()
-        self.authorReputation = answer.owner.reputation.string()
-        self.authorImage = answer.owner.profileImage.unwrapped()
-        self.comments = comments
-    }
     
     init(from answer: Answer) {
         self.lastActivityDate = "Last activity on \(answer.lastActivityDate.stringDate())"

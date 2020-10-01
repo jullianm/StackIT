@@ -11,7 +11,7 @@ import StackAPI
 struct QuestionsSummary: Identifiable, Equatable {
     var id = UUID()
     let questionId: String
-    let body: String
+    let body: [MessageDetail]
     var lastActivityDate: String
     let title: String
     let tags: [String]
@@ -42,7 +42,7 @@ struct QuestionsSummary: Identifiable, Equatable {
 extension QuestionsSummary {
     init(from question: Question) {
         self.questionId = question.questionId.string()
-        self.body = question.body.addStyling()
+        self.body = MessageExtractor.sharedInstance.parse(html: question.body)
         self.lastActivityDate = "Last activity on \(question.lastActivityDate.stringDate())"
         self.title = question.title
         self.tags = question.tags
@@ -65,7 +65,7 @@ extension QuestionsSummary {
     }
     
     static let empty = [QuestionsSummary(questionId: "",
-                                         body: "",
+                                         body: [],
                                          lastActivityDate: "",
                                          title: "",
                                          tags: [],
