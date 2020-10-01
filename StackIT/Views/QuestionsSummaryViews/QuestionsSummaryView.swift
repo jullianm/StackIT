@@ -12,6 +12,7 @@ struct QuestionsSummaryView: View {
     @ObservedObject var questionsViewManager: QuestionsViewManager
     @State private var isActive = true
     @State private var selectedIndex: UUID?
+    @State private var isNewQuestionSheetPresented = false
     var answersViewManager: AnswersViewManager
 
     var body: some View {
@@ -41,6 +42,24 @@ extension QuestionsSummaryView {
                         Text(questionFilter.rawValue)
                     }
                 }.padding()
+                
+                Spacer()
+                
+                Button(action: {
+                    isNewQuestionSheetPresented = true
+                }) {
+                    Image(systemName: "square.and.pencil")
+                        .renderingMode(.template)
+                        .foregroundColor(Color.blue)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.trailing)
+                .sheet(isPresented: $isNewQuestionSheetPresented) {
+                    NewQuestionView {
+                        self.isNewQuestionSheetPresented = false
+                    }
+                }
+                
             }
             
             Divider()

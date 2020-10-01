@@ -12,6 +12,7 @@ import SwiftUI
 
 class QuestionsViewManager: ObservableObject {
     /// Published properties
+    @Published var trending: Trending?
     @Published var tags: [TagSummary] = TagSummary.popular
     @Published var questionsSummary: [QuestionsSummary] = QuestionsSummary.placeholders
     @Published var questionsFilter: Set<QuestionsFilter> = []
@@ -59,6 +60,7 @@ extension QuestionsViewManager {
             .switchToLatest()
             .handleEvents(receiveSubscription: { [weak self] _ in
                 self?.loadingSections.insert(.tags)
+                self?.loadingSections.insert(.questions)
             }, receiveOutput: { [weak self] tags in
                 self?.loadingSections.remove(.tags)
                 self?.tags = tags
@@ -76,25 +78,27 @@ extension QuestionsViewManager {
         fetchQuestionsSubject
             .dropFirst()
             .handleEvents(receiveOutput: { [weak self] output in
-                guard case let .questions(subsection, action) = output else {
+                guard let self = self, case let .questions(subsection, action) = output else {
                     return
                 }
                 
-                self?.loadingSections.insert(.questions)
+                self.loadingSections.insert(.questions)
                 
                 switch subsection {
+                case .trending(let selectedTrending):
+                    self.trending = (selectedTrending == self.trending) ? nil: selectedTrending
                 case .tag(let tag) where action == nil:
-                    self?.tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
-                    self?.favoritesTags = self?.tags.filter(\.isFavorite).map(\.name).toData()
+                    self.tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
+                    self.favoritesTags = self.tags.filter(\.isFavorite).map(\.name).toData()
                 case .search:
-                    self?.tags.forEach { $0.isFavorite = false }
+                    self.tags.forEach { $0.isFavorite = false }
                 default:
                     break
                 }
             })
             .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
-            .map { [self] section -> AnyPublisher<[QuestionsSummary], Never> in
-                guard case let .questions(subsection, action) = section else {
+            .map { [weak self] section -> AnyPublisher<[QuestionsSummary], Never> in
+                guard let self = self, case let .questions(subsection, action) = section else {
                     fatalError()
                 }
                 
@@ -104,28 +108,21 @@ extension QuestionsViewManager {
                         self?.showLoadMore = $0.hasMore
                     }
                     
-                    return proxy.fetchQuestionsByKeywords(keywords: keywords,
+                    return self.proxy.fetchQuestionsByKeywords(keywords: keywords,
                                                           action: action,
                                                           outputEvent: outputEvent)
-                case let .trending(trending):
+                case .trending, .tag:
                     let outputEvent: (Questions) -> Void = { [weak self] in
                         self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
                     }
                     
-                    return proxy.fetchQuestionsWithFilters(tags: [],
-                                                           trending: trending,
-                                                           action: action,
-                                                           outputEvent: outputEvent)
-                case .tag:
-                    let outputEvent: (Questions) -> Void = { [weak self] in
-                        self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
-                    }
+                    let selectedTags = self.tags.filter(\.isFavorite).map(\.name)
+                    let selectedTrending = self.trending ?? .votes
                     
-                    return proxy.fetchQuestionsWithFilters(tags: tags.filter(\.isFavorite).map(\.name),
-                                                           trending: .votes,
-                                                           action: action,
-                                                           outputEvent: outputEvent)
-                                    
+                    return self.proxy.fetchQuestionsWithFilters(tags: selectedTags,
+                                                                trending: selectedTrending,
+                                                                action: action,
+                                                                outputEvent: outputEvent)
                 }
             }
             .switchToLatest()

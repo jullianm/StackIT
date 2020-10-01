@@ -60,6 +60,7 @@
 		C9A36B702523E7FD00C2A31F /* AccountViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */; };
 		C9A36B7A2524C35B00C2A31F /* CommentsViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */; };
 		C9A36B7E2525308300C2A31F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B7D2525308300C2A31F /* Data.swift */; };
+		C9A36B812525F9FC00C2A31F /* NewQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B802525F9FC00C2A31F /* NewQuestionView.swift */; };
 		C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */; };
 /* End PBXBuildFile section */
 
@@ -119,6 +120,7 @@
 		C9A36B6F2523E7FD00C2A31F /* AccountViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewManager.swift; sourceTree = "<group>"; };
 		C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewManager.swift; sourceTree = "<group>"; };
 		C9A36B7D2525308300C2A31F /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		C9A36B802525F9FC00C2A31F /* NewQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewQuestionView.swift; sourceTree = "<group>"; };
 		C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -180,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				C98AFC0324CC68BA005BAD7A /* QuestionsSummaryView.swift */,
+				C9A36B802525F9FC00C2A31F /* NewQuestionView.swift */,
 				C946AA9424E16B9B00DF3A13 /* QuestionsSummaryRow.swift */,
 			);
 			path = QuestionsSummaryViews;
@@ -395,6 +398,7 @@
 				C98AFC0424CC68BA005BAD7A /* QuestionsSummaryView.swift in Sources */,
 				C946AA8C24E1689E00DF3A13 /* TagSectionView.swift in Sources */,
 				C946AA9A24E16C1800DF3A13 /* CommentRow.swift in Sources */,
+				C9A36B812525F9FC00C2A31F /* NewQuestionView.swift in Sources */,
 				C946AAB124E17A0C00DF3A13 /* Array.swift in Sources */,
 				C98AFBE924CC65E2005BAD7A /* StackITApp.swift in Sources */,
 				C946AAA924E1798000DF3A13 /* Optional.swift in Sources */,

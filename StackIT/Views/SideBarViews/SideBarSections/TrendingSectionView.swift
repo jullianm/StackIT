@@ -27,9 +27,12 @@ struct TrendingSectionView: View {
                 HStack {
                     Image(systemName: trending.iconName)
                         .renderingMode(.template)
-                        .foregroundColor(.yellow)
+                        .foregroundColor(questionsViewManager.trending == trending ? .white: .yellow)
+                    
                     Text(trending.title)
+                    
                     Spacer()
+                    
                 }
                 .padding(.leading)
                 .padding(.bottom, 5)
