@@ -13,7 +13,8 @@ struct AnswersSummary: Identifiable, Equatable {
     var lastActivityDate: String
     var score: String
     var isAccepted: Bool
-    var body: [MessageDetail]
+    var body: String
+    var messageDetails: [MessageDetail] = []
     var authorName: String
     var authorReputation: String
     var authorImage: String
@@ -26,7 +27,7 @@ extension AnswersSummary {
     init(from answer: Answer) {
         self.lastActivityDate = "Last activity on \(answer.lastActivityDate.stringDate())"
         self.score = answer.score.string()
-        self.body = MessageExtractor.sharedInstance.parse(html: answer.body)
+        self.body = answer.body
         self.isAccepted = answer.isAccepted
         self.authorName = answer.owner.displayName.unwrapped()
         self.authorReputation = answer.owner.reputation.string()

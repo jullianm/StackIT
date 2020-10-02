@@ -12,8 +12,8 @@ struct AnswersView: View {
     
     var body: some View {
         ZStack {
-            ScrollView(.vertical) {
-                LazyVStack {
+            List {
+                VStack {
                     if let question = answersViewManager.selectedQuestion, !answersViewManager.answersSummary.isEmpty  {
                         HStack {
                             Text("Question").font(.largeTitle).padding(.leading)

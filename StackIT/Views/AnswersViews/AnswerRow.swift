@@ -59,7 +59,7 @@ struct AnswerRow: View {
             }
 
             VStack(alignment: .leading) {
-                ForEach(answer.body, id: \.self) { messageDetail in
+                ForEach(answer.messageDetails, id: \.self) { messageDetail in
                     switch messageDetail {
                     case .plainText(let text):
                         NSTextFieldRepresentable(attributedString: text)
