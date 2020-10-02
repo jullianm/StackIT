@@ -5,6 +5,7 @@
 //  Created by Jullian Mercier on 2020-09-17.
 //
 
+import Foundation
 import Combine
 import StackAPI
 

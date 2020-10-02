@@ -11,10 +11,11 @@ import Combine
 extension Publisher where Output == [QuestionsSummary], Failure == Never {
     func assign(to keyPath: ReferenceWritableKeyPath<QuestionsViewManager, Self.Output>,
                 on object: QuestionsViewManager) -> AnyCancellable {
-            sink { output in
+        debounce(for: .seconds(2), scheduler: DispatchQueue.main)
+            .sink { output in
                 guard case let .questions(_, status) = object.fetchQuestionsSubject.value else { return }
                 
-                object.loadingSections = []
+                object.loadingSections.remove(.questions)
                 
                 guard output.count > 0 else {
                     object.questionsSummary = QuestionsSummary.empty

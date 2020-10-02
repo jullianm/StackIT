@@ -34,8 +34,8 @@ class QuestionsViewManager: ObservableObject {
     
     init(enableMock: Bool = false) {
         proxy = ViewManagerProxy(api: .init(enableMock: enableMock))
-        bindFetchTags()
         bindFetchQuestions()
+        bindFetchTags()
         bindReset()
     }
     
@@ -64,12 +64,11 @@ extension QuestionsViewManager {
             }, receiveOutput: { [weak self] tags in
                 self?.loadingSections.remove(.tags)
                 self?.tags = tags
-            })
-            .map { [weak self] _ in
                 self?.favoritesTags.toArray().forEach { favorite in
                     self?.tags.first(where: { $0.name == favorite })?.isFavorite.toggle()
                 }
-            }.sink { [weak self] _ in
+            })
+            .sink { [weak self] _ in
                 self?.fetchQuestionsSubject.send(.questions)
             }.store(in: &subscriptions)
     }
@@ -96,7 +95,6 @@ extension QuestionsViewManager {
                     break
                 }
             })
-            .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
             .map { [weak self] section -> AnyPublisher<[QuestionsSummary], Never> in
                 guard let self = self, case let .questions(subsection, action) = section else {
                     fatalError()
