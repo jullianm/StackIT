@@ -22,7 +22,7 @@ class AnswersViewManager: ObservableObject {
     private var proxy: ViewManagerProxy
 
     /// Subjects properties
-    var fetchAnswersSubject = CurrentValueSubject<AppSection, Never>(.questions)
+    var fetchAnswersSubject = PassthroughSubject<AppSection, Never>()
     var fetchCommentsSubject = PassthroughSubject<AppSection, Never>()
     var resetSubject = PassthroughSubject<Void, Never>()
     
@@ -44,7 +44,6 @@ extension AnswersViewManager {
     
     private func bindFetchAnswers() {
         fetchAnswersSubject
-            .dropFirst()
             .handleEvents(receiveOutput: { [weak self] output in
                 guard case .answers(let question, _) = output else { return }
                 
@@ -59,6 +58,14 @@ extension AnswersViewManager {
                 return proxy.fetchAnswersByQuestionId(question.questionId)
             }
             .switchToLatest()
+            .map { answers in
+                var values = answers
+                values.enumerated().forEach { index, value in
+                    values[index].messageDetails = MessageExtractor.sharedInstance.parse(html: value.body)
+                }
+                
+                return values
+            }
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections.remove(.answers)
             })

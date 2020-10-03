@@ -31,8 +31,9 @@ struct CommentRow: View {
                 Text(comment.authorName).font(.subheadline)
                 Spacer()
             }
-            
-            NSTextFieldRepresentable(htmlString: comment.body)
+
+            // TODO: Jessy
+            //NSTextFieldRepresentable(htmlString: comment.body)
             
             Divider()
                 .background(Color.gray)

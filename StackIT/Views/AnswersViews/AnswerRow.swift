@@ -16,7 +16,7 @@ struct AnswerRow: View {
     var body: some View {
         VStack {
             HStack(alignment: .top) {
-                VStack {
+                /*VStack {
                     HStack {
                         Button {
                             
@@ -32,7 +32,7 @@ struct AnswerRow: View {
                             Image(systemName: "arrowtriangle.down.fill")
                         }
                     }
-                }
+                }*/
                 
                 Spacer()
                 
@@ -57,11 +57,22 @@ struct AnswerRow: View {
                     }
                 }.padding([.leading, .trailing])
             }
-            
-            NSTextFieldRepresentable(htmlString: answer.body)
-                .padding()
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(answer.isAccepted ? Color("StackITGreen"): Color.gray.opacity(0.2), lineWidth: 1))
-            Button {
+
+            VStack(alignment: .leading) {
+                ForEach(answer.messageDetails, id: \.self) { messageDetail in
+                    switch messageDetail {
+                    case .plainText(let text):
+                        NSTextFieldRepresentable(attributedString: text)
+                    case .codeText(let code):
+                        CodeView(code: code)
+                    case .image(let image):
+                        ImageView(imageManager: .init(image.url), legend: image.legend)
+                    }
+                }
+            }.padding()
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(answer.isAccepted ? Color("StackITGreen"): Color.gray.opacity(0.2), lineWidth: 1))
+
+            /*Button {
                 showComments.toggle()
             } label: {
                 HStack {
@@ -82,7 +93,7 @@ struct AnswerRow: View {
                         .comments(subsection: .answer(answer))
                     )
                 }
-            }
+            }*/
         }.padding()
     }
 }

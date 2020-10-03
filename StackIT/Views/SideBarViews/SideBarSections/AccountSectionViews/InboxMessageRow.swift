@@ -43,7 +43,7 @@ struct InboxMessageRow: View {
                             .overlay(Circle().stroke(Color.white, lineWidth: 1))
                     }
                     
-                    NSTextFieldRepresentable(htmlString: messageSummary.body, backgroundColor: .black)
+                    //NSTextFieldRepresentable(htmlString: messageSummary.body, backgroundColor: .black)
                 }
             }
             

@@ -14,6 +14,7 @@ struct AnswersSummary: Identifiable, Equatable {
     var score: String
     var isAccepted: Bool
     var body: String
+    var messageDetails: [MessageDetail] = []
     var authorName: String
     var authorReputation: String
     var authorImage: String
@@ -22,10 +23,11 @@ struct AnswersSummary: Identifiable, Equatable {
 }
 
 extension AnswersSummary {
+    
     init(from answer: Answer) {
         self.lastActivityDate = "Last activity on \(answer.lastActivityDate.stringDate())"
         self.score = answer.score.string()
-        self.body = answer.body.addStyling()
+        self.body = answer.body
         self.isAccepted = answer.isAccepted
         self.authorName = answer.owner.displayName.unwrapped()
         self.authorReputation = answer.owner.reputation.string()

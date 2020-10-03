@@ -9,12 +9,12 @@ import AppKit
 import SwiftUI
 
 struct NSTextFieldRepresentable: NSViewRepresentable {
-    let htmlString: String
+    let attributedString: NSAttributedString
     let backgroundColor: NSColor
     private let textField = NSTextField()
     
-    init(htmlString: String, backgroundColor: NSColor = NSColor(named: "StackITCode")!) {
-        self.htmlString = htmlString
+    init(attributedString: NSAttributedString, backgroundColor: NSColor = NSColor(named: "StackITCode")!) {
+        self.attributedString = attributedString
         self.backgroundColor = backgroundColor
     }
     
@@ -34,8 +34,8 @@ extension NSTextFieldRepresentable {
         textField.layer?.borderColor = NSColor(named: "StackITCode")!.cgColor
         textField.backgroundColor = backgroundColor
         textField.drawsBackground = true
-        textField.isEditable = false
-        textField.isSelectable = false
+        textField.isEditable = true
+        textField.isSelectable = true
         textField.lineBreakMode = .byWordWrapping
         textField.maximumNumberOfLines = 0
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -49,7 +49,7 @@ extension NSTextFieldRepresentable {
     
     private func setAttributedString(textField: NSTextField) {
         DispatchQueue.main.async {
-            let data = Data(htmlString.utf8)
+            /*let data = Data(htmlString.utf8)
             let options: [NSAttributedString.DocumentReadingOptionKey : Any] = [
                 .documentType: NSAttributedString.DocumentType.html,
             ]
@@ -58,9 +58,13 @@ extension NSTextFieldRepresentable {
                                                               documentAttributes: nil) {
                 attributedString.addAttributes([.backgroundColor: NSColor(named: "StackITCode")!,
                                                 ],
-                                               range: NSMakeRange(0, attributedString.length))
+                                               range: NSMakeRange(0, attributedString.length))*/
                 textField.attributedStringValue = attributedString
-            }
+            //}
         }
     }
+}
+
+class TextTest: NSObject, NSTextFieldDelegate {
+
 }

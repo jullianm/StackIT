@@ -14,7 +14,7 @@ struct QuestionSummaryRow: View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading) {
-                    Text(questionSummary.title)
+                    Text(questionSummary.title).lineLimit(nil)
                     
                     Text(questionSummary.tags.joined(separator: ", "))
                         .foregroundColor(Color.gray)
