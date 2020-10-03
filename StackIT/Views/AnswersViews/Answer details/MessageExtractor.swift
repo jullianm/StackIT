@@ -23,10 +23,6 @@ public class MessageExtractor {
 
         if let body = doc.body() {
 
-            if let test = try? body.text(), test.contains("You are a victim of") {
-                print("stop")
-            }
-
             var inP = false
             var currentP = "".addStyling()
             for element in body.children() {
@@ -37,7 +33,7 @@ public class MessageExtractor {
                         currentP = "".addStyling()
                     }
 
-                    result.append(.codeText(text: "Toto\n\(code)\nToto"))
+                    result.append(.codeText(text: code))
                 } else {
                     if let aTag = element.children().first(where: { elt -> Bool in elt.tag().getName() == "a" }), let _ = aTag.children().first(where: { elt -> Bool in elt.tag().getName() == "img" }) {
                         if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
@@ -53,21 +49,6 @@ public class MessageExtractor {
                         inP = true
                         currentP += html
                     }
-                    /*if element.children().contains(where: { element -> Bool in element.tag().getName() == "a" || element.tag().getName() == "img" }) {
-                        if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
-                            inP = false
-                            result.append(.plainText(text: attributedText))
-                            currentP = "".addStyling()
-                        }
-
-                        if let image = extractImage(element: element) {
-                            result.append(.image(image: image))
-                        }
-
-                    } else if let html = try? element.outerHtml() {
-                        inP = true
-                        currentP += html
-                    }*/
                 }
             }
 
