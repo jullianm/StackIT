@@ -16,7 +16,7 @@ struct ImageView: View {
             if let image = imageManager.image {
                 HStack {
                     Spacer()
-                    Image(nsImage: image).resizable().aspectRatio(contentMode: .fit)
+                    Image(nsImage: image).resizable().aspectRatio(contentMode: .fit).fixedSize(horizontal: false, vertical: true)
                     Spacer()
                 }
             }

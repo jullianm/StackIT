@@ -33,9 +33,6 @@ struct AnswersView: View {
                         AnswerRow(imageManager: .init(answer.authorImage),
                                   commentsViewManager: CommentsViewManager(),
                                   answer: answer)
-                            .onAppear(perform: {
-                                print("*** Answer : \(answer.id)")
-                            })
                     }
 
                 }.id(UUID())
