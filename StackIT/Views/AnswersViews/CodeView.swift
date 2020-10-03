@@ -11,22 +11,24 @@ struct CodeView: View {
     let code: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack {
             HStack {
 
                 Button("Copy") {
                     let pasteboard = NSPasteboard.general
                     pasteboard.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
                     pasteboard.setString(code, forType: NSPasteboard.PasteboardType.string)
-                }
+                }//.padding(.all, 10)
                 Spacer()
             }
 
-            ScrollView(.horizontal, showsIndicators: true) {
-                Text(code).lineLimit(nil)
-            }
 
-        }.padding(.all, 10).border(Color.gray, width: 1)
+
+            ScrollView(.horizontal, showsIndicators: true) {
+                Text(code).fixedSize(horizontal: false, vertical: true).lineLimit(nil)
+            }.padding(.all, 10).background(Color.stackITGray).cornerRadius(10.0)
+
+        }
     }
 }
 

@@ -22,6 +22,7 @@ public class MessageExtractor {
         var result: [MessageDetail] = []
 
         if let body = doc.body() {
+
             var inP = false
             var currentP = "".addStyling()
             for element in body.children() {
@@ -32,12 +33,9 @@ public class MessageExtractor {
                         currentP = "".addStyling()
                     }
 
-                    // fix a wrong height in Text 
-                    code.append("\n")
-
                     result.append(.codeText(text: code))
                 } else {
-                    if element.children().contains(where: { element -> Bool in element.tag().getName() == "a" || element.tag().getName() == "img" }) {
+                    if let aTag = element.children().first(where: { elt -> Bool in element.tag().getName() == "a" }), let _ = aTag.children().first(where: { elt -> Bool in element.tag().getName() == "img" }) {
                         if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
                             inP = false
                             result.append(.plainText(text: attributedText))
@@ -47,7 +45,6 @@ public class MessageExtractor {
                         if let image = extractImage(element: element) {
                             result.append(.image(image: image))
                         }
-
                     } else if let html = try? element.outerHtml() {
                         inP = true
                         currentP += html

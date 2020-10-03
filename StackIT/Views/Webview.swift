@@ -34,7 +34,7 @@ extension NSTextFieldRepresentable {
         textField.layer?.borderColor = NSColor(named: "StackITCode")!.cgColor
         textField.backgroundColor = backgroundColor
         textField.drawsBackground = true
-        textField.isEditable = false
+        textField.isEditable = true
         textField.isSelectable = true
         textField.lineBreakMode = .byWordWrapping
         textField.maximumNumberOfLines = 0
@@ -63,4 +63,8 @@ extension NSTextFieldRepresentable {
             //}
         }
     }
+}
+
+class TextTest: NSObject, NSTextFieldDelegate {
+
 }

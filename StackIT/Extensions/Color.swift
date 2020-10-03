@@ -9,5 +9,6 @@ import SwiftUI
 
 extension Color {
     static let stackITDarkGray = Self("StackITDarkGray")
+    static let stackITGray = Self("StackITGray")
     static let stackITCode = Self("StackITCode")
 }
