@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4574C0162528D2430050F0C6 /* StackConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4574C0152528D2430050F0C6 /* StackConfig.plist */; };
 		4996F358251F7B5200934EC3 /* MessageDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4996F357251F7B5200934EC3 /* MessageDetail.swift */; };
 		4996F35A251F807F00934EC3 /* MessageExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4996F359251F807F00934EC3 /* MessageExtractor.swift */; };
 		4996F35D251FDF3500934EC3 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 4996F35C251FDF3500934EC3 /* SwiftSoup */; };
@@ -65,11 +66,11 @@
 		C9A36B7A2524C35B00C2A31F /* CommentsViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */; };
 		C9A36B7E2525308300C2A31F /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B7D2525308300C2A31F /* Data.swift */; };
 		C9A36B812525F9FC00C2A31F /* NewQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A36B802525F9FC00C2A31F /* NewQuestionView.swift */; };
-		C9A36B8725269AF000C2A31F /* StackConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = C9A36B8625269AF000C2A31F /* StackConfig.plist */; };
 		C9ECA1FA24E2C2E500A07BB9 /* QuestionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4574C0152528D2430050F0C6 /* StackConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = StackConfig.plist; path = ../../../Downloads/StackConfig.plist; sourceTree = "<group>"; };
 		4996F357251F7B5200934EC3 /* MessageDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetail.swift; sourceTree = "<group>"; };
 		4996F359251F807F00934EC3 /* MessageExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageExtractor.swift; sourceTree = "<group>"; };
 		4996F35E252136FA00934EC3 /* CodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
@@ -129,7 +130,6 @@
 		C9A36B792524C35B00C2A31F /* CommentsViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewManager.swift; sourceTree = "<group>"; };
 		C9A36B7D2525308300C2A31F /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		C9A36B802525F9FC00C2A31F /* NewQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewQuestionView.swift; sourceTree = "<group>"; };
-		C9A36B8625269AF000C2A31F /* StackConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = StackConfig.plist; sourceTree = "<group>"; };
 		C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -211,8 +211,8 @@
 			isa = PBXGroup;
 			children = (
 				C95942D724CE456A001FA9FA /* AnswersView.swift */,
-				C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */,
 				C946AA9D24E16E4B00DF3A13 /* AnswerRow.swift */,
+				C9ECA1F924E2C2E500A07BB9 /* QuestionRow.swift */,
 				C946AA9924E16C1800DF3A13 /* CommentRow.swift */,
 				4996F356251F7B2900934EC3 /* Answer details */,
 				4996F35E252136FA00934EC3 /* CodeView.swift */,
@@ -277,8 +277,8 @@
 				C95942DB24CE492E001FA9FA /* Views */,
 				C98AFBEC24CC65E7005BAD7A /* Assets.xcassets */,
 				C98AFBF124CC65E7005BAD7A /* Info.plist */,
+				4574C0152528D2430050F0C6 /* StackConfig.plist */,
 				C9402E8824DA28E1002B8804 /* StackConfig.swift */,
-				C9A36B8625269AF000C2A31F /* StackConfig.plist */,
 				C98AFBF224CC65E7005BAD7A /* StackIT.entitlements */,
 				C98AFBEE24CC65E7005BAD7A /* Preview Content */,
 			);
@@ -382,7 +382,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9A36B8725269AF000C2A31F /* StackConfig.plist in Resources */,
+				4574C0162528D2430050F0C6 /* StackConfig.plist in Resources */,
 				C98AFBF024CC65E7005BAD7A /* Preview Assets.xcassets in Resources */,
 				C98AFBED24CC65E7005BAD7A /* Assets.xcassets in Resources */,
 			);
@@ -578,10 +578,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = StackIT/StackIT.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"StackIT/Preview Content\"";
-				DEVELOPMENT_TEAM = NS7Y4342PW;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = StackIT/Info.plist;
@@ -592,6 +592,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = Croissants.StackIT;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;

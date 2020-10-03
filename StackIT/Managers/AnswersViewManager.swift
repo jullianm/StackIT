@@ -47,6 +47,7 @@ extension AnswersViewManager {
             .handleEvents(receiveOutput: { [weak self] output in
                 guard case .answers(let question, _) = output else { return }
                 
+                self?.answersSummary = []
                 self?.selectedQuestion = question
                 self?.loadingSections.insert(.answers)
             })
@@ -66,10 +67,10 @@ extension AnswersViewManager {
                 
                 return values
             }
+            .replaceError(with: [])
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections.remove(.answers)
             })
-            .replaceError(with: [])
             .assign(to: \.answersSummary, on: self)
             .store(in: &subscriptions)
     }
