@@ -35,6 +35,7 @@ class ImageManager: ObservableObject {
             .map(\.data)
             .map(NSImage.init(data:))
             .replaceError(with: nil)
+            .receive(on: RunLoop.main)
             .assign(to: \.image, on: self)
             .store(in: &subscriptions)
     }
