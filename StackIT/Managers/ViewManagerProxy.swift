@@ -30,10 +30,9 @@ class ViewManagerProxy {
 
 // MARK: - Tags API requests
 extension ViewManagerProxy {
-    func fetchTags() -> AnyPublisher<[TagSummary], Never> {
+    func fetchTags() -> AnyPublisher<[TagSummary], Error> {
         return api.fetchPopularTags()
             .map { $0.items.map(\.name).map { TagSummary(name: $0) } }
-            .replaceError(with: TagSummary.popular)
             .eraseToAnyPublisher()
     }
 }
@@ -42,7 +41,7 @@ extension ViewManagerProxy {
 extension ViewManagerProxy {
     func fetchQuestionsByKeywords(keywords: String,
                                   action: Action?,
-                                  outputEvent: OutputSearchEvent) -> AnyPublisher<[QuestionsSummary], Never> {
+                                  outputEvent: OutputSearchEvent) -> AnyPublisher<[QuestionsSummary], Error> {
         return api.fetchQuestionsByKeywords(keywords: keywords, action: action)
             .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(\.questionId).joinedString() }
@@ -56,44 +55,45 @@ extension ViewManagerProxy {
                     .eraseToAnyPublisher()
             }
             .switchToLatest()
-            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
     
     func fetchQuestionsWithFilters(tags: [String],
                                    trending: Trending,
                                    action: Action?,
-                                   outputEvent: OutputQuestionsEvent) -> AnyPublisher<[QuestionsSummary], Never> {
+                                   outputEvent: OutputQuestionsEvent) -> AnyPublisher<[QuestionsSummary], Error> {
         api.fetchQuestionsWithFilters(tags: tags, trending: trending, action: action)
             .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(QuestionsSummary.init) }
-            .replaceError(with: [])
-            .map { [self] in $0.filtered(by: questionsFilter) }
+            .map { [weak self] in
+                guard let self = self else { return [] }
+                return $0.filtered(by: self.questionsFilter)
+            }
             .eraseToAnyPublisher()
     }
     
-    private func fetchQuestionsByIds(_ ids: String) -> AnyPublisher<[QuestionsSummary], Never> {
+    private func fetchQuestionsByIds(_ ids: String) -> AnyPublisher<[QuestionsSummary], Error> {
         api.fetchQuestionsByIds(ids)
             .map { $0.items.map(QuestionsSummary.init) }
-            .replaceError(with: [])
-            .map { [self] in $0.filtered(by: questionsFilter) }
+            .map { [weak self] in
+                guard let self = self else { return [] }
+                return $0.filtered(by: self.questionsFilter)
+            }
             .eraseToAnyPublisher()
     }
 }
 
 // MARK: Answers API calls
 extension ViewManagerProxy {
-    private func fetchAnswersByIds(_ ids: String) -> AnyPublisher<[AnswersSummary], Never> {
+    private func fetchAnswersByIds(_ ids: String) -> AnyPublisher<[AnswersSummary], Error> {
         api.fetchAnswersByIds(ids)
             .map { $0.items.map(AnswersSummary.init) }
-            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
     
-    func fetchAnswersByQuestionId(_ questionId: String) -> AnyPublisher<[AnswersSummary], Never> {
+    func fetchAnswersByQuestionId(_ questionId: String) -> AnyPublisher<[AnswersSummary], Error> {
         api.fetchAnswersByQuestionId(questionId)
             .map { $0.items.map(AnswersSummary.init) }
-            .replaceError(with: [])
             .eraseToAnyPublisher()
         
     }
@@ -101,26 +101,24 @@ extension ViewManagerProxy {
 
 // MARK: Comments API calls
 extension ViewManagerProxy {
-    func fetchCommentsByAnswerId(_ answerId: String) -> AnyPublisher<[CommentsSummary], Never> {
+    func fetchCommentsByAnswerId(_ answerId: String) -> AnyPublisher<[CommentsSummary], Error> {
         api.fetchCommentsByAnswersIds(answerId)
             .map { $0.items.map(CommentsSummary.init) }
-            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
     
-    func fetchCommentsByQuestionId(_ questionId: String) -> AnyPublisher<[CommentsSummary], Never> {
+    func fetchCommentsByQuestionId(_ questionId: String) -> AnyPublisher<[CommentsSummary], Error> {
         api.fetchCommentsByQuestionsIds(questionId)
             .map { $0.items.map(CommentsSummary.init) }
-            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
 }
 
 // MARK: User API calls
 extension ViewManagerProxy {
-    func fetchInbox() -> AnyPublisher<[UserMessageSummary], Never> {
+    func fetchInbox() -> AnyPublisher<[UserMessageSummary], Error> {
         guard let token = stackConfig?.token, let key = stackConfig?.key else {
-            return Just([]).eraseToAnyPublisher()
+            return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
         
         return api.fetchInbox(token: token, key: key)
@@ -169,18 +167,16 @@ extension ViewManagerProxy {
                 
                 return values
             }
-            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
     
-    func fetchTimeline() -> AnyPublisher<[TimelineSummary], Never> {
+    func fetchTimeline() -> AnyPublisher<[TimelineSummary], Error> {
         guard let token = stackConfig?.token, let key = stackConfig?.key else {
-            return Just([]).eraseToAnyPublisher()
+            return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
         
         return api.fetchTimeline(token: token, key: key)
             .map { $0.items.map(TimelineSummary.init) }
-            .replaceError(with: [])
             .eraseToAnyPublisher()
     }
 }

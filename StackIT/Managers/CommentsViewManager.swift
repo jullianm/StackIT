@@ -35,7 +35,7 @@ extension CommentsViewManager {
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections.insert(.comments)
             })
-            .map { section -> AnyPublisher<[CommentsSummary], Never> in
+            .map { section -> AnyPublisher<[CommentsSummary], Error> in
                 switch section {
                 case .comments(let subsection, _):
                     switch subsection {
@@ -45,7 +45,7 @@ extension CommentsViewManager {
                         return self.proxy.fetchCommentsByQuestionId(question.questionId)
                     }
                 default:
-                    return Just([]).eraseToAnyPublisher()
+                    return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
                 
             }

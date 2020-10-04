@@ -51,9 +51,9 @@ extension AnswersViewManager {
                 self?.selectedQuestion = question
                 self?.loadingSections.insert(.answers)
             })
-            .map { [self] section -> AnyPublisher<[AnswersSummary], Never> in
+            .map { [self] section -> AnyPublisher<[AnswersSummary], Error> in
                 guard case let .answers(question, _) = section else {
-                    return Just([]).eraseToAnyPublisher()
+                    return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
                 
                 return proxy.fetchAnswersByQuestionId(question.questionId)
@@ -67,10 +67,10 @@ extension AnswersViewManager {
                 
                 return values
             }
-            .replaceError(with: [])
             .handleEvents(receiveOutput: { [weak self] _ in
                 self?.loadingSections.remove(.answers)
             })
+            .replaceError(with: [])
             .assign(to: \.answersSummary, on: self)
             .store(in: &subscriptions)
     }

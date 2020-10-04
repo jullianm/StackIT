@@ -53,11 +53,12 @@ class QuestionsViewManager: ObservableObject {
 extension QuestionsViewManager {
     private func bindFetchTags() {
         proxy.fetchTags()
-            .map { [weak self] _ -> AnyPublisher<[TagSummary], Never> in
-                guard let self = self else { return Just([]).eraseToAnyPublisher() }
+            .map { [weak self] _ -> AnyPublisher<[TagSummary], Error> in
+                guard let self = self else { return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher() }
                 return self.proxy.fetchTags()
             }
             .switchToLatest()
+            .replaceError(with: [])
             .handleEvents(receiveSubscription: { [weak self] _ in
                 self?.loadingSections.insert(.tags)
                 self?.loadingSections.insert(.questions)
@@ -95,9 +96,9 @@ extension QuestionsViewManager {
                     break
                 }
             })
-            .map { [weak self] section -> AnyPublisher<[QuestionsSummary], Never> in
+            .map { [weak self] section -> AnyPublisher<[QuestionsSummary], Error> in
                 guard let self = self, case let .questions(subsection, action) = section else {
-                    fatalError()
+                    return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
                 
                 switch subsection {
@@ -124,6 +125,7 @@ extension QuestionsViewManager {
                 }
             }
             .switchToLatest()
+            .replaceError(with: [])
             .assign(to: \.questionsSummary, on: self)
             .store(in: &subscriptions)
     }

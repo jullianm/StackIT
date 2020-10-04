@@ -81,6 +81,7 @@ extension AccountViewManager {
                             .handleEvents(receiveOutput: { [weak self] _ in
                                 self?.loadingSections.remove(.inbox)
                             })
+                            .replaceError(with: [])
                             .assign(to: \.inbox, on: self)
                             .store(in: &self.subscriptions)
                     case .timeline:
@@ -88,6 +89,7 @@ extension AccountViewManager {
                             .handleEvents(receiveOutput: { [weak self] _ in
                                 self?.loadingSections.remove(.timeline)
                             })
+                            .replaceError(with: [])
                             .assign(to: \.timeline, on: self)
                             .store(in: &self.subscriptions)
                     case .profile:
