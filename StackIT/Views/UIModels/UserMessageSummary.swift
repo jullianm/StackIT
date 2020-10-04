@@ -11,19 +11,21 @@ import StackAPI
 struct UserMessageSummary: Identifiable {
     let id = UUID()
     let title: String
-    let body: String
+    var messageDetails: [MessageDetail]
     let creationDate: String
     let isUnread: Bool
     let messageType: String
     let url: URL
+    let body: String
     let authorName: String
     let profileImage: String
 }
 
 extension UserMessageSummary {
     init(answer: Answer, messageStatus: MessageStatus) {
-        self.body = answer.body.addStyling()
-        self.creationDate = "Created on \(messageStatus)"
+        self.messageDetails = []
+        self.body = answer.body
+        self.creationDate = messageStatus.creationDate
         self.isUnread = messageStatus.isUnread
         self.messageType = messageStatus.messageType == .comment ? "Comment": "Answer"
         self.title = messageStatus.title
@@ -33,8 +35,9 @@ extension UserMessageSummary {
     }
     
     init(comment: Comment, messageStatus: MessageStatus) {
-        self.body = comment.body.addStyling()
-        self.creationDate = "Created on \(messageStatus)"
+        self.messageDetails = []
+        self.body = comment.body
+        self.creationDate = messageStatus.creationDate
         self.isUnread = messageStatus.isUnread
         self.messageType = messageStatus.messageType == .comment ? "Comment": "Answer"
         self.title = messageStatus.title

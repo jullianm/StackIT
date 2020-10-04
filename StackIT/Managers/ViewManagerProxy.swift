@@ -161,6 +161,14 @@ extension ViewManagerProxy {
                     }.eraseToAnyPublisher()
             }
             .switchToLatest()
+            .map { answers in
+                var values = answers
+                values.enumerated().forEach { index, value in
+                    values[index].messageDetails = MessageExtractor.sharedInstance.parse(html: value.body)
+                }
+                
+                return values
+            }
             .replaceError(with: [])
             .eraseToAnyPublisher()
     }
