@@ -41,4 +41,14 @@ extension AnswersSummary {
     static let placeholders = Array(0...10).map { _ in
         return AnswersSummary(from: Answer.placeholder)
     }
+    
+    static let empty = [AnswersSummary(lastActivityDate: "",
+                                       score: "",
+                                       isAccepted: false,
+                                       body: "",
+                                       authorName: "",
+                                       authorReputation: "",
+                                       authorImage: "",
+                                       answerId: "",
+                                       commentCount: "")]
 }

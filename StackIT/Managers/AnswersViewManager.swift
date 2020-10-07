@@ -22,7 +22,7 @@ class AnswersViewManager: ObservableObject {
     private var proxy: ViewManagerProxy
 
     /// Subjects properties
-    var fetchAnswersSubject = PassthroughSubject<AppSection, Never>()
+    var fetchAnswersSubject = CurrentValueSubject<AppSection?, Never>(nil)
     var fetchCommentsSubject = PassthroughSubject<AppSection, Never>()
     var resetSubject = PassthroughSubject<Void, Never>()
     
@@ -45,18 +45,26 @@ extension AnswersViewManager {
     private func bindFetchAnswers() {
         fetchAnswersSubject
             .handleEvents(receiveOutput: { [weak self] output in
-                guard case .answers(let question, _) = output else { return }
+                guard case .answers(let question, let action) = output else { return }
                 
-                self?.answersSummary = []
+                if case .none = action { /// not paging or refreshing
+                    self?.answersSummary = []
+                }
                 self?.selectedQuestion = question
                 self?.loadingSections.insert(.answers)
             })
             .map { [self] section -> AnyPublisher<[AnswersSummary], Error> in
-                guard case let .answers(question, _) = section else {
+                guard case let .answers(question, action) = section else {
                     return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
                 
-                return proxy.fetchAnswersByQuestionId(question.questionId)
+                let outputEvent: (Answers) -> Void = { [weak self] in
+                    self?.showLoadMore = $0.hasMore
+                }
+                
+                return proxy.fetchAnswersByQuestionId(question.questionId,
+                                                      outputEvent: outputEvent,
+                                                      action: action)
             }
             .switchToLatest()
             .map { answers in
@@ -67,9 +75,6 @@ extension AnswersViewManager {
                 
                 return values
             }
-            .handleEvents(receiveOutput: { [weak self] _ in
-                self?.loadingSections.remove(.answers)
-            })
             .replaceError(with: [])
             .assign(to: \.answersSummary, on: self)
             .store(in: &subscriptions)

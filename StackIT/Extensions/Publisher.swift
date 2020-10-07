@@ -33,3 +33,27 @@ extension Publisher where Output == [QuestionsSummary], Failure == Never {
             }
     }
 }
+
+extension Publisher where Output == [AnswersSummary], Failure == Never {
+    func assign(to keyPath: ReferenceWritableKeyPath<AnswersViewManager, Self.Output>,
+                on object: AnswersViewManager) -> AnyCancellable {
+        debounce(for: .seconds(2), scheduler: DispatchQueue.main)
+            .sink { output in
+                guard case let .answers(_, status) = object.fetchAnswersSubject.value else { return }
+                
+                object.loadingSections.remove(.answers)
+                
+                guard output.count > 0 else {
+                    object.answersSummary = AnswersSummary.empty
+                    return
+                }
+                
+                switch status {
+                case .paging:
+                    object.answersSummary.append(contentsOf: output)
+                default:
+                    object.answersSummary = output
+                }
+            }
+    }
+}

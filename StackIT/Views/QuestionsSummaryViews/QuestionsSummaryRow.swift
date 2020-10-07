@@ -33,28 +33,45 @@ struct QuestionSummaryRow: View {
                 Spacer()
                 
                 VStack(alignment:.leading, spacing: 7) {
-                    ZStack {
-                        Rectangle()
-                            .foregroundColor(Color.blue.opacity(0.5))
-                            .cornerRadius(10.0)
-                        VStack {
-                            Text(questionSummary.score).font(.headline)
-                            Text("votes").font(.subheadline)
+                    HStack {
+                        ZStack {
+                            Rectangle()
+                                .foregroundColor(Color.blue.opacity(0.5))
+                                .cornerRadius(10.0)
+                            VStack {
+                                Text(questionSummary.score).font(.headline)
+                                Text("votes").font(.subheadline)
+                            }
                         }
+                        .frame(width : 70, height: 50)
+                        .padding(.bottom, 5)
+                        
+                        VStack(spacing: 10) {
+                            Button {
+                                
+                            } label: {
+                                Image(systemName: "arrowtriangle.up.fill")
+                            }.buttonStyle(PlainButtonStyle())
+                            
+                            Button {
+                                
+                            } label: {
+                                Image(systemName: "arrowtriangle.down.fill")
+                            }.buttonStyle(PlainButtonStyle())
+                        }.frame(height: 50)
                     }
-                    .frame(width : 70, height: 50)
-                    .padding(.bottom, 5)
-                    
+                
                     HStack(spacing: 8.5) {
                         Image(systemName: "text.bubble.fill")
-                        Text(questionSummary.answers)
+                        Text(questionSummary.answers).fixedSize()
                     }
                     
                     HStack(spacing: 5) {
                         Image(systemName: "eye.fill")
-                        Text(questionSummary.views)
+                        Text(questionSummary.views).fixedSize()
                     }
                 }.opacity(questionSummary.isNoResultFound ? 0: 1)
+            
             }.padding(.top, 10)
             
             Divider().opacity(questionSummary.isNoResultFound ? 0: 1)

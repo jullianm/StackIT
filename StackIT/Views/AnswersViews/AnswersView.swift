@@ -36,6 +36,22 @@ struct AnswersView: View {
                     }
 
                 }.id(UUID())
+                
+                if answersViewManager.showLoadMore && answersViewManager.loadingSections.isEmpty {
+                    HStack {
+                        Spacer()
+                        
+                        Button {
+                            answersViewManager.fetchAnswersSubject.send(
+                                answersViewManager.fetchAnswersSubject.value?.enablePaging()
+                            )
+                        } label: {
+                            Text("Next page")
+                        }.buttonStyle(BorderlessButtonStyle())
+                        
+                        Spacer()
+                    }.padding()
+                }
             }
             
             if answersViewManager.loadingSections.contains(.answers) {

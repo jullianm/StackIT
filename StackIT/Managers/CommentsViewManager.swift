@@ -37,12 +37,14 @@ extension CommentsViewManager {
             })
             .map { section -> AnyPublisher<[CommentsSummary], Error> in
                 switch section {
-                case .comments(let subsection, _):
+                case let .comments(subsection, action):
                     switch subsection {
                     case .answer(let answer):
-                        return self.proxy.fetchCommentsByAnswerId(answer.answerId)
+                        return self.proxy.fetchCommentsByAnswerId(answer.answerId,
+                                                                  action: action)
                     case .question(let question):
-                        return self.proxy.fetchCommentsByQuestionId(question.questionId)
+                        return self.proxy.fetchCommentsByQuestionId(question.questionId,
+                                                                    action: action)
                     }
                 default:
                     return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()

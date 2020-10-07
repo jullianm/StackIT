@@ -58,7 +58,6 @@ extension QuestionsViewManager {
                 return self.proxy.fetchTags()
             }
             .switchToLatest()
-            .replaceError(with: [])
             .handleEvents(receiveSubscription: { [weak self] _ in
                 self?.loadingSections.insert(.tags)
                 self?.loadingSections.insert(.questions)
@@ -69,6 +68,7 @@ extension QuestionsViewManager {
                     self?.tags.first(where: { $0.name == favorite })?.isFavorite.toggle()
                 }
             })
+            .replaceError(with: [])
             .sink { [weak self] _ in
                 self?.fetchQuestionsSubject.send(.questions)
             }.store(in: &subscriptions)
@@ -108,8 +108,8 @@ extension QuestionsViewManager {
                     }
                     
                     return self.proxy.fetchQuestionsByKeywords(keywords: keywords,
-                                                          action: action,
-                                                          outputEvent: outputEvent)
+                                                               action: action,
+                                                               outputEvent: outputEvent)
                 case .trending, .tag:
                     let outputEvent: (Questions) -> Void = { [weak self] in
                         self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0

@@ -10,6 +10,7 @@ import Combine
 import StackAPI
 
 typealias OutputQuestionsEvent = ((Questions) -> Void)?
+typealias OutputAnswersEvent = ((Answers) -> Void)?
 typealias OutputSearchEvent = ((Search) -> Void)?
 
 /// This class acts as a middle man between the different view managers and the `StackITAPI`
@@ -45,12 +46,13 @@ extension ViewManagerProxy {
         return api.fetchQuestionsByKeywords(keywords: keywords, action: action)
             .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(\.questionId).joinedString() }
-            .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Never> in
-                guard let self = self else { return Just([]).eraseToAnyPublisher() }
+            .map { [weak self] ids -> AnyPublisher<[QuestionsSummary], Error> in
+                guard let self = self else {
+                    return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+                }
                 
-                return self.api.fetchQuestionsByIds(ids)
+                return self.api.fetchQuestionsByIds(ids, action: nil)
                     .map { $0.items.map(QuestionsSummary.init) }
-                    .replaceError(with: [])
                     .map { [self] in $0.filtered(by: self.questionsFilter) }
                     .eraseToAnyPublisher()
             }
@@ -72,8 +74,8 @@ extension ViewManagerProxy {
             .eraseToAnyPublisher()
     }
     
-    private func fetchQuestionsByIds(_ ids: String) -> AnyPublisher<[QuestionsSummary], Error> {
-        api.fetchQuestionsByIds(ids)
+    private func fetchQuestionsByIds(_ ids: String, outputEvent: OutputAnswersEvent, action: Action?) -> AnyPublisher<[QuestionsSummary], Error> {
+        api.fetchQuestionsByIds(ids, action: action)
             .map { $0.items.map(QuestionsSummary.init) }
             .map { [weak self] in
                 guard let self = self else { return [] }
@@ -85,14 +87,17 @@ extension ViewManagerProxy {
 
 // MARK: Answers API calls
 extension ViewManagerProxy {
-    private func fetchAnswersByIds(_ ids: String) -> AnyPublisher<[AnswersSummary], Error> {
-        api.fetchAnswersByIds(ids)
+    private func fetchAnswersByIds(_ ids: String, action: Action?) -> AnyPublisher<[AnswersSummary], Error> {
+        api.fetchAnswersByIds(ids, action: action)
             .map { $0.items.map(AnswersSummary.init) }
             .eraseToAnyPublisher()
     }
     
-    func fetchAnswersByQuestionId(_ questionId: String) -> AnyPublisher<[AnswersSummary], Error> {
-        api.fetchAnswersByQuestionId(questionId)
+    func fetchAnswersByQuestionId(_ questionId: String,
+                                  outputEvent: OutputAnswersEvent,
+                                  action: Action?) -> AnyPublisher<[AnswersSummary], Error> {
+        api.fetchAnswersByQuestionId(questionId, action: action)
+            .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(AnswersSummary.init) }
             .eraseToAnyPublisher()
         
@@ -101,14 +106,15 @@ extension ViewManagerProxy {
 
 // MARK: Comments API calls
 extension ViewManagerProxy {
-    func fetchCommentsByAnswerId(_ answerId: String) -> AnyPublisher<[CommentsSummary], Error> {
-        api.fetchCommentsByAnswersIds(answerId)
+    func fetchCommentsByAnswerId(_ answerId: String, action: Action?) -> AnyPublisher<[CommentsSummary], Error> {
+        api.fetchCommentsByAnswersIds(answerId, action: action)
             .map { $0.items.map(CommentsSummary.init) }
             .eraseToAnyPublisher()
     }
     
-    func fetchCommentsByQuestionId(_ questionId: String) -> AnyPublisher<[CommentsSummary], Error> {
-        api.fetchCommentsByQuestionsIds(questionId)
+    func fetchCommentsByQuestionId(_ questionId: String,
+                                   action: Action?) -> AnyPublisher<[CommentsSummary], Error> {
+        api.fetchCommentsByQuestionsIds(questionId, action: action)
             .map { $0.items.map(CommentsSummary.init) }
             .eraseToAnyPublisher()
     }
@@ -133,8 +139,10 @@ extension ViewManagerProxy {
                 let answersIds = posts.filter { $0.messageType == .answer }.compactMap(\.id).joinedString()
                 let commentsIds = posts.filter { $0.messageType == .comment }.compactMap(\.id).joinedString()
                 
-                let answersPublisher = self.api.fetchAnswersByIds(answersIds).map(\.items)
-                let commentsPublisher = self.api.fetchCommentsByIds(commentsIds).map(\.items)
+                let answersPublisher = self.api.fetchAnswersByIds(answersIds,
+                                                                  action: nil).map(\.items)
+                let commentsPublisher = self.api.fetchCommentsByIds(commentsIds,
+                                                                    action: nil).map(\.items)
                 
                 let zip = Publishers.Zip(answersPublisher, commentsPublisher).eraseToAnyPublisher()
                 
