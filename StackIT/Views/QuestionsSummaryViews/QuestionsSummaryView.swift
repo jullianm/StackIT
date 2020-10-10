@@ -59,7 +59,6 @@ extension QuestionsSummaryView {
                         self.isNewQuestionSheetPresented = false
                     }
                 }
-                
             }
             
             Divider()
@@ -71,8 +70,11 @@ extension QuestionsSummaryView {
     var listView: some View {
         List {
             ForEach(questionsViewManager.questionsSummary, id: \.id) { questionSummary in
-                QuestionSummaryRow(questionSummary: questionSummary)
-                    .background(selectedIndex == questionSummary.id ? Color.white.opacity(0.3): Color.clear)
+                QuestionSummaryRow(questionSummary: questionSummary,
+                                   questionsViewManager: questionsViewManager)
+                    .background(
+                        selectedIndex == questionSummary.id ? Color.white.opacity(0.3): Color.clear
+                    )
                     .onTapGesture {
                         selectedIndex = questionSummary.id
                         answersViewManager.fetchAnswersSubject.send(

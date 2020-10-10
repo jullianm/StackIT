@@ -9,17 +9,42 @@ import SwiftUI
 
 struct QuestionSummaryRow: View {
     var questionSummary: QuestionsSummary
+    @ObservedObject var questionsViewManager: QuestionsViewManager
+    @State private var showNewAnswerSheet = false
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(questionSummary.title).lineLimit(nil)
                     
                     Text(questionSummary.tags.joined(separator: ", "))
                         .foregroundColor(Color.gray)
                         .font(.caption)
                         .opacity(questionSummary.isNoResultFound ? 0: 1)
+                    
+                    HStack {
+                        Button {
+                            self.questionsViewManager.toggleFavoriteQuestionSubject.send(
+                                questionSummary.questionId
+                            )
+                        } label: {
+                            Image(systemName: questionSummary.isFavorite ? "heart.fill" :"heart")
+                        }.buttonStyle(PlainButtonStyle())
+                        
+                        Button {
+                            self.showNewAnswerSheet.toggle()
+                        } label: {
+                            Image(systemName: "arrowshape.turn.up.left")
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .padding(.trailing)
+                        .sheet(isPresented: $showNewAnswerSheet) {
+                            NewAnswerView {
+                                self.showNewAnswerSheet = false
+                            }
+                        }
+                    }.opacity(questionSummary.isNoResultFound ? 0: 1)
                     
                     Spacer()
                     

@@ -22,6 +22,7 @@ struct SideBarView: View {
                 AccountSectionView(accountViewManager: accountViewManager)
                 TrendingSectionView(questionsViewManager: questionsViewManager)
                 TagSectionView(questionsViewManager: questionsViewManager)
+                FavoritesSectionView(questionsViewManager: questionsViewManager)
             }
             .padding(.top, 5)
             .frame(minWidth: 250, maxWidth: 250, minHeight: 650, maxHeight: .infinity)

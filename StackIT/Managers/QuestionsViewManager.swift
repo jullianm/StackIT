@@ -18,7 +18,8 @@ class QuestionsViewManager: ObservableObject {
     @Published var questionsFilter: Set<QuestionsFilter> = []
     @Published var loadingSections: Set<QuestionsLoadingSection> = []
     @Published var showLoadMore: Bool = false
-    @AppStorage("favorites") private var favoritesTags: Data?
+    @AppStorage("favoritesTags") private var favoritesTags: Data?
+    @AppStorage("favoritesQuestions") var favoritesQuestions: Data?
 
     /// Private properties
     private var subscriptions = Set<AnyCancellable>()
@@ -31,12 +32,37 @@ class QuestionsViewManager: ObservableObject {
     var resetSubject = PassthroughSubject<Void, Never>()
     var fetchTagsSubject = PassthroughSubject<AppSection, Never>()
     var fetchQuestionsSubject = CurrentValueSubject<AppSection, Never>(.questions)
+    var toggleFavoriteQuestionSubject = PassthroughSubject<String, Never>()
     
     init(enableMock: Bool = false) {
         proxy = ViewManagerProxy(api: .init(enableMock: enableMock))
         bindFetchQuestions()
         bindFetchTags()
+        bindToggleFavoriteQuestion()
         bindReset()
+    }
+    
+    private func bindToggleFavoriteQuestion() {
+        toggleFavoriteQuestionSubject
+            .handleEvents(receiveOutput: { [weak self] questionId in
+                self?.questionsSummary
+                    .first(where: { $0.questionId == questionId })?
+                    .isFavorite.toggle()
+                self?.objectWillChange.send()
+            })
+            .map { [weak self] questionId in
+                guard let self = self else { return Data() }
+                var storedFavorites = self.favoritesQuestions.toArray()
+                if let i = storedFavorites.firstIndex(where: { $0 == questionId }) {
+                    storedFavorites.remove(at: i)
+                } else {
+                    storedFavorites.append(questionId)
+                }
+                            
+                return storedFavorites.toData()
+            }
+            .assign(to: \.favoritesQuestions, on: self)
+            .store(in: &subscriptions)
     }
     
     private func bindReset() {
@@ -90,7 +116,7 @@ extension QuestionsViewManager {
                 case .tag(let tag) where action == nil:
                     self.tags.first(where: { $0.name == tag.name })?.isFavorite.toggle()
                     self.favoritesTags = self.tags.filter(\.isFavorite).map(\.name).toData()
-                case .search:
+                case .search, .favorites:
                     self.tags.forEach { $0.isFavorite = false }
                 default:
                     break
@@ -122,12 +148,33 @@ extension QuestionsViewManager {
                                                                 trending: selectedTrending,
                                                                 action: action,
                                                                 outputEvent: outputEvent)
+                case .favorites:
+                    let outputEvent: (Questions) -> Void = { [weak self] in
+                        self?.showLoadMore = $0.hasMore && $0.quotaRemaining > 0
+                    }
+                    
+                    let favoritesQuestions = self.favoritesQuestions.toArray().joined(separator: ";")
+                    return self.proxy.fetchQuestionsByIds(favoritesQuestions,
+                                                          outputEvent: outputEvent,
+                                                          action: action)
+                    
                 }
             }
             .switchToLatest()
             .replaceError(with: [])
+            .map(updateFavorites)
             .assign(to: \.questionsSummary, on: self)
             .store(in: &subscriptions)
+    }
+    
+    private func updateFavorites(in questions: [QuestionsSummary]) -> [QuestionsSummary] {
+        let questionsSummary = questions
+        let favoritesQuestionsIds = self.favoritesQuestions.toArray()
+        questionsSummary.forEach {
+            $0.isFavorite = favoritesQuestionsIds.contains($0.questionId)
+        }
+        
+        return questionsSummary
     }
 }
 

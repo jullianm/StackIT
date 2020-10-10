@@ -74,8 +74,9 @@ extension ViewManagerProxy {
             .eraseToAnyPublisher()
     }
     
-    private func fetchQuestionsByIds(_ ids: String, outputEvent: OutputAnswersEvent, action: Action?) -> AnyPublisher<[QuestionsSummary], Error> {
+    func fetchQuestionsByIds(_ ids: String, outputEvent: OutputQuestionsEvent, action: Action?) -> AnyPublisher<[QuestionsSummary], Error> {
         api.fetchQuestionsByIds(ids, action: action)
+            .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(QuestionsSummary.init) }
             .map { [weak self] in
                 guard let self = self else { return [] }

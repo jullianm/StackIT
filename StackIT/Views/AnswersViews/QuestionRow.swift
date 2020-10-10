@@ -10,7 +10,8 @@ import SwiftUI
 struct QuestionRow: View {
     @ObservedObject var imageManager: ImageManager
     @ObservedObject var commentsViewManager: CommentsViewManager
-    @State private var showComments = false
+    @State private var showCommentsSheet = false
+    @State private var showNewAnswerSheet = false
     var question: QuestionsSummary
     
     var body: some View {
@@ -72,30 +73,45 @@ struct QuestionRow: View {
             }.padding()
             .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.2), lineWidth: 1))
             
-           // NSTextFieldRepresentable(htmlString: question.body)
-             //   .padding()
-               // .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.2), lineWidth: 1))
-            
-            Button {
-                showComments.toggle()
-            } label: {
-                HStack {
-                    Image(systemName: "message.fill")
-                    Text("\(question.commentCount)")
-                    Spacer()
+            HStack {
+                Spacer()
+                
+                Button {
+                    showCommentsSheet.toggle()
+                } label: {
+                    HStack {
+                        Image(systemName: "message.fill")
+                        Text("\(question.commentCount)")
+                        Spacer()
+                    }
+                }.onTapGesture {
+                    showCommentsSheet.toggle()
+                }.popover(isPresented: $showCommentsSheet) {
+                    ZStack {
+                        Color.stackITCode
+                        commentsSection
+                    }
+                    .frame(width: 500, height: 350)
+                    .onAppear {
+                        commentsViewManager.fetchCommentsSubject.send(
+                            .comments(subsection: .question(question))
+                        )
+                    }
                 }
-            }.onTapGesture {
-                showComments.toggle()
-            }.popover(isPresented: $showComments) {
-                ZStack {
-                    Color.stackITCode
-                    commentsSection
+                
+                Spacer()
+                
+                Button {
+                    self.showNewAnswerSheet.toggle()
+                } label: {
+                    Image(systemName: "arrowshape.turn.up.left")
                 }
-                .frame(width: 500, height: 350)
-                .onAppear {
-                    commentsViewManager.fetchCommentsSubject.send(
-                        .comments(subsection: .question(question))
-                    )
+                .buttonStyle(PlainButtonStyle())
+                .padding(.trailing)
+                .sheet(isPresented: $showNewAnswerSheet) {
+                    NewAnswerView {
+                        self.showNewAnswerSheet = false
+                    }
                 }
             }
         }.padding()
@@ -110,7 +126,7 @@ extension QuestionRow {
                     Text("Comments").font(.largeTitle)
                     Spacer()
                     Button {
-                        showComments = false
+                        showCommentsSheet = false
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                     }.buttonStyle(BorderlessButtonStyle())

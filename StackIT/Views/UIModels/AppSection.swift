@@ -54,4 +54,5 @@ enum SubSection: Equatable {
     case trending(trending: Trending)
     case tag(tag: TagSummary)
     case search(keywords: String)
+    case favorites
 }
