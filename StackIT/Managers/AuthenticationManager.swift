@@ -15,7 +15,7 @@ class AuthenticationManager {
     private let redirectUri = "stackit://stackexchange.com"
     private let keychainManager = KeychainManager.shared
     private var subscriptions = Set<AnyCancellable>()
-    var stackConfig: StackConfig
+    var credentials: StackCredentials
     
     /// Subjects properties
     var parseTokenSubject = PassthroughSubject<URL, Never>()
@@ -27,7 +27,7 @@ class AuthenticationManager {
     }
     
     private init() {
-        stackConfig = Bundle.main.load(resource: "StackConfig", ofType: "plist")
+        credentials = Bundle(for: StackITAPI.self).load(resource: "StackCredentials", ofType: "plist")
         bindParseToken()
         bindRemoveUser()
         bindCheckToken()
@@ -40,7 +40,7 @@ class AuthenticationManager {
                 return self.keychainManager.retrieveToken() ?? .init()
             }
             .handleEvents(receiveOutput: { token in
-                self.stackConfig.token = token
+                self.credentials.token = token
             })
             .map { [weak self] token -> AnyPublisher<UserSummary?, Never> in
                 guard let self = self else { return Just(nil).eraseToAnyPublisher() }
@@ -80,7 +80,7 @@ class AuthenticationManager {
     
     private func storeToken(_ token: Token) {
         keychainManager.storeToken(token)
-        stackConfig.token = token.value
+        credentials.token = token.value
     }
 }
 
@@ -88,7 +88,7 @@ class AuthenticationManager {
 extension AuthenticationManager {
     func getSignInUrl() -> URL {
         return URL(string: "https://stackoverflow.com/oauth/dialog")!
-            .appending("client_id", value: stackConfig.clientId)
+            .appending("client_id", value: credentials.clientId)
             .appending("redirect_uri", value: redirectUri)
             .appending("scope", value: scopes.joined(separator: " "))
     }
@@ -98,7 +98,7 @@ extension AuthenticationManager {
     }
     
     private func getUser(token: String) -> AnyPublisher<UserSummary?, Never> {
-        return StackITAPI().fetchUser(token: token, key: stackConfig.key)
+        return StackITAPI().fetchUser(credentials: credentials)
             .map { $0.items.map(UserSummary.init) }
             .replaceError(with: [])
             .map(\.first)

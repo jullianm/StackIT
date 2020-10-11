@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import StackAPI
 
 extension Bundle {
-    func load(resource: String, ofType type: String) -> StackConfig {
+    func load(resource: String, ofType type: String) -> StackCredentials {
         guard let path = path(forResource: resource, ofType: type),
               let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
             fatalError("File not found.")
@@ -16,7 +17,7 @@ extension Bundle {
         
         do {
             let decoder = PropertyListDecoder()
-            let model = try decoder.decode(StackConfig.self, from: data)
+            let model = try decoder.decode(StackCredentials.self, from: data)
             return model
         } catch {
             fatalError("Failed to load \(resource) from bundle.")

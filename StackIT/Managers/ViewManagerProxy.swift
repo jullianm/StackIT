@@ -17,7 +17,7 @@ typealias OutputSearchEvent = ((Search) -> Void)?
 /// It should be used to trigger API calls.
 class ViewManagerProxy {
     let api: StackITAPI
-    var stackConfig: StackConfig?
+    var credentials: StackCredentials?
     private var questionsFilter: Set<QuestionsFilter> = []
     
     init(api: StackITAPI) {
@@ -51,7 +51,9 @@ extension ViewManagerProxy {
                     return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
                 }
                 
-                return self.api.fetchQuestionsByIds(ids, action: nil)
+                return self.api.fetchQuestionsByIds(ids,
+                                                    action: nil,
+                                                    credentials: self.credentials)
                     .map { $0.items.map(QuestionsSummary.init) }
                     .map { [self] in $0.filtered(by: self.questionsFilter) }
                     .eraseToAnyPublisher()
@@ -64,7 +66,10 @@ extension ViewManagerProxy {
                                    trending: Trending,
                                    action: Action?,
                                    outputEvent: OutputQuestionsEvent) -> AnyPublisher<[QuestionsSummary], Error> {
-        api.fetchQuestionsWithFilters(tags: tags, trending: trending, action: action)
+        api.fetchQuestionsWithFilters(tags: tags,
+                                      trending: trending,
+                                      action: action,
+                                      credentials: credentials)
             .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(QuestionsSummary.init) }
             .map { [weak self] in
@@ -75,7 +80,7 @@ extension ViewManagerProxy {
     }
     
     func fetchQuestionsByIds(_ ids: String, outputEvent: OutputQuestionsEvent, action: Action?) -> AnyPublisher<[QuestionsSummary], Error> {
-        api.fetchQuestionsByIds(ids, action: action)
+        api.fetchQuestionsByIds(ids, action: action, credentials: credentials)
             .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(QuestionsSummary.init) }
             .map { [weak self] in
@@ -89,7 +94,7 @@ extension ViewManagerProxy {
 // MARK: Answers API calls
 extension ViewManagerProxy {
     private func fetchAnswersByIds(_ ids: String, action: Action?) -> AnyPublisher<[AnswersSummary], Error> {
-        api.fetchAnswersByIds(ids, action: action)
+        api.fetchAnswersByIds(ids, action: action, credentials: credentials)
             .map { $0.items.map(AnswersSummary.init) }
             .eraseToAnyPublisher()
     }
@@ -97,7 +102,7 @@ extension ViewManagerProxy {
     func fetchAnswersByQuestionId(_ questionId: String,
                                   outputEvent: OutputAnswersEvent,
                                   action: Action?) -> AnyPublisher<[AnswersSummary], Error> {
-        api.fetchAnswersByQuestionId(questionId, action: action)
+        api.fetchAnswersByQuestionId(questionId, action: action, credentials: credentials)
             .handleEvents(receiveOutput: outputEvent)
             .map { $0.items.map(AnswersSummary.init) }
             .eraseToAnyPublisher()
@@ -108,14 +113,18 @@ extension ViewManagerProxy {
 // MARK: Comments API calls
 extension ViewManagerProxy {
     func fetchCommentsByAnswerId(_ answerId: String, action: Action?) -> AnyPublisher<[CommentsSummary], Error> {
-        api.fetchCommentsByAnswersIds(answerId, action: action)
+        api.fetchCommentsByAnswersIds(answerId,
+                                      action: action,
+                                      credentials: credentials)
             .map { $0.items.map(CommentsSummary.init) }
             .eraseToAnyPublisher()
     }
     
     func fetchCommentsByQuestionId(_ questionId: String,
                                    action: Action?) -> AnyPublisher<[CommentsSummary], Error> {
-        api.fetchCommentsByQuestionsIds(questionId, action: action)
+        api.fetchCommentsByQuestionsIds(questionId,
+                                        action: action,
+                                        credentials: credentials)
             .map { $0.items.map(CommentsSummary.init) }
             .eraseToAnyPublisher()
     }
@@ -124,11 +133,11 @@ extension ViewManagerProxy {
 // MARK: User API calls
 extension ViewManagerProxy {
     func fetchInbox() -> AnyPublisher<[UserMessageSummary], Error> {
-        guard let token = stackConfig?.token, let key = stackConfig?.key else {
+        guard let credentials = credentials else {
             return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
         
-        return api.fetchInbox(token: token, key: key)
+        return api.fetchInbox(credentials: credentials)
             .map { [weak self] inbox -> AnyPublisher<[UserMessageSummary], Error> in
                 guard let self = self else {
                     return Just([])
@@ -141,9 +150,11 @@ extension ViewManagerProxy {
                 let commentsIds = posts.filter { $0.messageType == .comment }.compactMap(\.id).joinedString()
                 
                 let answersPublisher = self.api.fetchAnswersByIds(answersIds,
-                                                                  action: nil).map(\.items)
+                                                                  action: nil,
+                                                                  credentials: credentials).map(\.items)
                 let commentsPublisher = self.api.fetchCommentsByIds(commentsIds,
-                                                                    action: nil).map(\.items)
+                                                                    action: nil,
+                                                                    credentials: credentials).map(\.items)
                 
                 let zip = Publishers.Zip(answersPublisher, commentsPublisher).eraseToAnyPublisher()
                 
@@ -180,11 +191,11 @@ extension ViewManagerProxy {
     }
     
     func fetchTimeline() -> AnyPublisher<[TimelineSummary], Error> {
-        guard let token = stackConfig?.token, let key = stackConfig?.key else {
+        guard let credentials = credentials else {
             return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
         
-        return api.fetchTimeline(token: token, key: key)
+        return api.fetchTimeline(credentials: credentials)
             .map { $0.items.map(TimelineSummary.init) }
             .eraseToAnyPublisher()
     }

@@ -45,7 +45,7 @@ extension AccountViewManager {
         authManager.addUserPublisher
             .handleEvents(receiveOutput: { [weak self] _ in
                 guard let self = self else { return }
-                self.proxy.stackConfig = self.authManager.stackConfig
+                self.proxy.credentials = self.authManager.credentials
                 self.loadingSections.remove(.account)
             })
             .assign(to: \.user, on: self)
