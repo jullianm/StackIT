@@ -9,13 +9,13 @@ import Combine
 import Foundation
 import StackAPI
 
-class AnswersViewManager: ObservableObject {
+class AnswersViewManager: ObservableObject {    
     /// Published properties
     var selectedQuestion: QuestionsSummary?
+    var showLoadMore: Bool = false
     @Published var answersSummary: [AnswersSummary] = []
     @Published var commentsSummary: [CommentsSummary] = []
     @Published var loadingSections: Set<AnswersLoadingSection> = []
-    @Published var showLoadMore: Bool = false
 
     /// Private properties
     private var subscriptions = Set<AnyCancellable>()
@@ -45,13 +45,12 @@ extension AnswersViewManager {
     private func bindFetchAnswers() {
         fetchAnswersSubject
             .handleEvents(receiveOutput: { [weak self] output in
-                guard case .answers(let question, let action) = output else { return }
+                guard case .answers(let question, let action) = output,
+                      action == nil else { return }
                 
-                if case .none = action { /// not paging or refreshing
-                    self?.answersSummary = []
-                }
-                self?.selectedQuestion = question
+                self?.answersSummary = []
                 self?.loadingSections.insert(.answers)
+                self?.selectedQuestion = question
             })
             .map { [self] section -> AnyPublisher<[AnswersSummary], Error> in
                 guard case let .answers(question, action) = section else {

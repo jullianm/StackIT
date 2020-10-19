@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AnswerRow: View {
+struct AnswerRow: View {    
     @ObservedObject var imageManager: ImageManager
     @ObservedObject var commentsViewManager: CommentsViewManager
     @State private var showComments = false

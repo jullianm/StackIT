@@ -11,8 +11,7 @@ import Combine
 extension Publisher where Output == [QuestionsSummary], Failure == Never {
     func assign(to keyPath: ReferenceWritableKeyPath<QuestionsViewManager, Self.Output>,
                 on object: QuestionsViewManager) -> AnyCancellable {
-        debounce(for: .seconds(2), scheduler: DispatchQueue.main)
-            .sink { output in
+            sink { output in
                 guard case let .questions(_, status) = object.fetchQuestionsSubject.value else { return }
                 
                 object.loadingSections.remove(.questions)
@@ -37,9 +36,8 @@ extension Publisher where Output == [QuestionsSummary], Failure == Never {
 extension Publisher where Output == [AnswersSummary], Failure == Never {
     func assign(to keyPath: ReferenceWritableKeyPath<AnswersViewManager, Self.Output>,
                 on object: AnswersViewManager) -> AnyCancellable {
-        debounce(for: .seconds(2), scheduler: DispatchQueue.main)
-            .sink { output in
-                guard case let .answers(_, status) = object.fetchAnswersSubject.value else { return }
+            sink { output in
+                guard case let .answers(_, action) = object.fetchAnswersSubject.value else { return }
                 
                 object.loadingSections.remove(.answers)
                 
@@ -48,7 +46,7 @@ extension Publisher where Output == [AnswersSummary], Failure == Never {
                     return
                 }
                 
-                switch status {
+                switch action {
                 case .paging:
                     object.answersSummary.append(contentsOf: output)
                 default:

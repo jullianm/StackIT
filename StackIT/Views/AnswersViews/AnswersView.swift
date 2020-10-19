@@ -34,8 +34,7 @@ struct AnswersView: View {
                                   commentsViewManager: CommentsViewManager(),
                                   answer: answer)
                     }
-
-                }.id(UUID())
+                }
                 
                 if answersViewManager.showLoadMore && answersViewManager.loadingSections.isEmpty {
                     HStack {
