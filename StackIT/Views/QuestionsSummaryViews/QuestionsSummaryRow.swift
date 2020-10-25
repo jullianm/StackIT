@@ -13,7 +13,7 @@ struct QuestionSummaryRow: View {
     @State private var showNewAnswerSheet = false
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(questionSummary.title).lineLimit(nil)
@@ -23,7 +23,26 @@ struct QuestionSummaryRow: View {
                         .font(.caption)
                         .opacity(questionSummary.isNoResultFound ? 0: 1)
                     
-                    HStack {
+                    HStack(spacing: 10) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "text.bubble.fill")
+                            Text(questionSummary.answers).fixedSize()
+                        }
+                        
+                        HStack(spacing: 2) {
+                            Image(systemName: "eye.fill")
+                            Text(questionSummary.views).fixedSize()
+                        }
+                        
+                        HStack(spacing: 2) {
+                            Image(systemName: "arrowtriangle.up.fill")
+                            Text(questionSummary.score)
+                        }
+                    }.opacity(questionSummary.isNoResultFound ? 0: 1)
+                                        
+                    Spacer()
+                    
+                    HStack(spacing: 5) {
                         Button {
                             self.questionsViewManager.toggleFavoriteQuestionSubject.send(
                                 questionSummary.questionId
@@ -45,58 +64,38 @@ struct QuestionSummaryRow: View {
                             }
                         }
                     }.opacity(questionSummary.isNoResultFound ? 0: 1)
-                    
-                    Spacer()
-                    
-                    Text(questionSummary.lastActivityDate)
-                        .foregroundColor(Color.gray)
-                        .italic()
-                        .font(.caption)
-                        .opacity(questionSummary.isNoResultFound ? 0: 1)
                 }
                 
                 Spacer()
                 
-                VStack(alignment:.leading, spacing: 7) {
-                    HStack {
-                        ZStack {
-                            Rectangle()
-                                .foregroundColor(Color.blue.opacity(0.5))
-                                .cornerRadius(10.0)
-                            VStack {
-                                Text(questionSummary.score).font(.headline)
-                                Text("votes").font(.subheadline)
-                            }
-                        }
-                        .frame(width : 70, height: 50)
-                        .padding(.bottom, 5)
-                        
-                        VStack(spacing: 10) {
-                            Button {
-                                
-                            } label: {
-                                Image(systemName: "arrowtriangle.up.fill")
-                            }.buttonStyle(PlainButtonStyle())
-                            
-                            Button {
-                                
-                            } label: {
-                                Image(systemName: "arrowtriangle.down.fill")
-                            }.buttonStyle(PlainButtonStyle())
-                        }.frame(height: 50)
-                    }
-                
-                    HStack(spacing: 8.5) {
-                        Image(systemName: "text.bubble.fill")
-                        Text(questionSummary.answers).fixedSize()
+                ZStack(alignment: .topTrailing) {
+                    if questionsViewManager.loadingSections.isEmpty {
+                        Image("StackVotes")
+                            .renderingMode(.template)
+                            .resizable()
+                            .opacity(questionSummary.isNoResultFound ? 0: 0.1)
+                            .frame(width: 100, height: 100)
+                            .offset(x: -20, y: -20)
                     }
                     
-                    HStack(spacing: 5) {
-                        Image(systemName: "eye.fill")
-                        Text(questionSummary.views).fixedSize()
-                    }
-                }.opacity(questionSummary.isNoResultFound ? 0: 1)
-            
+                    VStack {
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "arrowtriangle.up.fill")
+                        }.buttonStyle(PlainButtonStyle())
+                        
+                        Spacer()
+                        
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "arrowtriangle.down.fill")
+                        }.buttonStyle(PlainButtonStyle())
+                        
+                    }.opacity(questionSummary.isNoResultFound ? 0: 1)
+                }
+                
             }.padding(.top, 10)
             
             Divider().opacity(questionSummary.isNoResultFound ? 0: 1)

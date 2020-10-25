@@ -17,10 +17,10 @@ class ImageManager: ObservableObject {
     }
 
     init(_ string: String) {
-        fetchString(from: string)
+        fetchImage(from: string)
     }
 
-    private func fetchString(from string: String) {
+    private func fetchImage(from string: String) {
         guard !string.isEmpty, let url = URL(string: string) else {
             return
         }
@@ -29,8 +29,6 @@ class ImageManager: ObservableObject {
     }
     
     private func fetchImage(from url: URL) {
-
-        
         URLSession.shared.dataTaskPublisher(for: url)
             .map(\.data)
             .map(NSImage.init(data:))
