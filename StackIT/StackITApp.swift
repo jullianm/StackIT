@@ -12,6 +12,8 @@ struct StackITApp: App {
     var body: some Scene {
         WindowGroup {
             SideBarView()
+        }.commands {
+            SidebarCommands()
         }
     }
 }

@@ -27,7 +27,7 @@ public class MessageExtractor {
             var currentP = "".addStyling()
             for element in body.children() {
                 if element.tag().getName() == "pre", var code = try? element.text() {
-                    if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
+                    if inP, let attributedText = currentP.convertToAttributedText() {
                         inP = false
                         result.append(.plainText(text: attributedText))
                         currentP = "".addStyling()
@@ -36,7 +36,7 @@ public class MessageExtractor {
                     result.append(.codeText(text: code))
                 } else {
                     if let aTag = element.children().first(where: { elt -> Bool in elt.tag().getName() == "a" }), let _ = aTag.children().first(where: { elt -> Bool in elt.tag().getName() == "img" }) {
-                        if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
+                        if inP, let attributedText = currentP.convertToAttributedText() {
                             inP = false
                             result.append(.plainText(text: attributedText))
                             currentP = "".addStyling()
@@ -52,7 +52,7 @@ public class MessageExtractor {
                 }
             }
 
-            if inP, let attributedText = convertToAttributedText(htmlString: currentP) {
+            if inP, let attributedText = currentP.convertToAttributedText() {
                 inP = false
                 result.append(.plainText(text: attributedText))
             }
@@ -71,7 +71,7 @@ public class MessageExtractor {
                     finalUrl = url
                 }
             } else if content.tag().getName() == "sub", let html = try? content.outerHtml() {
-                legend = convertToAttributedText(htmlString: html.addStyling())
+                legend = html.addStyling().convertToAttributedText()
             } else if content.tag().getName() == "img" {
                 if let src = try? content.attr("src"), let url = URL(string: src) {
                     finalUrl = url
@@ -90,23 +90,12 @@ public class MessageExtractor {
         do {
            let doc: Document = try SwiftSoup.parse(html)
            return doc
-        } catch Exception.Error(let type, let message) {
+        } catch Exception.Error(_, let message) {
             print(message)
             return nil
         } catch {
             print("error")
             return nil
         }
-    }
-
-    private func convertToAttributedText(htmlString: String) -> NSAttributedString? {
-        let data = Data(htmlString.utf8)
-        let options: [NSAttributedString.DocumentReadingOptionKey : Any] = [.documentType: NSAttributedString.DocumentType.html]
-        if let attributedString = try? NSMutableAttributedString(data: data, options: options, documentAttributes: nil) {
-            attributedString.addAttributes([.backgroundColor: NSColor(named: "StackITCode")!], range: NSMakeRange(0, attributedString.length))
-            return attributedString
-        }
-
-        return nil
     }
 }
